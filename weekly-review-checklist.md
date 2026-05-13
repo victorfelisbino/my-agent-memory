@@ -11,6 +11,8 @@ Run this once per week to keep memory fresh and useful.
 7. Update goals.md with this week's top 3 outcomes.
 8. Add one entry to decision-journal.md.
 9. Validate anti-hallucination-protocol.md still matches current workflow.
+10. Use decision-framework.md on one high-impact decision from this week.
+11. Run cognitive-bias-checks.md on one decision that felt uncertain.
 
 Definition of done:
 - memory-scoreboard.md updated this week
@@ -18,3 +20,5 @@ Definition of done:
 - no duplicate guardrails across files
 - goals.md reflects current week
 - one decision captured with result and lesson
+- one decision scored with the decision framework
+- one debiasing check applied and documented

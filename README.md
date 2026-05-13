@@ -14,6 +14,10 @@ This repository contains my persistent memory for GitHub Copilot across all mach
 - **goals.md** - 30/90-day outcomes and weekly priorities
 - **performance-map.md** - Where you perform best and what to avoid
 - **decision-journal.md** - High-value decisions, outcomes, and lessons
+- **thinking-principles.md** - Your default way of reasoning under uncertainty
+- **decision-framework.md** - Consistent decision scoring and tradeoff method
+- **cognitive-bias-checks.md** - Debiasing prompts to reduce bad judgments
+- **exploration-modes.md** - Intentional problem-solving modes (triage, diagnosis, strategy)
 
 ## How it works
 
@@ -123,3 +127,9 @@ Use these files together:
 4. decision-journal.md: capture strategic decisions and outcomes.
 
 This helps with both execution quality and personal growth over time.
+
+For important tasks, explicitly apply:
+
+1. thinking-principles.md before planning
+2. decision-framework.md before committing to an approach
+3. cognitive-bias-checks.md before final decision

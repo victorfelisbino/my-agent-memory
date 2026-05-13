@@ -24,6 +24,10 @@ $filesToStage = @(
     'project-commands.md',
     'README.md',
     'anti-hallucination-protocol.md',
+    'thinking-principles.md',
+    'decision-framework.md',
+    'cognitive-bias-checks.md',
+    'exploration-modes.md',
     'goals.md',
     'performance-map.md',
     'decision-journal.md',
@@ -45,6 +49,8 @@ Write-Host "- Did I update goals.md for this week?"
 Write-Host "- Did I log one decision in decision-journal.md?"
 Write-Host "- Did I add one anti-hallucination guardrail or verification step?"
 Write-Host "- Do top scoreboard items have active guardrails?"
+Write-Host "- Did I apply decision-framework.md to one meaningful decision?"
+Write-Host "- Did I run cognitive-bias-checks.md before finalizing hard calls?"
 
 if ($Commit) {
     Write-Host "[5/5] Commit changes..."
