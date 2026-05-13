@@ -30,3 +30,18 @@ git push
 ```
 
 That's it! Your memory is now available in every project, on every machine.
+
+## Learning loop (use after every incident)
+
+1. What failed: one sentence only.
+2. Root cause: branch process, metadata mismatch, permissions, or code defect.
+3. Detection: how we could have caught it earlier.
+4. Guardrail: command/checklist/test to prevent recurrence.
+5. Evidence: link to deploy id, PR, or commit hash.
+
+When adding a lesson, prefix with one of these tags:
+- [P0 Prevented outage]
+- [P1 Frequent failure]
+- [P2 Nice to have]
+
+Keep only lessons that are reusable in future work. Skip one-off context.

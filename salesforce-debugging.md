@@ -47,3 +47,18 @@ System.debug('Query calls remaining: ' + Limits.getQueryLocalsRemaining());
 System.debug('DML rows: ' + Limits.getDmlRows());
 System.debug('Heap size: ' + Limits.getHeapSize());
 ```
+
+## Field visible to admin but not user - triage order
+
+1. Verify field-level security for the exact profile/permission set.
+2. Verify permission set assignment for the affected user.
+3. Verify layout assignment for the record type and profile.
+4. Verify Lightning record page activation by app, profile, and record type.
+5. Re-test while logged in as the target user.
+
+## Deploy result truth-check
+
+Treat deployment as successful only when all checks pass:
+- SF deploy report says succeeded for the target org.
+- Branch contains the fix commit(s).
+- PR diff shows expected metadata changes.

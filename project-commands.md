@@ -74,6 +74,29 @@ Org list to avoid alias mistakes:
 sf org list --json
 ```
 
+Pre-close verification bundle:
+```bash
+# 1) branch has expected commits
+git log --oneline -n 10
+
+# 2) PR target diff check
+git fetch origin
+git log --oneline origin/qa..HEAD
+
+# 3) deploy status check (replace values)
+sf project deploy report --job-id <DEPLOY_ID> --target-org <alias> --json
+```
+
+Capture lesson quickly after incident:
+```bash
+cd "$env:APPDATA\Code\User\memories"
+git pull
+# edit gotchas.md or salesforce-debugging.md with root cause + guardrail
+git add .
+git commit -m "lesson: <short title>"
+git push
+```
+
 ## npm (LWC Tests)
 
 ```bash

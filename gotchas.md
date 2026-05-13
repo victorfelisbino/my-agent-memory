@@ -39,3 +39,18 @@
 - **main_-_stg validation failures**: Repeated failures often come from stale profile references and profileActionOverrides in CustomApplication metadata. Audit profile refs before retriggering.
 - **Field visible to admin but not user**: Usually not layout-only. Validate all three: field-level security, permission set/profile assignment, and record page/layout assignment for the affected persona.
 - **"No changes in PR" surprise**: Usually means the fix is already in target or landed on a sibling branch. Use branch diff checks before creating another PR.
+
+## Decision Guardrails (stop repeat mistakes)
+
+- **Never call a fix done until all 3 are true**: branch pushed, PR reflects diff, org deploy succeeded.
+- **Never trust admin-only UI validation**: verify with affected user persona before closing defect.
+- **Never retrigger blindly after failure**: capture first failing component and fix root cause before rerun.
+- **Never assume branch health from one environment**: validate path for dev2 -> qa -> stg dry-run -> prod dry-run when applicable.
+- **Never open a new PR before diff check**: confirm the delta exists against target to avoid empty/no-op PR cycles.
+
+## Done Criteria for defect closure
+
+- Reproduced original issue once.
+- Confirmed fix in target org as intended user profile/permission set.
+- Confirmed metadata is on the promoting branch (not only on _-_qa head).
+- Logged deploy id(s) and PR/commit evidence.
