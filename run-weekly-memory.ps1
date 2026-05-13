@@ -22,7 +22,12 @@ $filesToStage = @(
     'gotchas.md',
     'salesforce-debugging.md',
     'project-commands.md',
-    'README.md'
+    'README.md',
+    'anti-hallucination-protocol.md',
+    'goals.md',
+    'performance-map.md',
+    'decision-journal.md',
+    'weekly-review-checklist.md'
 )
 
 foreach ($f in $filesToStage) {
@@ -33,6 +38,13 @@ foreach ($f in $filesToStage) {
 
 Write-Host "[4/5] Show staged status..."
 git status --short
+
+Write-Host ""
+Write-Host "Weekly quality prompts (quick review):"
+Write-Host "- Did I update goals.md for this week?"
+Write-Host "- Did I log one decision in decision-journal.md?"
+Write-Host "- Did I add one anti-hallucination guardrail or verification step?"
+Write-Host "- Do top scoreboard items have active guardrails?"
 
 if ($Commit) {
     Write-Host "[5/5] Commit changes..."

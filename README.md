@@ -10,6 +10,10 @@ This repository contains my persistent memory for GitHub Copilot across all mach
 - **gotchas.md** - Common pitfalls and how to avoid them
 - **deployment-checklist.md** - Pre-deployment validation steps
 - **tools-and-aliases.md** - Useful tools, aliases, and configurations
+- **anti-hallucination-protocol.md** - Evidence-first guardrails to reduce wrong assumptions
+- **goals.md** - 30/90-day outcomes and weekly priorities
+- **performance-map.md** - Where you perform best and what to avoid
+- **decision-journal.md** - High-value decisions, outcomes, and lessons
 
 ## How it works
 
@@ -108,3 +112,14 @@ When adding a lesson, prefix with one of these tags:
 - [P2 Nice to have]
 
 Keep only lessons that are reusable in future work. Skip one-off context.
+
+## Best-self mode
+
+Use these files together:
+
+1. goals.md: pick what matters most this week.
+2. performance-map.md: choose work styles where you perform best.
+3. anti-hallucination-protocol.md: enforce evidence-first answers.
+4. decision-journal.md: capture strategic decisions and outcomes.
+
+This helps with both execution quality and personal growth over time.

@@ -8,8 +8,13 @@ Run this once per week to keep memory fresh and useful.
 4. Remove stale or duplicate lessons.
 5. Add one new prevention rule based on this week's failures.
 6. Commit and push changes.
+7. Update goals.md with this week's top 3 outcomes.
+8. Add one entry to decision-journal.md.
+9. Validate anti-hallucination-protocol.md still matches current workflow.
 
 Definition of done:
 - memory-scoreboard.md updated this week
 - at least one prevention improvement merged to memory
 - no duplicate guardrails across files
+- goals.md reflects current week
+- one decision captured with result and lesson
