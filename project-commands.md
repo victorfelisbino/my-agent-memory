@@ -121,6 +121,20 @@ cd "$env:APPDATA\Code\User\memories"
 .\learn-memory.ps1
 ```
 
+Run full weekly memory workflow (pull + learn + stage):
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\run-weekly-memory.ps1
+```
+
+Run and finish automatically (commit + push):
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\run-weekly-memory.ps1 -Commit -Push
+```
+
 Push memory updates:
 
 ```powershell

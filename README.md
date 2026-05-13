@@ -53,6 +53,19 @@ cd "$env:APPDATA\Code\User\memories"
 .\learn-memory.ps1
 ```
 
+Weekly (one-command full runner):
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\run-weekly-memory.ps1
+```
+
+To auto-commit and push in one shot:
+
+```powershell
+.\run-weekly-memory.ps1 -Commit -Push
+```
+
 Then review:
 
 - memory-scoreboard.md
