@@ -135,6 +135,12 @@ cd "$env:APPDATA\Code\User\memories"
 .\run-weekly-memory.ps1 -Commit -Push
 ```
 
+Domain switch prompt (use at start of a new project/chat):
+
+```text
+Domain: MuleSoft. Use domains/mulesoft and domains/general rules. Ignore Salesforce-specific deployment rules unless asked.
+```
+
 Push memory updates:
 
 ```powershell

@@ -72,6 +72,20 @@ Then review:
 - memory-top-patterns.md
 - weekly-review-checklist.md
 
+## Multi-domain use (Salesforce, MuleSoft, others)
+
+- Shared rules: `domains/general/`
+- Salesforce specifics: `domains/salesforce/`
+- MuleSoft specifics: `domains/mulesoft/`
+
+At task start, declare the domain in plain words:
+
+- "Domain: Salesforce"
+- "Domain: MuleSoft"
+- "Domain: General"
+
+This keeps recommendations relevant when switching projects.
+
 ## Learning loop (use after every incident)
 
 1. What failed: one sentence only.
