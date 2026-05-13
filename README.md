@@ -37,6 +37,15 @@ git commit -m "Add new tip"
 git push
 ```
 
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+git add .
+git commit -m "Add new tip"
+git push
+```
+
 That's it! Your memory is now available in every project, on every machine.
 
 ## Simplest workflow
@@ -45,6 +54,13 @@ Daily (30 seconds):
 
 ```powershell
 cd "$env:APPDATA\Code\User\memories"
+git pull
+```
+
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
 git pull
 ```
 
@@ -61,12 +77,25 @@ cd "$env:APPDATA\Code\User\memories"
 .\learn-memory.ps1
 ```
 
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./learn-memory.sh
+```
+
 By default, this scans Copilot transcript history across all VS Code workspaces on this machine.
 
 Optional: scan only one transcript directory:
 
 ```powershell
 .\learn-memory.ps1 -TranscriptDir "<path-to-transcripts>"
+```
+
+macOS/Linux equivalent:
+
+```bash
+./learn-memory.sh --transcript-dir "<path-to-transcripts>"
 ```
 
 Weekly (one-command full runner):
@@ -76,10 +105,23 @@ cd "$env:APPDATA\Code\User\memories"
 .\run-weekly-memory.ps1
 ```
 
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./run-weekly-memory.sh
+```
+
 To auto-commit and push in one shot:
 
 ```powershell
 .\run-weekly-memory.ps1 -Commit -Push
+```
+
+macOS/Linux equivalent:
+
+```bash
+./run-weekly-memory.sh --commit --push
 ```
 
 Then review:

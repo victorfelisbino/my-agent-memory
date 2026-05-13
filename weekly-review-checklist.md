@@ -2,7 +2,7 @@
 
 Run this once per week to keep memory fresh and useful.
 
-1. Run learn-memory.ps1 to refresh scoreboard and top patterns.
+1. Run learn-memory.ps1 (Windows) or ./learn-memory.sh (macOS/Linux) to refresh scoreboard and top patterns.
 2. Review top 5 patterns by weighted score.
 3. For each top pattern, verify a guardrail exists in gotchas.md or project-commands.md.
 4. Remove stale or duplicate lessons.

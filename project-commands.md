@@ -48,6 +48,15 @@ git commit -m "Add new tip"
 git push
 ```
 
+macOS/Linux equivalent:
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+git pull
+git add .
+git commit -m "Add new tip"
+git push
+```
+
 Branch verification before PR/deploy:
 ```bash
 # Compare current branch against qa
@@ -121,6 +130,13 @@ cd "$env:APPDATA\Code\User\memories"
 .\learn-memory.ps1
 ```
 
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./learn-memory.sh
+```
+
 Run full weekly memory workflow (pull + learn + stage):
 
 ```powershell
@@ -128,11 +144,25 @@ cd "$env:APPDATA\Code\User\memories"
 .\run-weekly-memory.ps1
 ```
 
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./run-weekly-memory.sh
+```
+
 Run and finish automatically (commit + push):
 
 ```powershell
 cd "$env:APPDATA\Code\User\memories"
 .\run-weekly-memory.ps1 -Commit -Push
+```
+
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./run-weekly-memory.sh --commit --push
 ```
 
 Domain switch prompt (use at start of a new project/chat):
