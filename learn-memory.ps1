@@ -1,12 +1,13 @@
 param(
-    [string]$TranscriptDir = "$env:APPDATA\Code\User\workspaceStorage\7f561f80acb9bd533bd3c09f5b5c6ca3\GitHub.copilot-chat\transcripts",
+    [string]$WorkspaceStorageRoot = "$env:APPDATA\Code\User\workspaceStorage",
+    [string]$TranscriptDir = "",
     [string]$OutputDir = "$env:APPDATA\Code\User\memories"
 )
 
 $ErrorActionPreference = 'Stop'
 
-if (-not (Test-Path $TranscriptDir)) {
-    Write-Error "Transcript directory not found: $TranscriptDir"
+if (-not (Test-Path $WorkspaceStorageRoot)) {
+    Write-Error "Workspace storage root not found: $WorkspaceStorageRoot"
 }
 
 $patterns = @(
@@ -25,19 +26,40 @@ $patterns = @(
     [pscustomobject]@{ Trigger = 'try again'; Label = 'Retry without learning'; Severity = 'P2'; Domain = 'General'; Guardrail = 'Require one-line root cause hypothesis before retry.' }
 )
 
+$transcriptDirs = @()
+if ($TranscriptDir -and (Test-Path $TranscriptDir)) {
+    $transcriptDirs += (Resolve-Path $TranscriptDir).Path
+} else {
+    foreach ($workspaceDir in Get-ChildItem $WorkspaceStorageRoot -Directory) {
+        $candidate = Join-Path $workspaceDir.FullName 'GitHub.copilot-chat\transcripts'
+        if (Test-Path $candidate) {
+            $transcriptDirs += $candidate
+        }
+    }
+}
+
+if ($transcriptDirs.Count -eq 0) {
+    Write-Error "No transcript directories found."
+}
+
 $messages = @()
-foreach ($file in Get-ChildItem $TranscriptDir -Filter *.jsonl -File) {
-    foreach ($line in Get-Content $file.FullName) {
-        try {
-            $obj = $line | ConvertFrom-Json -ErrorAction Stop
-            if ($obj.type -eq 'user.message' -and $obj.data.content) {
-                $messages += [pscustomobject]@{
-                    File = $file.Name
-                    Text = $obj.data.content.ToLower()
-                    Timestamp = $obj.timestamp
+$workspaceCount = 0
+foreach ($dir in $transcriptDirs | Select-Object -Unique) {
+    $workspaceCount++
+    foreach ($file in Get-ChildItem $dir -Filter *.jsonl -File) {
+        foreach ($line in Get-Content $file.FullName) {
+            try {
+                $obj = $line | ConvertFrom-Json -ErrorAction Stop
+                if ($obj.type -eq 'user.message' -and $obj.data.content) {
+                    $messages += [pscustomobject]@{
+                        File = $file.Name
+                        Text = $obj.data.content.ToLower()
+                        Timestamp = $obj.timestamp
+                        TranscriptDir = $dir
+                    }
                 }
+            } catch {
             }
-        } catch {
         }
     }
 }
@@ -106,3 +128,4 @@ Set-Content -Path $topPatternsPath -Value ($top -join "`n") -Encoding UTF8
 Write-Host "Updated: $scoreboardPath"
 Write-Host "Updated: $topPatternsPath"
 Write-Host "Messages processed: $($messages.Count)"
+Write-Host "Transcript directories scanned: $workspaceCount"

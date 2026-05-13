@@ -53,6 +53,14 @@ cd "$env:APPDATA\Code\User\memories"
 .\learn-memory.ps1
 ```
 
+By default, this scans Copilot transcript history across all VS Code workspaces on this machine.
+
+Optional: scan only one transcript directory:
+
+```powershell
+.\learn-memory.ps1 -TranscriptDir "<path-to-transcripts>"
+```
+
 Weekly (one-command full runner):
 
 ```powershell
