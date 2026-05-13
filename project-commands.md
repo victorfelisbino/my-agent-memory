@@ -48,6 +48,32 @@ git commit -m "Add new tip"
 git push
 ```
 
+Branch verification before PR/deploy:
+```bash
+# Compare current branch against qa
+git fetch origin
+git rev-list --left-right --count origin/qa...HEAD
+
+# See exact commits not in qa yet
+git log --oneline origin/qa..HEAD
+```
+
+Quick branch sync check for Gearset-style branches:
+```bash
+# Replace names as needed
+git rev-list --left-right --count origin/gs-pipeline/feature/<work-item>...origin/gs-pipeline/feature/<work-item>_-_qa
+```
+
+Org deployment status check:
+```powershell
+sf project deploy report --job-id <DEPLOY_ID> --target-org <alias> --json
+```
+
+Org list to avoid alias mistakes:
+```powershell
+sf org list --json
+```
+
 ## npm (LWC Tests)
 
 ```bash
