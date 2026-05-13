@@ -31,6 +31,34 @@ git push
 
 That's it! Your memory is now available in every project, on every machine.
 
+## Simplest workflow
+
+Daily (30 seconds):
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+git pull
+```
+
+After an incident (2 minutes):
+
+1. Copy lesson-template.md.
+2. Fill root cause and guardrail.
+3. Move distilled guardrail to gotchas.md or salesforce-debugging.md.
+
+Weekly (1 command):
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\learn-memory.ps1
+```
+
+Then review:
+
+- memory-scoreboard.md
+- memory-top-patterns.md
+- weekly-review-checklist.md
+
 ## Learning loop (use after every incident)
 
 1. What failed: one sentence only.

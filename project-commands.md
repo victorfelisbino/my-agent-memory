@@ -111,3 +111,21 @@ Open Command Palette: Ctrl+Shift+P
 Quick Open: Ctrl+P
 Go to Line: Ctrl+G
 Toggle Terminal: Ctrl+`
+
+## Memory Automation
+
+Refresh learned patterns from Copilot history:
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\learn-memory.ps1
+```
+
+Push memory updates:
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+git add .
+git commit -m "memory: weekly refresh"
+git push
+```
