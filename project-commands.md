@@ -179,3 +179,41 @@ git add .
 git commit -m "memory: weekly refresh"
 git push
 ```
+
+Generate task-specific memory brief (magic mode):
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\summon-memory.ps1 -Task "Create API integration with OAuth and refresh token handling"
+```
+
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./summon-memory.sh --task "Create API integration with OAuth and refresh token handling"
+```
+
+Print one-command preflight prompt block:
+
+```powershell
+.\summon-memory.ps1 -Task "Create API integration with OAuth and refresh token handling" -Preflight
+```
+
+macOS/Linux equivalent:
+
+```bash
+./summon-memory.sh --task "Create API integration with OAuth and refresh token handling" --preflight
+```
+
+Run memory lint before promoting shared lessons:
+
+```powershell
+.\lint-memory.ps1 -IncludeCanonical
+```
+
+macOS/Linux equivalent:
+
+```bash
+./lint-memory.sh --include-canonical
+```

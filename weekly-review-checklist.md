@@ -13,6 +13,10 @@ Run this once per week to keep memory fresh and useful.
 9. Validate anti-hallucination-protocol.md still matches current workflow.
 10. Use decision-framework.md on one high-impact decision from this week.
 11. Run cognitive-bias-checks.md on one decision that felt uncertain.
+12. Run summon-memory for one real task and confirm top results are relevant.
+13. Verify new lessons include scope, confidence, and last verified date.
+14. Revalidate at least one high-impact guardrail with fresh evidence.
+15. Rehearse no-memory fallback: document how to continue safely if memory tools fail.
 
 Definition of done:
 - memory-scoreboard.md updated this week
@@ -22,3 +26,5 @@ Definition of done:
 - one decision captured with result and lesson
 - one decision scored with the decision framework
 - one debiasing check applied and documented
+- one memory retrieval quality check completed
+- one stale lesson refreshed or downgraded in confidence

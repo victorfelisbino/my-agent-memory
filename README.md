@@ -130,6 +130,75 @@ Then review:
 - memory-top-patterns.md
 - weekly-review-checklist.md
 
+Run team memory lint:
+
+```powershell
+.\lint-memory.ps1 -IncludeCanonical
+```
+
+macOS/Linux equivalent:
+
+```bash
+./lint-memory.sh --include-canonical
+```
+
+## Magic mode (task-specific memory recall)
+
+Generate a focused brief before a complex task:
+
+```powershell
+cd "$env:APPDATA\Code\User\memories"
+.\summon-memory.ps1 -Task "Build a .NET app that uses Salesforce OAuth and retrieves Accounts"
+```
+
+macOS/Linux equivalent:
+
+```bash
+cd "$HOME/Library/Application Support/Code/User/memories"
+./summon-memory.sh --task "Build a .NET app that uses Salesforce OAuth and retrieves Accounts"
+```
+
+This creates `active-memory-brief.md` with ranked snippets from:
+
+- root memory files
+- domains/general
+- selected domain folder
+
+It now includes:
+
+- Auto domain routing from task keywords (`Auto` is default)
+- Freshness weighting so newer lessons rank higher
+- Optional preflight prompt output for copy/paste into chat
+
+Print a ready-to-paste preflight prompt:
+
+```powershell
+.\summon-memory.ps1 -Task "Create Salesforce API integration with OAuth refresh tokens" -Preflight
+```
+
+macOS/Linux equivalent:
+
+```bash
+./summon-memory.sh --task "Create Salesforce API integration with OAuth refresh tokens" --preflight
+```
+
+Paste that brief into your next Copilot prompt to bias retrieval toward your proven patterns.
+
+## Ecosystem research
+
+Recent market scan and examples:
+
+- `memory-ecosystem-research-2026-05-15.md`
+- `memory-adoption-playbook.md`
+
+## Team memory layer
+
+Shared team memory with promotion gates lives in:
+
+- `team-memory/README.md`
+- `team-memory/approval-gates.md`
+- `team-memory/templates/shared-lesson-template.md`
+
 ## Multi-domain use (Salesforce, MuleSoft, others)
 
 - Shared rules: `domains/general/`

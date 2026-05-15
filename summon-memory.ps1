@@ -1,0 +1,295 @@
+param(
+    [ValidateSet('Auto','General','Salesforce','MuleSoft')]
+    [string]$Domain = 'Auto',
+    [Parameter(Mandatory=$true)]
+    [string]$Task,
+    [int]$Top = 10,
+    [string]$OutputFile = 'active-memory-brief.md',
+    [switch]$Preflight
+)
+
+$ErrorActionPreference = 'Stop'
+
+$repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$outputPath = Join-Path $repoRoot $OutputFile
+
+function Get-RelativePath {
+    param(
+        [string]$BasePath,
+        [string]$TargetPath
+    )
+
+    $base = (Resolve-Path $BasePath).Path
+    $target = (Resolve-Path $TargetPath).Path
+
+    if (-not $base.EndsWith('\')) {
+        $base += '\'
+    }
+
+    $baseUri = New-Object System.Uri($base)
+    $targetUri = New-Object System.Uri($target)
+    $relativeUri = $baseUri.MakeRelativeUri($targetUri)
+    return [System.Uri]::UnescapeDataString($relativeUri.ToString()).Replace('/', '\')
+}
+
+function Get-NormalizedWords {
+    param([string]$Text)
+
+    $clean = ($Text.ToLower() -replace '[^a-z0-9\s-]', ' ')
+    $parts = $clean -split '\s+'
+
+    $stop = @(
+        'the','and','for','with','from','that','this','your','about','into','will',
+        'have','need','using','when','what','where','how','why','can','could','should',
+        'would','make','more','less','then','than','also','just','task','work','project',
+        'create','build','setup','set','get','use','api','app','access','domain'
+    )
+
+    $words = @()
+    foreach ($p in $parts) {
+        if ($p.Length -lt 4) { continue }
+        if ($stop -contains $p) { continue }
+        $words += $p
+    }
+
+    return $words | Select-Object -Unique
+}
+
+function Resolve-DomainFromTask {
+    param([string]$TaskText)
+
+    $lower = $TaskText.ToLower()
+    $domainRules = @(
+        [pscustomobject]@{
+            Domain = 'Salesforce'
+            Keywords = @('salesforce','apex','soql','sobject','lwc','connected app','sfdc','sf cli','sf org')
+        },
+        [pscustomobject]@{
+            Domain = 'MuleSoft'
+            Keywords = @('mulesoft','mule','anypoint','raml','mule app','mule flow','exchange','cloudhub')
+        }
+    )
+
+    $bestDomain = 'General'
+    $bestScore = 0
+
+    foreach ($rule in $domainRules) {
+        $score = 0
+        foreach ($k in $rule.Keywords) {
+            if ($lower -match [regex]::Escape($k)) {
+                $score++
+            }
+        }
+
+        if ($score -gt $bestScore) {
+            $bestScore = $score
+            $bestDomain = $rule.Domain
+        }
+    }
+
+    return $bestDomain
+}
+
+function Get-FreshnessScore {
+    param([datetime]$LastWrite)
+
+    $days = (New-TimeSpan -Start $LastWrite -End (Get-Date)).TotalDays
+    if ($days -le 7) { return 3 }
+    if ($days -le 30) { return 2 }
+    if ($days -le 90) { return 1 }
+    return 0
+}
+
+function Get-ConfidenceScoreFromText {
+    param([string]$Text)
+
+    $match = [regex]::Match($Text, '(?im)^\s*[-*]?\s*confidence:\s*(low|medium|high)\b')
+    if (-not $match.Success) { return 0 }
+
+    switch ($match.Groups[1].Value.ToLower()) {
+        'high' { return 2 }
+        'medium' { return 1 }
+        'low' { return -1 }
+        default { return 0 }
+    }
+}
+
+function Get-VerificationScoreFromText {
+    param([string]$Text)
+
+    $match = [regex]::Match($Text, '(?im)^\s*[-*]?\s*last\s*verified(?:\s*date)?\s*:\s*(\d{4}-\d{2}-\d{2})\b')
+    if (-not $match.Success) { return -1 }
+
+    $verifiedDate = $null
+    if (-not [datetime]::TryParse($match.Groups[1].Value, [ref]$verifiedDate)) {
+        return -1
+    }
+
+    $days = (New-TimeSpan -Start $verifiedDate -End (Get-Date)).TotalDays
+    if ($days -le 30) { return 2 }
+    if ($days -le 90) { return 1 }
+    if ($days -le 180) { return 0 }
+    return -1
+}
+
+function Get-CandidateFiles {
+    param([string]$Root, [string]$SelectedDomain, [string]$GeneratedFile)
+
+    $files = @()
+
+    $rootFiles = Get-ChildItem -Path $Root -Filter *.md -File | Where-Object {
+        $_.Name -notin @('memory-scoreboard.md','memory-top-patterns.md', $GeneratedFile)
+    }
+    $files += $rootFiles
+
+    $generalDir = Join-Path $Root 'domains\general'
+    if (Test-Path $generalDir) {
+        $files += Get-ChildItem -Path $generalDir -Filter *.md -File
+    }
+
+    $domainDir = Join-Path $Root ("domains\" + $SelectedDomain.ToLower())
+    if (Test-Path $domainDir) {
+        $files += Get-ChildItem -Path $domainDir -Filter *.md -File
+    }
+
+    return $files | Select-Object -Unique
+}
+
+function Score-Line {
+    param(
+        [string]$Line,
+        [string[]]$Keywords,
+        [string]$TaskText,
+        [string]$ActiveDomain
+    )
+
+    $score = 0
+    $lower = $Line.ToLower()
+
+    foreach ($k in $Keywords) {
+        if ($lower -match [regex]::Escape($k)) {
+            $score += 2
+        }
+    }
+
+    if ($lower -match '^#{1,3}\s') { $score += 1 }
+    if ($lower -match 'guardrail|risk|evidence|checklist|verify|oauth|token|auth|deploy|permission') {
+        $score += 1
+    }
+
+    if ($TaskText.ToLower() -match 'salesforce' -and $lower -match 'salesforce|sf ') {
+        $score += 2
+    }
+
+    if ($ActiveDomain -eq 'Salesforce' -and $lower -match 'salesforce|sf |oauth|token|connected app|permission set') {
+        $score += 1
+    }
+
+    if ($ActiveDomain -eq 'MuleSoft' -and $lower -match 'mulesoft|anypoint|raml|cloudhub|exchange') {
+        $score += 1
+    }
+
+    return $score
+}
+
+$resolvedDomain = if ($Domain -eq 'Auto') { Resolve-DomainFromTask -TaskText $Task } else { $Domain }
+$keywords = Get-NormalizedWords -Text $Task
+$candidateFiles = Get-CandidateFiles -Root $repoRoot -SelectedDomain $resolvedDomain -GeneratedFile $OutputFile
+
+if ($candidateFiles.Count -eq 0) {
+    throw "No markdown files found to search."
+}
+
+$snippets = @()
+
+foreach ($file in $candidateFiles) {
+    $lines = Get-Content $file.FullName
+    $fileText = $lines -join "`n"
+    $confidenceScore = Get-ConfidenceScoreFromText -Text $fileText
+    $verificationScore = Get-VerificationScoreFromText -Text $fileText
+    $freshnessScore = Get-FreshnessScore -LastWrite $file.LastWriteTime
+
+    $i = 0
+    foreach ($line in $lines) {
+        $i++
+        if ([string]::IsNullOrWhiteSpace($line)) { continue }
+
+        $baseScore = Score-Line -Line $line -Keywords $keywords -TaskText $Task -ActiveDomain $resolvedDomain
+        $score = $baseScore + $freshnessScore + $confidenceScore + $verificationScore
+        if ($score -le 0) { continue }
+
+        $snippets += [pscustomobject]@{
+            Score = $score
+            BaseScore = $baseScore
+            FreshnessScore = $freshnessScore
+            ConfidenceScore = $confidenceScore
+            VerificationScore = $verificationScore
+            File = $file.Name
+            RelPath = Get-RelativePath -BasePath $repoRoot -TargetPath $file.FullName
+            Line = $i
+            Text = $line.Trim()
+        }
+    }
+}
+
+$ranked = $snippets |
+    Where-Object { $_.Text -notmatch 'summon-memory\.(ps1|sh)' } |
+    Sort-Object @{ Expression = { $_.Score }; Descending = $true }, @{ Expression = { $_.VerificationScore }; Descending = $true }, @{ Expression = { $_.FreshnessScore }; Descending = $true }, @{ Expression = { $_.File }; Ascending = $true } |
+    Select-Object -First $Top
+
+$now = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+
+$out = @()
+$out += '# Active Memory Brief'
+$out += ''
+$out += "Updated: $now"
+$out += "Domain: $resolvedDomain"
+$out += "Domain selection: $Domain"
+$out += "Task: $Task"
+$out += 'Scoring: total = relevance + freshness + confidence + verification-freshness'
+$out += 'Confidence score: high=+2, medium=+1, low=-1, missing=0'
+$out += 'Verification score: <=30d=+2, <=90d=+1, <=180d=0, stale/missing=-1'
+$out += ''
+$out += '## Suggested snippets'
+$out += ''
+
+if ($ranked.Count -eq 0) {
+    $out += '- No strong matches found. Add a new note for this scenario and rerun.'
+} else {
+    foreach ($r in $ranked) {
+        $out += "- [$($r.Score) = $($r.BaseScore) relevance + $($r.FreshnessScore) freshness + $($r.ConfidenceScore) confidence + $($r.VerificationScore) verification] $($r.RelPath):$($r.Line) - $($r.Text)"
+    }
+}
+
+$out += ''
+$out += '## Usage'
+$out += ''
+$out += 'Copy this brief into your next Copilot prompt to force high-signal context.'
+
+Set-Content -Path $outputPath -Value ($out -join "`n") -Encoding UTF8
+
+Write-Host "Updated: $outputPath"
+Write-Host "Files scanned: $($candidateFiles.Count)"
+Write-Host "Keywords: $($keywords -join ', ')"
+Write-Host "Resolved domain: $resolvedDomain"
+
+if ($Preflight) {
+    $briefContent = Get-Content -Path $outputPath -Raw
+    $prompt = @()
+    $prompt += '----- COPILOT PREFLIGHT PROMPT -----'
+    $prompt += "Domain: $resolvedDomain"
+    $prompt += "Task: $Task"
+    $prompt += ''
+    $prompt += 'Use this memory brief as highest-priority context:'
+    $prompt += ''
+    $prompt += $briefContent.Trim()
+    $prompt += ''
+    $prompt += 'Instructions:'
+    $prompt += '- Prefer commands and guardrails from the brief when they fit.'
+    $prompt += '- If required values are org/project-specific, ask for them explicitly.'
+    $prompt += '- If memory conflicts with current codebase reality, trust current evidence and state the mismatch.'
+    $prompt += '----- END PREFLIGHT PROMPT -----'
+
+    Write-Host ''
+    Write-Host ($prompt -join "`n")
+}

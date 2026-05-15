@@ -12,10 +12,15 @@ Set-Location $repoDir
 Write-Host "[1/5] Pull latest memory..."
 git pull
 
-Write-Host "[2/5] Run learner..."
+Write-Host "[2/6] Run learner..."
 .\learn-memory.ps1
 
-Write-Host "[3/5] Stage weekly memory files..."
+if ((Test-Path '.\lint-memory.ps1') -and (Test-Path '.\team-memory')) {
+    Write-Host "[3/6] Run team memory lint..."
+    .\lint-memory.ps1 -IncludeCanonical
+}
+
+Write-Host "[4/6] Stage weekly memory files..."
 $filesToStage = @(
     'memory-scoreboard.md',
     'memory-top-patterns.md',
@@ -31,7 +36,12 @@ $filesToStage = @(
     'goals.md',
     'performance-map.md',
     'decision-journal.md',
-    'weekly-review-checklist.md'
+    'weekly-review-checklist.md',
+    'lesson-template.md',
+    'memory-adoption-playbook.md',
+    'memory-ecosystem-research-2026-05-15.md',
+    'lint-memory.ps1',
+    'lint-memory.sh'
 )
 
 foreach ($f in $filesToStage) {
@@ -40,7 +50,11 @@ foreach ($f in $filesToStage) {
     }
 }
 
-Write-Host "[4/5] Show staged status..."
+if (Test-Path '.\team-memory') {
+    git add team-memory
+}
+
+Write-Host "[5/6] Show staged status..."
 git status --short
 
 Write-Host ""
@@ -53,7 +67,7 @@ Write-Host "- Did I apply decision-framework.md to one meaningful decision?"
 Write-Host "- Did I run cognitive-bias-checks.md before finalizing hard calls?"
 
 if ($Commit) {
-    Write-Host "[5/5] Commit changes..."
+    Write-Host "[6/6] Commit changes..."
     git commit -m $CommitMessage
 
     if ($Push) {

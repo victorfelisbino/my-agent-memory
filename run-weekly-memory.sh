@@ -41,10 +41,15 @@ cd "$SCRIPT_DIR"
 echo "[1/5] Pull latest memory..."
 git pull
 
-echo "[2/5] Run learner..."
+echo "[2/6] Run learner..."
 ./learn-memory.sh
 
-echo "[3/5] Stage weekly memory files..."
+if [[ -x "./lint-memory.sh" && -d "./team-memory" ]]; then
+  echo "[3/6] Run team memory lint..."
+  ./lint-memory.sh --include-canonical
+fi
+
+echo "[4/6] Stage weekly memory files..."
 files_to_stage=(
   memory-scoreboard.md
   memory-top-patterns.md
@@ -61,6 +66,11 @@ files_to_stage=(
   performance-map.md
   decision-journal.md
   weekly-review-checklist.md
+  lesson-template.md
+  memory-adoption-playbook.md
+  memory-ecosystem-research-2026-05-15.md
+  lint-memory.ps1
+  lint-memory.sh
 )
 
 for f in "${files_to_stage[@]}"; do
@@ -69,7 +79,11 @@ for f in "${files_to_stage[@]}"; do
   fi
 done
 
-echo "[4/5] Show staged status..."
+if [[ -d "team-memory" ]]; then
+  git add team-memory
+fi
+
+echo "[5/6] Show staged status..."
 git status --short
 
 echo
@@ -82,7 +96,7 @@ echo "- Did I apply decision-framework.md to one meaningful decision?"
 echo "- Did I run cognitive-bias-checks.md before finalizing hard calls?"
 
 if [[ "$COMMIT" == true ]]; then
-  echo "[5/5] Commit changes..."
+  echo "[6/6] Commit changes..."
   git commit -m "$COMMIT_MESSAGE"
 
   if [[ "$PUSH" == true ]]; then
