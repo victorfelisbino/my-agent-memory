@@ -217,3 +217,27 @@ macOS/Linux equivalent:
 ```bash
 ./lint-memory.sh --include-canonical
 ```
+
+Capture an in-flight observation (decision, blocker, progress, dead-end, insight):
+
+```powershell
+.\capture-observation.ps1 -Type decision -Domain Salesforce -Tags "deploy,qa" -Note "Promote via Gearset, not direct deploy, due to profile drift."
+```
+
+macOS/Linux equivalent:
+
+```bash
+./capture-observation.sh --type decision --domain Salesforce --tags "deploy,qa" --note "Promote via Gearset, not direct deploy, due to profile drift."
+```
+
+Synthesize the last 7 days of observations into `status-update.md`:
+
+```powershell
+.\synthesize-observations.ps1 -Days 7
+```
+
+macOS/Linux equivalent:
+
+```bash
+./synthesize-observations.sh --days 7
+```

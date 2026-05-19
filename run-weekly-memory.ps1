@@ -15,6 +15,11 @@ git pull
 Write-Host "[2/6] Run learner..."
 .\learn-memory.ps1
 
+if (Test-Path '.\synthesize-observations.ps1') {
+    Write-Host "[2b/6] Synthesize observations..."
+    .\synthesize-observations.ps1 -Days 7
+}
+
 if ((Test-Path '.\lint-memory.ps1') -and (Test-Path '.\team-memory')) {
     Write-Host "[3/6] Run team memory lint..."
     .\lint-memory.ps1 -IncludeCanonical
@@ -41,7 +46,13 @@ $filesToStage = @(
     'memory-adoption-playbook.md',
     'memory-ecosystem-research-2026-05-15.md',
     'lint-memory.ps1',
-    'lint-memory.sh'
+    'lint-memory.sh',
+    'capture-observation.ps1',
+    'capture-observation.sh',
+    'synthesize-observations.ps1',
+    'synthesize-observations.sh',
+    'observations.jsonl',
+    'status-update.md'
 )
 
 foreach ($f in $filesToStage) {
