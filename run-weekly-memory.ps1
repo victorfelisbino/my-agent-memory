@@ -15,6 +15,11 @@ git pull
 Write-Host "[2/6] Run learner..."
 .\learn-memory.ps1
 
+if (Test-Path '.\auto-capture-observations.ps1') {
+    Write-Host "[2a/6] Auto-capture observations from Copilot transcripts..."
+    .\auto-capture-observations.ps1 -SinceDays 7 -MaxPerRun 25
+}
+
 if (Test-Path '.\synthesize-observations.ps1') {
     Write-Host "[2b/6] Synthesize observations..."
     .\synthesize-observations.ps1 -Days 7
@@ -49,6 +54,7 @@ $filesToStage = @(
     'lint-memory.sh',
     'capture-observation.ps1',
     'capture-observation.sh',
+    'auto-capture-observations.ps1',
     'synthesize-observations.ps1',
     'synthesize-observations.sh',
     'observations.jsonl',

@@ -241,3 +241,18 @@ macOS/Linux equivalent:
 ```bash
 ./synthesize-observations.sh --days 7
 ```
+
+Auto-capture observations from Copilot Chat transcripts (decisions, blockers, dead-ends, insights, progress):
+
+```powershell
+.\auto-capture-observations.ps1 -SinceDays 7 -DryRun       # preview
+.\auto-capture-observations.ps1 -SinceDays 7 -MaxPerRun 25 # write to log
+```
+
+Install fully automated weekly refresh (Windows Task Scheduler):
+
+```powershell
+.\install-scheduled-task.ps1 -Push                # weekly Monday 9am, auto-commit + push
+.\install-scheduled-task.ps1 -Frequency Daily     # or daily refresh
+.\install-scheduled-task.ps1 -Uninstall           # remove
+```
