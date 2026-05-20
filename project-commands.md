@@ -249,6 +249,22 @@ Auto-capture observations from Copilot Chat transcripts (decisions, blockers, de
 .\auto-capture-observations.ps1 -SinceDays 7 -MaxPerRun 25 # write to log
 ```
 
+macOS/Linux equivalent:
+
+```bash
+./auto-capture-observations.sh --since-days 7 --dry-run
+./auto-capture-observations.sh --since-days 7 --max-per-run 25
+```
+
+Notes are redacted for common secrets (Bearer tokens, JWTs, Salesforce session IDs, Stripe/Slack/GitHub/AWS keys, password=value patterns, emails) before being written.
+
+Prune old observations into monthly archive files (keeps active log lean):
+
+```powershell
+.\prune-observations.ps1 -Days 90 -DryRun
+.\prune-observations.ps1 -Days 90
+```
+
 Install fully automated weekly refresh (Windows Task Scheduler):
 
 ```powershell

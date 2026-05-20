@@ -25,6 +25,11 @@ if (Test-Path '.\synthesize-observations.ps1') {
     .\synthesize-observations.ps1 -Days 7
 }
 
+if (Test-Path '.\prune-observations.ps1') {
+    Write-Host "[2c/6] Prune observations older than 90 days..."
+    .\prune-observations.ps1 -Days 90
+}
+
 if ((Test-Path '.\lint-memory.ps1') -and (Test-Path '.\team-memory')) {
     Write-Host "[3/6] Run team memory lint..."
     .\lint-memory.ps1 -IncludeCanonical
@@ -55,8 +60,10 @@ $filesToStage = @(
     'capture-observation.ps1',
     'capture-observation.sh',
     'auto-capture-observations.ps1',
+    'auto-capture-observations.sh',
     'synthesize-observations.ps1',
     'synthesize-observations.sh',
+    'prune-observations.ps1',
     'observations.jsonl',
     'status-update.md'
 )

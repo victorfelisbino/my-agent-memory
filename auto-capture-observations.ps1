@@ -41,6 +41,28 @@ function Resolve-DomainFromText {
     return 'General'
 }
 
+# Secret patterns: applied to every captured note before write.
+$secretPatterns = @(
+    @{ Pattern = '(?i)bearer\s+[A-Za-z0-9._\-]{20,}'; Replacement = 'Bearer [REDACTED]' },
+    @{ Pattern = 'eyJ[A-Za-z0-9._\-]{20,}'; Replacement = '[REDACTED_JWT]' },
+    @{ Pattern = '00D[A-Za-z0-9]{12,18}![A-Za-z0-9._\-]+'; Replacement = '[REDACTED_SF_SESSION]' },
+    @{ Pattern = '\b(sk|pk|rk)_(live|test)_[A-Za-z0-9]{16,}\b'; Replacement = '[REDACTED_STRIPE_KEY]' },
+    @{ Pattern = '\bxox[bpasr]-[A-Za-z0-9-]{10,}\b'; Replacement = '[REDACTED_SLACK_TOKEN]' },
+    @{ Pattern = '\bgh[pousr]_[A-Za-z0-9]{30,}\b'; Replacement = '[REDACTED_GITHUB_TOKEN]' },
+    @{ Pattern = '\bAKIA[0-9A-Z]{16}\b'; Replacement = '[REDACTED_AWS_KEY]' },
+    @{ Pattern = '(?i)(password|passwd|pwd|secret|api[_-]?key|token|auth[_-]?key)\s*[:=]\s*[''"]?[^\s''"]{6,}'; Replacement = '$1=[REDACTED]' },
+    @{ Pattern = '[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}'; Replacement = '[REDACTED_EMAIL]' }
+)
+
+function Remove-Secrets {
+    param([string]$Text)
+    $clean = $Text
+    foreach ($sp in $secretPatterns) {
+        $clean = [regex]::Replace($clean, $sp.Pattern, $sp.Replacement)
+    }
+    return $clean
+}
+
 # Collect transcript directories
 $transcriptDirs = @()
 if ($TranscriptDir -and (Test-Path $TranscriptDir)) {
@@ -126,6 +148,7 @@ foreach ($dir in $transcriptDirs | Select-Object -Unique) {
                     if ($sentence.Length -gt 240) {
                         $sentence = $sentence.Substring(0, 237) + '...'
                     }
+                    $sentence = Remove-Secrets -Text $sentence
 
                     $domain = Resolve-DomainFromText -Text $content
                     $key = "$($p.Type)|$($sentence.ToLower().Substring(0, [Math]::Min(120, $sentence.Length)))"
