@@ -4,6 +4,9 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$Task,
     [int]$Top = 10,
+    [int]$TopObservations = 5,
+    [int]$ObservationDays = 30,
+    [string]$ObservationsFile = 'observations.jsonl',
     [string]$OutputFile = 'active-memory-brief.md',
     [switch]$Preflight
 )
@@ -196,6 +199,68 @@ $resolvedDomain = if ($Domain -eq 'Auto') { Resolve-DomainFromTask -TaskText $Ta
 $keywords = Get-NormalizedWords -Text $Task
 $candidateFiles = Get-CandidateFiles -Root $repoRoot -SelectedDomain $resolvedDomain -GeneratedFile $OutputFile
 
+function Get-RelevantObservations {
+    param(
+        [string]$Path,
+        [string[]]$Keywords,
+        [string]$ActiveDomain,
+        [int]$Days,
+        [int]$Limit
+    )
+
+    if (-not (Test-Path $Path)) { return @() }
+
+    $cutoff = (Get-Date).AddDays(-$Days)
+    $results = @()
+
+    foreach ($line in Get-Content $Path) {
+        if ([string]::IsNullOrWhiteSpace($line)) { continue }
+        try {
+            $obj = $line | ConvertFrom-Json -ErrorAction Stop
+        } catch { continue }
+
+        $ts = [datetime]::MinValue
+        if (-not [datetime]::TryParse([string]$obj.timestamp, [ref]$ts)) { continue }
+        if ($ts -lt $cutoff) { continue }
+
+        $hay = ("$($obj.note) $($obj.tags -join ' ')").ToLower()
+        $score = 0
+        foreach ($k in $Keywords) {
+            if ($hay -match [regex]::Escape($k)) { $score += 2 }
+        }
+
+        if ($obj.domain -eq $ActiveDomain) { $score += 2 }
+        elseif ($obj.domain -eq 'General') { $score += 1 }
+
+        switch ($obj.type) {
+            'decision' { $score += 2 }
+            'blocker'  { $score += 2 }
+            'dead-end' { $score += 1 }
+            'insight'  { $score += 1 }
+        }
+
+        $ageDays = (New-TimeSpan -Start $ts -End (Get-Date)).TotalDays
+        if ($ageDays -le 3)  { $score += 2 }
+        elseif ($ageDays -le 7)  { $score += 1 }
+
+        if ($score -le 0) { continue }
+
+        $results += [pscustomobject]@{
+            Score     = $score
+            Timestamp = $ts
+            Type      = $obj.type
+            Domain    = $obj.domain
+            Tags      = $obj.tags
+            Note      = $obj.note
+        }
+    }
+
+    return @($results | Sort-Object @{ Expression = { $_.Score }; Descending = $true }, @{ Expression = { $_.Timestamp }; Descending = $true } | Select-Object -First $Limit)
+}
+
+$observationsPath = Join-Path $repoRoot $ObservationsFile
+$rankedObservations = Get-RelevantObservations -Path $observationsPath -Keywords $keywords -ActiveDomain $resolvedDomain -Days $ObservationDays -Limit $TopObservations
+
 if ($candidateFiles.Count -eq 0) {
     throw "No markdown files found to search."
 }
@@ -262,6 +327,19 @@ if ($ranked.Count -eq 0) {
 }
 
 $out += ''
+$out += "## Recent observations (last $ObservationDays days)"
+$out += ''
+if ($rankedObservations.Count -eq 0) {
+    $out += '- No relevant recent observations. Capture decisions/blockers with capture-observation to build this stream.'
+} else {
+    foreach ($o in $rankedObservations) {
+        $date = $o.Timestamp.ToString('yyyy-MM-dd')
+        $tagStr = if ($o.Tags -and $o.Tags.Count -gt 0) { " [$(($o.Tags) -join ', ')]" } else { '' }
+        $out += "- [$($o.Score)] $date | $($o.Type) | $($o.Domain)$tagStr - $($o.Note)"
+    }
+}
+
+$out += ''
 $out += '## Usage'
 $out += ''
 $out += 'Copy this brief into your next Copilot prompt to force high-signal context.'
@@ -272,6 +350,7 @@ Write-Host "Updated: $outputPath"
 Write-Host "Files scanned: $($candidateFiles.Count)"
 Write-Host "Keywords: $($keywords -join ', ')"
 Write-Host "Resolved domain: $resolvedDomain"
+Write-Host "Observations included: $($rankedObservations.Count)"
 
 if ($Preflight) {
     $briefContent = Get-Content -Path $outputPath -Raw
