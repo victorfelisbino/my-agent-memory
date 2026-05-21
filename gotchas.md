@@ -7,6 +7,7 @@
 - **Reports/Dashboards excluded**: They're in .forceignore to keep CLI fast. Deploy individually with --metadata
 - **Large repo (326k files)**: Must set SF_DISABLE_SOURCE_MEMBER_POLLING=true or deploys hang with EEXIT:130
 - **LWC Jest required**: Cannot deploy LWC to dev2 or PR to qa without passing __tests__/<name>.test.js
+- **`sf project deploy start` rollback default**: `rollbackOnError=true` is the default. When any component fails, the "successful" components from the same call are rolled back too. Pass `--ignore-errors` only when partial deploys are intentional, and always re-read the final deploy report before assuming anything landed.
 
 ## Salesforce Development
 
@@ -16,6 +17,7 @@
 - **New Process Builders/Workflow Rules**: Not allowed - build a Flow instead
 - **No @isTest(SeeAllData=true)** without written justification
 - **PII in logs**: Never System.debug(user.email) or commit credentials
+- **Org-specific LWC component names**: Standard-looking names like `sfa:recordDetailDuplicatesPanel` may not exist in your org; the equivalent here is `runtime_sales_merge:mergeCandidatesPreviewCard`. Verify a component name against the target org's actual layout/page metadata before referencing it in code or deploys.
 
 ## Code Review Red Flags
 
@@ -31,6 +33,7 @@
 - **Deploy hangs with no output**: Likely a source tracking conflict. Use --ignore-conflicts flag.
 - **"UNABLE_TO_LOCK_ROW"**: Concurrent transaction issue. Add @future or use batch apex.
 - **"MALFORMED_ID"**: Wrong record type ID or wrong org. Double-check getRecordTypeInfosByDeveloperName()
+- **"0 parsed and 0 failed" is not success**: A clean-looking result often means the upstream SOQL/query returned zero rows, not that the job worked. Always log input row count alongside parsed/failed counts and fail loudly when input is zero unexpectedly.
 
 ## Recurring Branch and Pipeline Issues (from chat history)
 
@@ -47,6 +50,7 @@
 - **Never retrigger blindly after failure**: capture first failing component and fix root cause before rerun.
 - **Never assume branch health from one environment**: validate path for dev2 -> qa -> stg dry-run -> prod dry-run when applicable.
 - **Never open a new PR before diff check**: confirm the delta exists against target to avoid empty/no-op PR cycles.
+- **Never trust a tool's "successfully edited / applied" message alone**: multi-edit and apply tools have reported success while individual edits silently failed. Re-read the file or check `git diff` before declaring the change done.
 
 ## Done Criteria for defect closure
 
