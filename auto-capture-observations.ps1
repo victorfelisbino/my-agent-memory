@@ -4,6 +4,7 @@ param(
     [string]$LogFile = 'observations.jsonl',
     [int]$SinceDays = 14,
     [int]$MaxPerRun = 50,
+    [string[]]$ExtraTags = @(),
     [switch]$DryRun
 )
 
@@ -89,7 +90,7 @@ function Get-Hash {
 
 $existingHashes = New-Object 'System.Collections.Generic.HashSet[string]'
 if (Test-Path $logPath) {
-    foreach ($line in Get-Content $logPath) {
+    foreach ($line in Get-Content $logPath -Encoding UTF8) {
         if ([string]::IsNullOrWhiteSpace($line)) { continue }
         try {
             $obj = $line | ConvertFrom-Json -ErrorAction Stop
@@ -105,7 +106,7 @@ $candidates = @()
 foreach ($dir in $transcriptDirs | Select-Object -Unique) {
     foreach ($file in Get-ChildItem $dir -Filter *.jsonl -File) {
         if ($file.LastWriteTime -lt $cutoff) { continue }
-        foreach ($line in Get-Content $file.FullName) {
+        foreach ($line in Get-Content $file.FullName -Encoding UTF8) {
             try {
                 $obj = $line | ConvertFrom-Json -ErrorAction Stop
             } catch { continue }
@@ -156,11 +157,13 @@ foreach ($dir in $transcriptDirs | Select-Object -Unique) {
                     if ($existingHashes.Contains($hash)) { break }
                     [void]$existingHashes.Add($hash)
 
+                    $tagList = @($p.Tag, "source:$role")
+                    if ($ExtraTags -and $ExtraTags.Count -gt 0) { $tagList += $ExtraTags }
                     $candidates += [pscustomobject]@{
                         Timestamp = $ts
                         Type      = $p.Type
                         Domain    = $domain
-                        Tags      = @($p.Tag, "source:$role")
+                        Tags      = $tagList
                         Note      = $sentence
                     }
                     break

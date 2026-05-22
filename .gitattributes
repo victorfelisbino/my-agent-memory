@@ -1,0 +1,3 @@
+# Append-only logs from multiple machines: take union of both sides on merge.
+# Prevents conflicts when sync-memory.ps1 pushes from different machines.
+observations.jsonl merge=union

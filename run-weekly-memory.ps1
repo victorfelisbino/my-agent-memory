@@ -15,7 +15,10 @@ git pull
 Write-Host "[2/6] Run learner..."
 .\learn-memory.ps1
 
-if (Test-Path '.\auto-capture-observations.ps1') {
+if (Test-Path '.\sync-memory.ps1') {
+    Write-Host "[2a/6] Cross-machine sync (capture per workspace + active-threads.md)..."
+    .\sync-memory.ps1 -NoPull -SinceDays 14
+} elseif (Test-Path '.\auto-capture-observations.ps1') {
     Write-Host "[2a/6] Auto-capture observations from Copilot transcripts..."
     .\auto-capture-observations.ps1 -SinceDays 7 -MaxPerRun 25
 }
@@ -65,7 +68,14 @@ $filesToStage = @(
     'synthesize-observations.sh',
     'prune-observations.ps1',
     'observations.jsonl',
-    'status-update.md'
+    'status-update.md',
+    'sync-memory.ps1',
+    'sync-memory.sh',
+    'active-threads.md',
+    'open-loops.md',
+    'loop.ps1',
+    'loop.sh',
+    '.gitattributes'
 )
 
 foreach ($f in $filesToStage) {

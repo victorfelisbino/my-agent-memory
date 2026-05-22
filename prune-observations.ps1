@@ -20,7 +20,7 @@ $cutoff = (Get-Date).AddDays(-$Days)
 $keep = @()
 $archive = @{}
 
-foreach ($line in Get-Content $logPath) {
+foreach ($line in Get-Content $logPath -Encoding UTF8) {
     if ([string]::IsNullOrWhiteSpace($line)) { continue }
     try {
         $obj = $line | ConvertFrom-Json -ErrorAction Stop

@@ -1,14 +1,24 @@
 param(
-    [string]$TaskName = 'MemoryWeeklyRefresh',
+    [string]$TaskName,
     [string]$Time = '09:00',
     [ValidateSet('Daily','Weekly')]
     [string]$Frequency = 'Weekly',
     [string]$DayOfWeek = 'Monday',
     [switch]$Push,
+    [switch]$DailySync,
     [switch]$Uninstall
 )
 
 $ErrorActionPreference = 'Stop'
+
+# DailySync convenience preset: registers a daily task that runs sync-memory.ps1 -Commit -Push
+if ($DailySync) {
+    if (-not $TaskName) { $TaskName = 'MemoryDailySync' }
+    $Frequency = 'Daily'
+    $Push = $true
+} elseif (-not $TaskName) {
+    $TaskName = 'MemoryWeeklyRefresh'
+}
 
 if ($Uninstall) {
     if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
@@ -21,7 +31,11 @@ if ($Uninstall) {
 }
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$runner = Join-Path $repoRoot 'run-weekly-memory.ps1'
+if ($DailySync) {
+    $runner = Join-Path $repoRoot 'sync-memory.ps1'
+} else {
+    $runner = Join-Path $repoRoot 'run-weekly-memory.ps1'
+}
 
 if (-not (Test-Path $runner)) {
     throw "Runner not found at $runner"
@@ -59,7 +73,7 @@ Register-ScheduledTask `
     -Trigger $trigger `
     -Settings $settings `
     -Principal $principal `
-    -Description 'Automated weekly memory refresh: learn, auto-capture observations, synthesize, commit' | Out-Null
+    -Description "Automated memory refresh: $(Split-Path -Leaf $runner) $args" | Out-Null
 
 Write-Host "Installed scheduled task: $TaskName"
 Write-Host "Frequency: $Frequency at $Time$(if ($Frequency -eq 'Weekly') { " on $DayOfWeek" } else { '' })"

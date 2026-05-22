@@ -47,7 +47,7 @@ $workspaceCount = 0
 foreach ($dir in $transcriptDirs | Select-Object -Unique) {
     $workspaceCount++
     foreach ($file in Get-ChildItem $dir -Filter *.jsonl -File) {
-        foreach ($line in Get-Content $file.FullName) {
+        foreach ($line in Get-Content $file.FullName -Encoding UTF8) {
             try {
                 $obj = $line | ConvertFrom-Json -ErrorAction Stop
                 if ($obj.type -eq 'user.message' -and $obj.data.content) {

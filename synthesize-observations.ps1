@@ -18,7 +18,7 @@ if (-not (Test-Path $logPath)) {
 $cutoff = (Get-Date).AddDays(-$Days)
 $entries = @()
 
-foreach ($line in Get-Content $logPath) {
+foreach ($line in Get-Content $logPath -Encoding UTF8) {
     if (-not $line.Trim()) { continue }
     try {
         $obj = $line | ConvertFrom-Json -ErrorAction Stop

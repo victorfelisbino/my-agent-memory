@@ -64,6 +64,20 @@ cd "$HOME/Library/Application Support/Code/User/memories"
 git pull
 ```
 
+Daily across all 4 machines (one command per machine):
+
+```powershell
+.\sync-memory.ps1 -Commit -Push    # pulls, captures local Copilot activity tagged with machine + workspace, regenerates active-threads.md, pushes
+```
+
+macOS/Linux equivalent:
+
+```bash
+./sync-memory.sh --commit --push
+```
+
+Then open `active-threads.md` on any machine to see every project you have going, grouped by workspace, sorted by most recent activity, with machine attribution. Merge-safe: `.gitattributes` configures `observations.jsonl` for union merge so parallel pushes from different machines never conflict.
+
 After an incident (2 minutes):
 
 1. Copy lesson-template.md.
