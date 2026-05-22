@@ -30,6 +30,7 @@
 - MALFORMED_ID: Hardcoded ID doesn't exist or wrong org. Use getRecordTypeInfosByDeveloperName()
 - REQUIRED_FIELD_MISSING: Check custom object for required fields before insert/update
 - SYSTEM.LIMIT_EXCEPTION: Exceed max 3,000 SOSL results per transaction
+- "bad value for restricted picklist field: Task" when adding a custom field to Task: Activity-related custom fields must be created on the `Activity` object (the polymorphic parent), not on `Task` or `Event` directly. The same field then surfaces on both Task and Event.
 
 ## Profiling Apex
 
