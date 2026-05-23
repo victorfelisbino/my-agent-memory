@@ -144,7 +144,10 @@ cd E:\my-agent-memory
 **Before a complex Copilot task** (optional):
 ```powershell
 .\summon-memory.ps1 -Task "describe the task in plain words" -Preflight
+# For a denser, cheaper brief that plays well with Copilot's auto-mode (10% discount):
+.\summon-memory.ps1 -Task "describe the task" -Compact -Preflight
 ```
+See [copilot-auto-mode.md](copilot-auto-mode.md) for the auto-mode + token-saving strategy.
 
 **Automatic** (no action required): the scheduled task runs `sync-memory.ps1 -Commit -Push` daily — pulls everyone else's activity (from your other machines), captures from local Copilot transcripts with machine + workspace attribution, regenerates `active-threads.md`, and pushes. Only the personal repo gets pushed by this task; framework updates are a separate, manual `git pull` here.
 

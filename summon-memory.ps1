@@ -8,7 +8,8 @@ param(
     [int]$ObservationDays = 30,
     [string]$ObservationsFile = 'observations.jsonl',
     [string]$OutputFile = 'active-memory-brief.md',
-    [switch]$Preflight
+    [switch]$Preflight,
+    [switch]$Compact
 )
 
 $ErrorActionPreference = 'Stop'
@@ -93,6 +94,49 @@ function Resolve-DomainFromTask {
     }
 
     return $bestDomain
+}
+
+# Classify task into a coarse type. Used as a router hint for Copilot auto-mode
+# so the cheaper-but-correct model is picked instead of the heaviest one by default.
+function Resolve-TaskType {
+    param([string]$TaskText)
+    $t = $TaskText.ToLower()
+    $rules = @(
+        @{ Type = 'debug';    Pattern = '\b(debug|fix|error|broken|fails|failing|stack ?trace|exception|why (does|is)|null|undefined|crash)\b' },
+        @{ Type = 'refactor'; Pattern = '\b(refactor|rename|extract|simplify|cleanup|reorganize|move|split|consolidate)\b' },
+        @{ Type = 'review';   Pattern = '\b(review|audit|check|analyze|assess|evaluate|critique)\b' },
+        @{ Type = 'design';   Pattern = '\b(design|architect|approach|propose|plan|spec|how should|trade.?off|decide)\b' },
+        @{ Type = 'test';     Pattern = '\b(test|spec|coverage|unit|integration test|e2e|mock)\b' },
+        @{ Type = 'explain';  Pattern = '\b(explain|what is|how does|why does|describe|walk me through|summarize)\b' },
+        @{ Type = 'generate'; Pattern = '\b(implement|build|create|add|write|generate|scaffold|new)\b' }
+    )
+    foreach ($r in $rules) {
+        if ($t -match $r.Pattern) { return $r.Type }
+    }
+    return 'generate'
+}
+
+# Coarse complexity estimate. Used as a router hint.
+function Resolve-Complexity {
+    param([string]$TaskText)
+    $t = $TaskText.ToLower()
+    $heavySignals = @('migration','migrate','schema','integration','architecture','redesign','refactor.*module','deploy.*pipeline','multi.?step','end.?to.?end','cross.?system')
+    foreach ($s in $heavySignals) { if ($t -match $s) { return 'complex' } }
+    $andCount = ([regex]::Matches($t, '\band\b')).Count
+    if ($TaskText.Length -lt 60 -and $andCount -le 1) { return 'trivial' }
+    if ($TaskText.Length -gt 220 -or $andCount -ge 3) { return 'complex' }
+    return 'standard'
+}
+
+# Map (task type x complexity) to an auto-router hint string. Advisory only.
+# Goal: cheapest model that won't waste turns on the task. Auto-mode in Copilot
+# applies a ~10% discount when you let it pick; making the pick easy = real savings.
+function Resolve-ModelHint {
+    param([string]$TaskType, [string]$Complexity)
+    if ($Complexity -eq 'trivial')                              { return 'fast (auto should pick a small/cheap model)' }
+    if ($TaskType -in @('explain','review','design'))           { return 'reasoning (auto should pick a strong reasoning model)' }
+    if ($Complexity -eq 'complex')                              { return 'deep (auto should pick the top-tier model)' }
+    return 'balanced (auto default is fine)'
 }
 
 function Get-FreshnessScore {
@@ -198,6 +242,9 @@ function Score-Line {
 }
 
 $resolvedDomain = if ($Domain -eq 'Auto') { Resolve-DomainFromTask -TaskText $Task } else { $Domain }
+$taskType   = Resolve-TaskType  -TaskText $Task
+$complexity = Resolve-Complexity -TaskText $Task
+$modelHint  = Resolve-ModelHint  -TaskType $taskType -Complexity $complexity
 $keywords = Get-NormalizedWords -Text $Task
 $candidateFiles = Get-CandidateFiles -Root $repoRoot -SelectedDomain $resolvedDomain -GeneratedFile $OutputFile
 
@@ -299,24 +346,42 @@ foreach ($file in $candidateFiles) {
     }
 }
 
-$ranked = $snippets |
-    Where-Object { $_.Text -notmatch 'summon-memory\.(ps1|sh)' } |
-    Sort-Object @{ Expression = { $_.Score }; Descending = $true }, @{ Expression = { $_.VerificationScore }; Descending = $true }, @{ Expression = { $_.FreshnessScore }; Descending = $true }, @{ Expression = { $_.File }; Ascending = $true } |
-    Select-Object -First $Top
+# When compact, keep only the strongest snippets (saves tokens for auto-router).
+if ($Compact) {
+    $rankedAll = $snippets |
+        Where-Object { $_.Text -notmatch 'summon-memory\.(ps1|sh)' } |
+        Sort-Object @{ Expression = { $_.Score }; Descending = $true }, @{ Expression = { $_.VerificationScore }; Descending = $true }, @{ Expression = { $_.FreshnessScore }; Descending = $true }, @{ Expression = { $_.File }; Ascending = $true }
+    $ranked = $rankedAll | Select-Object -First ([Math]::Min(5, $Top))
+} else {
+    $ranked = $snippets |
+        Where-Object { $_.Text -notmatch 'summon-memory\.(ps1|sh)' } |
+        Sort-Object @{ Expression = { $_.Score }; Descending = $true }, @{ Expression = { $_.VerificationScore }; Descending = $true }, @{ Expression = { $_.FreshnessScore }; Descending = $true }, @{ Expression = { $_.File }; Ascending = $true } |
+        Select-Object -First $Top
+}
 
 $now = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 
 $out = @()
+# --- Router hints (always first; lets Copilot auto-mode classify and pick the cheapest correct model) ---
 $out += '# Active Memory Brief'
 $out += ''
-$out += "Updated: $now"
-$out += "Domain: $resolvedDomain"
-$out += "Domain selection: $Domain"
-$out += "Task: $Task"
-$out += 'Scoring: total = relevance + freshness + confidence + verification-freshness'
-$out += 'Confidence score: high=+2, medium=+1, low=-1, missing=0'
-$out += 'Verification score: <=30d=+2, <=90d=+1, <=180d=0, stale/missing=-1'
+$out += '## Router hints (for Copilot auto-mode)'
+$out += "- Task type : $taskType"
+$out += "- Complexity: $complexity"
+$out += "- Domain    : $resolvedDomain"
+$out += "- Suggested : $modelHint"
+$out += "- Task      : $Task"
 $out += ''
+
+if (-not $Compact) {
+    $out += "Updated: $now"
+    $out += "Domain selection: $Domain"
+    $out += 'Scoring: total = relevance + freshness + confidence + verification-freshness'
+    $out += 'Confidence score: high=+2, medium=+1, low=-1, missing=0'
+    $out += 'Verification score: <=30d=+2, <=90d=+1, <=180d=0, stale/missing=-1'
+    $out += ''
+}
+
 $out += '## Suggested snippets'
 $out += ''
 
@@ -324,27 +389,37 @@ if ($ranked.Count -eq 0) {
     $out += '- No strong matches found. Add a new note for this scenario and rerun.'
 } else {
     foreach ($r in $ranked) {
-        $out += "- [$($r.Score) = $($r.BaseScore) relevance + $($r.FreshnessScore) freshness + $($r.ConfidenceScore) confidence + $($r.VerificationScore) verification] $($r.RelPath):$($r.Line) - $($r.Text)"
+        if ($Compact) {
+            $out += "- $($r.RelPath):$($r.Line) - $($r.Text)"
+        } else {
+            $out += "- [$($r.Score) = $($r.BaseScore) relevance + $($r.FreshnessScore) freshness + $($r.ConfidenceScore) confidence + $($r.VerificationScore) verification] $($r.RelPath):$($r.Line) - $($r.Text)"
+        }
     }
 }
 
 $out += ''
 $out += "## Recent observations (last $ObservationDays days)"
 $out += ''
+$obsLimit = if ($Compact) { 3 } else { $rankedObservations.Count }
 if ($rankedObservations.Count -eq 0) {
     $out += '- No relevant recent observations. Capture decisions/blockers with capture-observation to build this stream.'
 } else {
-    foreach ($o in $rankedObservations) {
+    foreach ($o in ($rankedObservations | Select-Object -First $obsLimit)) {
         $date = $o.Timestamp.ToString('yyyy-MM-dd')
         $tagStr = if ($o.Tags -and $o.Tags.Count -gt 0) { " [$(($o.Tags) -join ', ')]" } else { '' }
-        $out += "- [$($o.Score)] $date | $($o.Type) | $($o.Domain)$tagStr - $($o.Note)"
+        if ($Compact) {
+            $out += "- $date $($o.Type) - $($o.Note)"
+        } else {
+            $out += "- [$($o.Score)] $date | $($o.Type) | $($o.Domain)$tagStr - $($o.Note)"
+        }
     }
 }
 
 # Active threads summary (cross-machine, generated by sync-memory.ps1).
 # Tells future Copilot which projects are live on which machines.
+# Skipped in compact mode to save tokens.
 $threadsPath = Join-Path $personalRoot 'active-threads.md'
-if (Test-Path $threadsPath) {
+if ((-not $Compact) -and (Test-Path $threadsPath)) {
     $threadLines = Get-Content $threadsPath -Encoding UTF8
     $headerLines = @()
     $machinesLine = ''
@@ -376,23 +451,29 @@ if (Test-Path $threadsPath) {
 }
 
 $out += ''
-$out += '## Usage'
-$out += ''
-$out += 'Copy this brief into your next Copilot prompt to force high-signal context.'
+if (-not $Compact) {
+    $out += '## Usage'
+    $out += ''
+    $out += 'Copy this brief into your next Copilot prompt to force high-signal context.'
+}
 
 Set-Content -Path $outputPath -Value ($out -join "`n") -Encoding UTF8
 
+# Rough token estimate: chars/4 (good enough to spot when a brief is bloated).
+$briefBytes = (Get-Content -Path $outputPath -Raw -Encoding UTF8).Length
+$estTokens = [int]($briefBytes / 4)
+
 Write-Host "Updated: $outputPath"
-Write-Host "Files scanned: $($candidateFiles.Count)"
-Write-Host "Keywords: $($keywords -join ', ')"
-Write-Host "Resolved domain: $resolvedDomain"
-Write-Host "Observations included: $($rankedObservations.Count)"
+Write-Host "Mode: $(if ($Compact) { 'compact' } else { 'full' })  |  Files scanned: $($candidateFiles.Count)  |  Snippets: $($ranked.Count)  |  Observations: $(if ($Compact) { [Math]::Min(3, $rankedObservations.Count) } else { $rankedObservations.Count })"
+Write-Host "Router hints -> type=$taskType complexity=$complexity domain=$resolvedDomain suggested=$modelHint"
+Write-Host "Brief size  -> $briefBytes chars (~$estTokens tokens)"
 
 if ($Preflight) {
     $briefContent = Get-Content -Path $outputPath -Raw -Encoding UTF8
     $prompt = @()
     $prompt += '----- COPILOT PREFLIGHT PROMPT -----'
-    $prompt += "Domain: $resolvedDomain"
+    $prompt += "Router hints (let auto-mode use these to pick the cheapest correct model):"
+    $prompt += "  task=$taskType  complexity=$complexity  domain=$resolvedDomain  suggested=$modelHint"
     $prompt += "Task: $Task"
     $prompt += ''
     $prompt += 'Use this memory brief as highest-priority context:'
@@ -400,9 +481,11 @@ if ($Preflight) {
     $prompt += $briefContent.Trim()
     $prompt += ''
     $prompt += 'Instructions:'
+    $prompt += '- Stay scoped to the task above. Do not expand scope without asking.'
     $prompt += '- Prefer commands and guardrails from the brief when they fit.'
-    $prompt += '- If required values are org/project-specific, ask for them explicitly.'
+    $prompt += '- If required values are org/project-specific, ask for them explicitly (one batched question, not many).'
     $prompt += '- If memory conflicts with current codebase reality, trust current evidence and state the mismatch.'
+    $prompt += '- Skip restating context back to me. Go straight to the answer or the next action.'
     $prompt += '----- END PREFLIGHT PROMPT -----'
 
     Write-Host ''

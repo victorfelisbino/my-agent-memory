@@ -64,6 +64,7 @@ $frameworkFiles = @(
     'lesson-template.md',
     'memory-adoption-playbook.md',
     'memory-ecosystem-research-2026-05-15.md',
+    'copilot-auto-mode.md',
     'lint-memory.ps1',
     'lint-memory.sh',
     'capture-observation.ps1',
