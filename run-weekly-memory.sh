@@ -67,8 +67,8 @@ files_to_stage=(
   decision-journal.md
   weekly-review-checklist.md
   lesson-template.md
-  memory-adoption-playbook.md
-  memory-ecosystem-research-2026-05-15.md
+  docs/memory-adoption-playbook.md
+  docs/memory-ecosystem-research-2026-05-15.md
   lint-memory.ps1
   lint-memory.sh
 )

@@ -69,6 +69,8 @@ The framework scripts find the personal repo via this resolution order:
 
 See [_personal-root.ps1](_personal-root.ps1) / [_personal-root.sh](_personal-root.sh).
 
+Long-form guidance and research live under [docs/](docs/).
+
 ## Quick Start (5 minutes)
 
 ```powershell
@@ -195,7 +197,7 @@ cd E:\my-agent-memory
 # For a denser, cheaper brief that plays well with Copilot's auto-mode (10% discount):
 .\summon-memory.ps1 -Task "describe the task" -Compact -Preflight
 ```
-See [copilot-auto-mode.md](copilot-auto-mode.md) for the auto-mode + token-saving strategy.
+See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + token-saving strategy.
 
 **Automatic** (no action required): the scheduled task runs `sync-memory.ps1 -Commit -Push` daily — pulls everyone else's activity (from your other machines), captures from local Copilot transcripts with machine + workspace attribution, regenerates `active-threads.md`, and pushes. Only the personal repo gets pushed by this task; framework updates are a separate, manual `git pull` here.
 
