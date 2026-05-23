@@ -7,6 +7,23 @@ A git-backed memory system that solves two related problems at once:
 
 This is the **framework repo** — scripts, playbooks, principles, and shared knowledge. It contains no personal data. Each user pairs it with a **separate, private personal repo** that holds their own observations, open loops, decisions, and active threads. The two repos are intentionally split so this one can be shared with collaborators without leaking anyone's working state.
 
+## What Stays Private Always
+
+This repository must never contain personal working-state files. Each collaborator keeps these in their own private personal repo:
+
+- `observations.jsonl`
+- `active-threads.md`
+- `active-memory-brief.md`
+- `open-loops.md`
+- `goals.md`
+- `decision-journal.md`
+- `status-update.md`
+- `performance-map.md`
+- `memory-scoreboard.md`
+- `memory-top-patterns.md`
+
+The framework `.gitignore` already protects these paths, but privacy is also a contributor rule.
+
 ## What we're trying to accomplish
 
 - **Never lose a thread.** Across N machines and M workspaces, you should be able to open one file and see every project you have going, what state it's in, who you owe what, and when you last touched it.
@@ -40,6 +57,26 @@ The framework scripts find the personal repo via this resolution order:
 3. The framework repo itself (legacy fallback, useful for first-time exploration before splitting)
 
 See [_personal-root.ps1](_personal-root.ps1) / [_personal-root.sh](_personal-root.sh).
+
+## Quick Start (5 minutes)
+
+```powershell
+# Clone framework
+git clone https://github.com/<you>/my-agent-memory.git E:\my-agent-memory
+
+# Clone your private personal repo as a sibling directory
+git clone https://github.com/<you>/my-agent-memory-personal.git E:\my-agent-memory-personal
+
+# Set personal-repo path once
+[Environment]::SetEnvironmentVariable('AGENT_MEMORY_PERSONAL', 'E:\my-agent-memory-personal', 'User')
+
+# Smoke test
+cd E:\my-agent-memory
+.\sync-memory.ps1
+.\loop.ps1 show
+```
+
+If you are creating your personal repo for the first time, use the full setup in [Bootstrapping a personal repo](#bootstrapping-a-personal-repo-first-machine-only).
 
 ## The three layers
 
@@ -161,6 +198,12 @@ See [copilot-auto-mode.md](copilot-auto-mode.md) for the auto-mode + token-savin
 - **Capture costs nothing, review costs everything.** Auto-capture is cheap and lossless; human attention is the scarce resource and goes only to bounded sections.
 - **Personal first, team second.** Lessons earn their way into shared framework knowledge through [team-memory/approval-gates.md](team-memory/approval-gates.md), not by default.
 - **Private data stays private.** The personal repo is always a separate, private repo — never push it to a shared remote.
+
+## Community
+
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](SECURITY.md)
 
 ## Why this exists
 

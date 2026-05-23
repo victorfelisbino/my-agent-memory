@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  script-sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Bash syntax
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(./*.sh)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No bash scripts found"
+            exit 0
+          fi
+          for f in "${files[@]}"; do
+            bash -n "$f"
+          done
+
+      - name: Validate PowerShell parse
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $files = Get-ChildItem -Path . -Filter *.ps1 -File
+          if (-not $files) {
+            Write-Host 'No PowerShell scripts found'
+            exit 0
+          }
+          foreach ($file in $files) {
+            $null = [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$null, [ref]$null)
+          }
+          Write-Host 'PowerShell parse OK'
