@@ -6,7 +6,7 @@
 - **Tech Stack**: .NET 8+ (C#), Avalonia UI, MVVM
 - **Primary Value**: Groups related Salesforce debug logs from single transactions and visualizes complete user experience journey
 - **Status**: Multi-version release with CI/CD, update service, "Go Live" (PRO) features
-- **Location**: /Users/victorfelisbino/Documents/salesforce-debug-log-analyzer
+- **Location**: Private local repository (path intentionally omitted)
 
 ## Architecture Observations
 

@@ -35,7 +35,7 @@ The auto-router reads this and biases its choice. Empirically the suggested-mode
 `full` is for non-trivial work where the brief's signal is worth the tokens. `compact` is the default for quick tasks — same router hints, ~70% fewer tokens.
 
 ```powershell
-.\summon-memory.ps1 -Task "fix the deploy error in agentforcepoc" -Compact -Preflight
+.\summon-memory.ps1 -Task "fix the deployment error in staging" -Compact -Preflight
 ```
 
 ## When to use which mode
