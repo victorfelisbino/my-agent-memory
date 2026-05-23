@@ -1,11 +1,22 @@
 # my-agent-memory (framework)
 
+[![Release](https://img.shields.io/github/v/release/victorfelisbino/my-agent-memory)](https://github.com/victorfelisbino/my-agent-memory/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/victorfelisbino/my-agent-memory/ci.yml?branch=main)](https://github.com/victorfelisbino/my-agent-memory/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A git-backed memory system that solves two related problems at once:
 
 1. **For humans**: when you run too many projects across too many machines, you forget what you've started, what you've promised people, and what you've actually shipped. This gives you one source of truth you can trust more than your memory.
 2. **For GitHub Copilot**: every Copilot session starts cold. Decisions you've already made, guardrails you've already learned, and work you have in flight on another machine should bias every new answer. This makes that automatic.
 
 This is the **framework repo** — scripts, playbooks, principles, and shared knowledge. It contains no personal data. Each user pairs it with a **separate, private personal repo** that holds their own observations, open loops, decisions, and active threads. The two repos are intentionally split so this one can be shared with collaborators without leaking anyone's working state.
+
+## Start Here
+
+- New user setup: [Quick Start (5 minutes)](#quick-start-5-minutes)
+- Architecture: [Two-repo architecture](#two-repo-architecture)
+- Privacy boundary: [What Stays Private Always](#what-stays-private-always)
+- Collaboration process: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## What Stays Private Always
 
@@ -62,10 +73,10 @@ See [_personal-root.ps1](_personal-root.ps1) / [_personal-root.sh](_personal-roo
 
 ```powershell
 # Clone framework
-git clone https://github.com/<you>/my-agent-memory.git E:\my-agent-memory
+git clone https://github.com/victorfelisbino/my-agent-memory.git E:\my-agent-memory
 
 # Clone your private personal repo as a sibling directory
-git clone https://github.com/<you>/my-agent-memory-personal.git E:\my-agent-memory-personal
+git clone https://github.com/<you-or-your-org>/my-agent-memory-personal.git E:\my-agent-memory-personal
 
 # Set personal-repo path once
 [Environment]::SetEnvironmentVariable('AGENT_MEMORY_PERSONAL', 'E:\my-agent-memory-personal', 'User')
@@ -129,10 +140,10 @@ Cross-machine sync for the **personal repo** uses git union-merge: [.gitattribut
 
 ```powershell
 # 1. Clone this framework repo (shareable)
-git clone https://github.com/<you>/my-agent-memory.git E:\my-agent-memory
+git clone https://github.com/victorfelisbino/my-agent-memory.git E:\my-agent-memory
 
 # 2. Clone (or init) your private personal repo as a SIBLING directory
-git clone https://github.com/<you>/my-agent-memory-personal.git E:\my-agent-memory-personal
+git clone https://github.com/<you-or-your-org>/my-agent-memory-personal.git E:\my-agent-memory-personal
 # (or, on your first machine, see "Bootstrapping a personal repo" below)
 
 # 3. (Optional but recommended) pin the personal-repo path explicitly
