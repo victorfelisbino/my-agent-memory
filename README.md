@@ -1,74 +1,136 @@
-# My Personal Agent Memory
+# my-agent-memory (framework)
 
 A git-backed memory system that solves two related problems at once:
 
-1. **For me as a human**: I run too many projects across 4 machines, forget what I've started, what I've promised people, and what I've actually shipped. I needed one source of truth I can trust more than my own memory.
-2. **For GitHub Copilot**: every Copilot session starts cold — no awareness of decisions I've already made, guardrails I've already learned, or work I have in flight on another machine. I needed Copilot to walk into each task with my full operating context.
+1. **For humans**: when you run too many projects across too many machines, you forget what you've started, what you've promised people, and what you've actually shipped. This gives you one source of truth you can trust more than your memory.
+2. **For GitHub Copilot**: every Copilot session starts cold. Decisions you've already made, guardrails you've already learned, and work you have in flight on another machine should bias every new answer. This makes that automatic.
 
-This repo is the answer to both. It's not a knowledge base. It's an **operating system for my own work** that also doubles as Copilot's long-term memory.
+This is the **framework repo** — scripts, playbooks, principles, and shared knowledge. It contains no personal data. Each user pairs it with a **separate, private personal repo** that holds their own observations, open loops, decisions, and active threads. The two repos are intentionally split so this one can be shared with collaborators without leaking anyone's working state.
 
 ## What we're trying to accomplish
 
-**Goal 1 — Never lose a thread.** Across 4 machines and a dozen workspaces, I should be able to open one file and see every project I have going, what state it's in, who I owe what, and when I last touched it. No mental load required.
+- **Never lose a thread.** Across N machines and M workspaces, you should be able to open one file and see every project you have going, what state it's in, who you owe what, and when you last touched it.
+- **Make every Copilot session start smart.** Patterns, guardrails, decisions, and lessons already paid for should automatically bias new Copilot answers.
+- **Verifiable progress over time.** Decisions, observations, and outcomes captured automatically and scored, so weekly review surfaces the few patterns that actually matter — not vibes.
+- **Zero-friction capture, hard-bounded review.** If recording something takes more than one shell command, it won't happen. If lists can sprawl, they will. So: capture is one verb, review is a 60-second daily ritual, lists have caps.
 
-**Goal 2 — Make every Copilot session start smart.** Patterns, guardrails, decisions, and lessons I've already paid for should automatically bias new Copilot answers. Repeated failure modes (deploy churn, PR confusion, permission mismatches, hallucinated component names) should be caught by enforced checks, not relearned every time.
+## Two-repo architecture
 
-**Goal 3 — Verifiable progress over time.** Decisions, observations, and outcomes are captured automatically and scored, so weekly review surfaces the few patterns that actually matter — not vibes.
+```
+my-agent-memory  (this repo, shareable)               my-agent-memory-personal  (private, per user)
+- scripts (loop, sync, summon, capture, learn,        - observations.jsonl
+  synthesize, prune, repair, install)                 - active-threads.md
+- principles & protocols                              - active-memory-brief.md
+  (anti-hallucination, thinking, decision,            - open-loops.md
+   cognitive-bias, exploration)                       - goals.md
+- verified-knowledge docs                             - decision-journal.md
+  (gotchas, salesforce-debugging,                     - status-update.md
+   project-commands)                                  - performance-map.md
+- domains/  (Salesforce, MuleSoft, general            - memory-scoreboard.md
+   playbooks)                                         - memory-top-patterns.md
+- team-memory/  (canonical lessons,                   - team-memory/inbox/  (your pending lessons)
+   templates, approval gates)
+- README + playbooks
+```
 
-**Goal 4 — Zero-friction capture, hard-bounded review.** If recording something takes more than one shell command, it won't happen. If the system can sprawl into a wiki, it will, and become useless. So: capture is one verb, review is a 60-second daily ritual, and lists have caps that force pruning.
+The framework scripts find the personal repo via this resolution order:
 
-## How the system is built
+1. `$env:AGENT_MEMORY_PERSONAL` (or `$AGENT_MEMORY_PERSONAL` on bash) if set
+2. Sibling directory of the framework repo named `my-agent-memory-personal`
+3. The framework repo itself (legacy fallback, useful for first-time exploration before splitting)
 
-Three layers, all in this repo:
+See [_personal-root.ps1](_personal-root.ps1) / [_personal-root.sh](_personal-root.sh).
 
-### 1. Knowledge layer — *what I've learned*
+## The three layers
+
+### 1. Knowledge layer (lives here, shared) — *what we've learned*
 Curated markdown files Copilot pulls into context to bias its answers:
 
-- [anti-hallucination-protocol.md](anti-hallucination-protocol.md), [thinking-principles.md](thinking-principles.md), [decision-framework.md](decision-framework.md), [cognitive-bias-checks.md](cognitive-bias-checks.md), [exploration-modes.md](exploration-modes.md) — how I want Copilot (and myself) to reason.
+- [anti-hallucination-protocol.md](anti-hallucination-protocol.md), [thinking-principles.md](thinking-principles.md), [decision-framework.md](decision-framework.md), [cognitive-bias-checks.md](cognitive-bias-checks.md), [exploration-modes.md](exploration-modes.md) — how to reason.
 - [gotchas.md](gotchas.md), [salesforce-debugging.md](salesforce-debugging.md), [project-commands.md](project-commands.md) — verified, evidence-backed practices.
-- [domains/](domains/) — domain-specific playbooks (Salesforce, MuleSoft, general).
-- [team-memory/](team-memory/) — lessons promoted from personal use into shared team practice through approval gates.
+- [domains/](domains/) — domain-specific playbooks.
+- [team-memory/](team-memory/) — lessons promoted from personal use into shared practice through [approval gates](team-memory/approval-gates.md).
 
-### 2. Activity layer — *what I've been doing*
-Auto-captured from Copilot transcripts on every machine:
+### 2. Activity layer (lives in the personal repo) — *what you've been doing*
+Auto-captured from your local Copilot transcripts on every machine:
 
-- [observations.jsonl](observations.jsonl) — append-only log of decisions, blockers, progress, insights, dead-ends. Each entry is tagged with `machine:HOSTNAME` and `workspace:NAME` so the source of every signal is traceable.
-- [active-threads.md](active-threads.md) — auto-generated cross-machine view: every active project, grouped by workspace, sorted by recency, showing which machine touched it last. **This is the answer to "what am I working on?"**
-- [status-update.md](status-update.md), [memory-scoreboard.md](memory-scoreboard.md), [memory-top-patterns.md](memory-top-patterns.md) — weekly synthesis surfacing recurring failure patterns and recent decisions.
+- `observations.jsonl` — append-only signals (decisions, blockers, progress, insights, dead-ends), tagged with `machine:` and `workspace:`. Secrets are scrubbed at capture time by [auto-capture-observations.ps1](auto-capture-observations.ps1).
+- `active-threads.md` — auto-generated cross-machine view of every project you're touching.
+- `status-update.md`, `memory-scoreboard.md`, `memory-top-patterns.md` — weekly synthesis.
 
-### 3. Tracking layer — *what's actually open*
-Manual but ultra-low-friction, with hard caps to prevent sprawl:
+### 3. Tracking layer (lives in the personal repo) — *what's actually open*
+Manual but one-command, with hard caps:
 
-- [open-loops.md](open-loops.md) — the single source of truth: Active Ideas (cap 7), In-Flight (cap 5), Promises, Waiting On, Done this week. If it's not here, it doesn't exist.
-- [loop.ps1](loop.ps1) / [loop.sh](loop.sh) — one command, six verbs: `idea`, `start`, `promise`, `wait`, `done`, `show`. Every capture also writes to `observations.jsonl` so nothing escapes the audit trail.
-- [goals.md](goals.md), [decision-journal.md](decision-journal.md), [performance-map.md](performance-map.md) — longer-arc tracking (30/90-day outcomes, strategic decisions, where I perform best).
+- `open-loops.md` — single source of truth (Active Ideas cap 7, In-Flight cap 5, Promises, Waiting On, Done this week).
+- [loop.ps1](loop.ps1) / [loop.sh](loop.sh) — one command, six verbs: `idea`, `start`, `promise`, `wait`, `done`, `show`. Every capture also writes to `observations.jsonl`.
+- `goals.md`, `decision-journal.md`, `performance-map.md` — longer-arc tracking.
 
-## How the layers work together
+## How the layers connect
 
 ```
 Copilot transcripts (per workspace, per machine)
     |
     v  auto-capture-observations.ps1  (UTF-8, secrets scrubbed)
     |
-observations.jsonl  <----------  loop.ps1  <----  me (1 command)
-    |                                |
-    v                                v
-active-threads.md               open-loops.md
-(what I'm doing,                (what's open,
- across machines)                bounded + reviewed)
+$PERSONAL/observations.jsonl  <----  loop.ps1  <----  you (1 command)
+    |                                     |
+    v                                     v
+$PERSONAL/active-threads.md         $PERSONAL/open-loops.md
+(what you're doing,                 (what's open,
+ across all your machines)           bounded + reviewed)
     |
-    v  summon-memory.ps1
-active-memory-brief.md  -->  paste into next Copilot prompt
-(ranked knowledge +
- recent observations +
- active threads)
+    v  summon-memory.ps1  (scans this framework repo for relevant knowledge)
+$PERSONAL/active-memory-brief.md  -->  paste into next Copilot prompt
+(ranked knowledge from framework +
+ your recent observations +
+ your active threads)
 ```
 
-Cross-machine sync is git-backed. [.gitattributes](.gitattributes) configures `observations.jsonl` as `merge=union` so parallel pushes from 4 machines never conflict — each machine just adds its lines.
+Cross-machine sync for the **personal repo** uses git union-merge: [.gitattributes](.gitattributes) in the personal repo marks `observations.jsonl merge=union` so parallel pushes from N machines never conflict.
+
+## Setup on a new machine
+
+```powershell
+# 1. Clone this framework repo (shareable)
+git clone https://github.com/<you>/my-agent-memory.git E:\my-agent-memory
+
+# 2. Clone (or init) your private personal repo as a SIBLING directory
+git clone https://github.com/<you>/my-agent-memory-personal.git E:\my-agent-memory-personal
+# (or, on your first machine, see "Bootstrapping a personal repo" below)
+
+# 3. (Optional but recommended) pin the personal-repo path explicitly
+[Environment]::SetEnvironmentVariable('AGENT_MEMORY_PERSONAL', 'E:\my-agent-memory-personal', 'User')
+
+# 4. Smoke-test
+cd E:\my-agent-memory
+.\sync-memory.ps1                          # pulls personal repo, captures, regenerates active-threads.md
+.\loop.ps1 show                            # prints your open loops
+
+# 5. Install the daily auto-sync task (runs sync-memory.ps1 -Commit -Push every morning)
+.\install-scheduled-task.ps1 -DailySync -Time '08:00'
+```
+
+### Bootstrapping a personal repo (first machine only)
+
+1. Create an empty **private** GitHub repo (e.g. `my-agent-memory-personal`).
+2. Make a sibling directory next to the framework repo:
+   ```powershell
+   New-Item -ItemType Directory E:\my-agent-memory-personal
+   cd E:\my-agent-memory-personal
+   git init -b main
+   # Optional but recommended — enables conflict-free parallel pushes:
+   'observations.jsonl merge=union' | Set-Content .gitattributes
+   git remote add origin <your-private-repo-url>
+   ```
+3. Run `..\my-agent-memory\sync-memory.ps1` once — it will create `observations.jsonl`, `active-threads.md`, etc.
+4. Commit and push to your private repo:
+   ```powershell
+   git add -A; git commit -m "init: personal memory store"; git push -u origin main
+   ```
 
 ## Daily operating rhythm
 
-**Morning (60 seconds), every machine**: open [open-loops.md](open-loops.md) and run the 4-step ritual at the top.
+**Morning (60 seconds), every machine**: open `$PERSONAL\open-loops.md` and run the ritual at the top.
 
 **Capture as you go (1 command)**:
 ```powershell
@@ -79,28 +141,14 @@ Cross-machine sync is git-backed. [.gitattributes](.gitattributes) configures `o
 .\loop.ps1 done    "thing I finished"
 ```
 
-**Automatic sync (no action required)**: a scheduled task on each machine runs `sync-memory.ps1 -Commit -Push` daily at 08:00. It pulls everyone else's activity, captures fresh observations from local Copilot transcripts with machine + workspace attribution, regenerates `active-threads.md`, and pushes.
-
-**Before a complex task** (optional but recommended):
+**Before a complex Copilot task** (optional):
 ```powershell
 .\summon-memory.ps1 -Task "describe the task in plain words" -Preflight
 ```
-Generates a ranked brief of relevant lessons + recent observations + active threads, and prints a ready-to-paste preflight prompt for Copilot.
 
-**Weekly (one command)**: `.\run-weekly-memory.ps1 -Commit -Push` — runs the learner, captures, synthesizes, lints team memory, stages, commits, pushes.
+**Automatic** (no action required): the scheduled task runs `sync-memory.ps1 -Commit -Push` daily — pulls everyone else's activity (from your other machines), captures from local Copilot transcripts with machine + workspace attribution, regenerates `active-threads.md`, and pushes. Only the personal repo gets pushed by this task; framework updates are a separate, manual `git pull` here.
 
-## Setup on a new machine
-
-1. Clone this repo to wherever your VS Code user folder lives (default symlink target: `$env:APPDATA\Code\User\memories` on Windows, `$HOME/Library/Application Support/Code/User/memories` on macOS/Linux).
-2. Run once to verify capture works locally:
-   ```powershell
-   .\sync-memory.ps1
-   ```
-3. Install the daily auto-sync task:
-   ```powershell
-   .\install-scheduled-task.ps1 -DailySync -Time '08:00'
-   ```
-4. Done. The machine is now part of the shared brain.
+**Weekly**: `.\run-weekly-memory.ps1 -Commit -Push` runs the learner, captures, synthesizes, lints team memory, and commits **both** repos (framework knowledge updates + personal data).
 
 ## Operating principles
 
@@ -108,10 +156,11 @@ Generates a ranked brief of relevant lessons + recent observations + active thre
 - **Caps over completeness.** Bounded lists force pruning; unbounded lists become wikis nobody reads.
 - **One verb, one file.** If a workflow needs more than one command or one place to look, it will be skipped.
 - **Capture costs nothing, review costs everything.** Auto-capture is cheap and lossless; human attention is the scarce resource and goes only to bounded sections.
-- **Personal first, team second.** Lessons earn their way into shared memory through approval gates in [team-memory/](team-memory/), not by default.
+- **Personal first, team second.** Lessons earn their way into shared framework knowledge through [team-memory/approval-gates.md](team-memory/approval-gates.md), not by default.
+- **Private data stays private.** The personal repo is always a separate, private repo — never push it to a shared remote.
 
 ## Why this exists
 
-I don't have the discipline to maintain a manual second-brain. I do have the discipline to type one command. This system is built around that constraint: the friction floor for capture is one shell command, and everything downstream — cross-machine sync, scoring, weekly synthesis, Copilot context injection — happens automatically from that one input.
+Manual second-brains fail because they require discipline nobody actually has. This system requires one disciplined behavior: type one shell command when something happens. Everything downstream — cross-machine sync, scoring, weekly synthesis, Copilot context injection — happens automatically from that one input.
 
-If it works, I stop dropping threads, I stop relearning the same lessons, and Copilot gets measurably more useful every week. If it stops working, the failure shows up in the daily ritual within 24 hours, not weeks later.
+If it works, you stop dropping threads, you stop relearning the same lessons, and Copilot gets measurably more useful every week. If it stops working, the failure shows up in the daily ritual within 24 hours, not weeks later.

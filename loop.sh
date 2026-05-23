@@ -22,13 +22,16 @@ while [ $# -gt 0 ]; do
 done
 
 root="$(cd "$(dirname "$0")" && pwd)"
-board="$root/open-loops.md"
+# shellcheck source=_personal-root.sh
+source "$root/_personal-root.sh"
+personal_root="$(get_personal_root "$root")"
+board="$personal_root/open-loops.md"
 today="$(date +%F)"
 
 log_obs() {
   local type="$1" note="$2"
   if [ -x "$root/capture-observation.sh" ]; then
-    "$root/capture-observation.sh" --type "$type" --note "$note" --domain General --tag open-loops >/dev/null 2>&1 || true
+    "$root/capture-observation.sh" --type "$type" --note "$note" --domain General --tag open-loops --log-file "$personal_root/observations.jsonl" >/dev/null 2>&1 || true
   fi
 }
 

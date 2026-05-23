@@ -7,8 +7,10 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$logPath = Join-Path $repoRoot $LogFile
-$outputPath = Join-Path $repoRoot $OutputFile
+. (Join-Path $repoRoot '_personal-root.ps1')
+$personalRoot = Get-PersonalMemoryRoot $repoRoot
+$logPath = Join-Path $personalRoot $LogFile
+$outputPath = Join-Path $personalRoot $OutputFile
 
 if (-not (Test-Path $logPath)) {
     Write-Host "No observations log found at $logPath. Nothing to synthesize."

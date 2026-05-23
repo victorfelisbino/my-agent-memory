@@ -30,7 +30,14 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
-LOG_PATH="$REPO_ROOT/$LOG_FILE"
+# shellcheck source=_personal-root.sh
+source "$REPO_ROOT/_personal-root.sh"
+PERSONAL_ROOT="$(get_personal_root "$REPO_ROOT")"
+if [[ "$LOG_FILE" == /* ]]; then
+  LOG_PATH="$LOG_FILE"
+else
+  LOG_PATH="$PERSONAL_ROOT/$LOG_FILE"
+fi
 
 # Detect workspace storage root if not provided
 if [[ -z "$TRANSCRIPT_DIR" ]]; then

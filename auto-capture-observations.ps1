@@ -11,7 +11,13 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$logPath = Join-Path $repoRoot $LogFile
+. (Join-Path $repoRoot '_personal-root.ps1')
+$personalRoot = Get-PersonalMemoryRoot $repoRoot
+if ([System.IO.Path]::IsPathRooted($LogFile)) {
+    $logPath = $LogFile
+} else {
+    $logPath = Join-Path $personalRoot $LogFile
+}
 
 if (-not (Test-Path $WorkspaceStorageRoot)) {
     Write-Error "Workspace storage root not found: $WorkspaceStorageRoot"

@@ -27,8 +27,16 @@ done
 
 root="$(cd "$(dirname "$0")" && pwd)"
 cd "$root"
+# shellcheck source=_personal-root.sh
+source "$root/_personal-root.sh"
+personal_root="$(get_personal_root "$root")"
+personal_is_repo=0
+[ -d "$personal_root/.git" ] && personal_is_repo=1
 
 machine="$(hostname | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9._-' '-')"
+
+echo "[sync-memory] framework: $root"
+echo "[sync-memory] personal : $personal_root$( [ "$personal_is_repo" = 0 ] && echo ' (NOT a git repo)' )"
 
 # Detect VS Code workspaceStorage root by OS
 case "$(uname)" in
@@ -38,8 +46,12 @@ case "$(uname)" in
 esac
 
 if [ "$do_pull" -eq 1 ]; then
-  echo "[sync-memory] git pull..."
-  git pull --no-edit || { echo "git pull failed"; exit 1; }
+  if [ "$personal_is_repo" = 1 ]; then
+    echo "[sync-memory] git pull (personal repo)..."
+    git -C "$personal_root" pull --no-edit || { echo 'git pull failed'; exit 1; }
+  else
+    echo "[sync-memory] personal dir is not a git repo - skipping pull"
+  fi
 fi
 
 if [ ! -d "$ws_root" ]; then
@@ -58,18 +70,19 @@ for ws_dir in "$ws_root"/*/; do
   fi
   echo "[sync-memory] capturing $name ..."
   if [ -x "$root/auto-capture-observations.sh" ]; then
-    "$root/auto-capture-observations.sh" --transcript-dir "$tx" --since-days "$since_days" --max-per-run "$max_per_ws" --extra-tag "machine:$machine" --extra-tag "workspace:$name" || true
+    "$root/auto-capture-observations.sh" --transcript-dir "$tx" --since-days "$since_days" --max-per-run "$max_per_ws" --log-file "$personal_root/observations.jsonl" --extra-tag "machine:$machine" --extra-tag "workspace:$name" || true
   fi
   count=$((count+1))
 done
 echo "[sync-memory] processed $count workspace(s) on $machine"
 
 # Build active-threads.md (simple version: group last $since_days observations by workspace tag)
-python3 - "$since_days" <<'PY'
+python3 - "$since_days" "$personal_root" <<'PY'
 import json, sys, os, datetime, collections
 since_days = int(sys.argv[1])
+personal_root = sys.argv[2]
 cutoff = datetime.datetime.now(datetime.timezone.utc).timestamp() - since_days*86400
-log = 'observations.jsonl'
+log = os.path.join(personal_root, 'observations.jsonl')
 entries = []
 if os.path.exists(log):
     for line in open(log, encoding='utf-8'):
@@ -118,19 +131,23 @@ else:
             if len(note) > 160: note = note[:157] + '...'
             out.append(f'- {ts.strftime("%Y-%m-%d")} [{typ}] ({m}) {note}')
         out.append('')
-open('active-threads.md','w',encoding='utf-8').write('\n'.join(out))
+open(os.path.join(personal_root, 'active-threads.md'),'w',encoding='utf-8').write('\n'.join(out))
 print(f'[sync-memory] wrote active-threads.md ({len(ordered)} workspace group(s))')
 PY
 
 if [ "$do_commit" -eq 1 ]; then
-  git add observations.jsonl active-threads.md 2>/dev/null || true
-  if git diff --cached --quiet; then
-    echo "[sync-memory] no changes to commit"
+  if [ "$personal_is_repo" = 0 ]; then
+    echo "[sync-memory] personal dir is not a git repo - skipping commit/push"
   else
-    git commit -m "memory: sync from $machine"
-    if [ "$do_push" -eq 1 ]; then
-      git push || (git pull --no-edit && git push)
+    git -C "$personal_root" add observations.jsonl active-threads.md 2>/dev/null || true
+    if git -C "$personal_root" diff --cached --quiet; then
+      echo "[sync-memory] no changes to commit"
+    else
+      git -C "$personal_root" commit -m "memory: sync from $machine"
+      if [ "$do_push" -eq 1 ]; then
+        git -C "$personal_root" push || (git -C "$personal_root" pull --no-edit && git -C "$personal_root" push)
+      fi
     fi
   fi
 fi
-echo "[sync-memory] done. Open active-threads.md."
+echo "[sync-memory] done. Open $personal_root/active-threads.md."

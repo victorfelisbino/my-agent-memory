@@ -1,4 +1,12 @@
 param([string]$Path = 'observations.jsonl')
+
+$ErrorActionPreference = 'Stop'
+$repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $repoRoot '_personal-root.ps1')
+$personalRoot = Get-PersonalMemoryRoot $repoRoot
+if (-not [System.IO.Path]::IsPathRooted($Path)) {
+    $Path = Join-Path $personalRoot $Path
+}
 $ErrorActionPreference = 'Stop'
 $full = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) $Path
 $text = [System.IO.File]::ReadAllText($full, [System.Text.Encoding]::UTF8)

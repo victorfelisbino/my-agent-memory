@@ -15,8 +15,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
-LOG_PATH="$REPO_ROOT/$LOG_FILE"
-OUT_PATH="$REPO_ROOT/$OUTPUT_FILE"
+# shellcheck source=_personal-root.sh
+source "$REPO_ROOT/_personal-root.sh"
+PERSONAL_ROOT="$(get_personal_root "$REPO_ROOT")"
+LOG_PATH="$PERSONAL_ROOT/$LOG_FILE"
+OUT_PATH="$PERSONAL_ROOT/$OUTPUT_FILE"
 
 if [[ ! -f "$LOG_PATH" ]]; then
   echo "No observations log at $LOG_PATH"

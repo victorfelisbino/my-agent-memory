@@ -16,7 +16,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$boardPath = Join-Path $repoRoot $BoardFile
+. (Join-Path $repoRoot '_personal-root.ps1')
+$personalRoot = Get-PersonalMemoryRoot $repoRoot
+$boardPath = Join-Path $personalRoot $BoardFile
 $obsPath   = Join-Path $repoRoot $ObsScript
 $today     = (Get-Date).ToString('yyyy-MM-dd')
 

@@ -14,20 +14,29 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $repoRoot
+. (Join-Path $repoRoot '_personal-root.ps1')
+$personalRoot = Get-PersonalMemoryRoot $repoRoot
+$personalIsRepo = Test-Path (Join-Path $personalRoot '.git')
 
 if (-not $MachineTag) { $MachineTag = $env:COMPUTERNAME }
 if (-not $MachineTag) { $MachineTag = 'unknown-machine' }
 $MachineTag = ($MachineTag -replace '[^A-Za-z0-9._-]', '-').ToLower()
 
 function Write-Step([string]$msg) { Write-Host "[sync-memory] $msg" }
+Write-Step "framework: $repoRoot"
+Write-Step "personal : $personalRoot$(if (-not $personalIsRepo) { ' (NOT a git repo - data will not sync across machines!)' })"
 
 # --- 1. Pull latest from other machines (relies on .gitattributes union merge for observations.jsonl) ---
 if (-not $NoPull) {
-    Write-Step "git pull (union-merging observations.jsonl from other machines)..."
-    git pull --no-edit
-    if ($LASTEXITCODE -ne 0) {
-        Write-Warning "git pull failed (exit $LASTEXITCODE). Resolve and re-run, or pass -NoPull."
-        return
+    if ($personalIsRepo) {
+        Write-Step "git pull (personal repo)..."
+        git -C $personalRoot pull --no-edit
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning "git pull on personal repo failed (exit $LASTEXITCODE). Resolve and re-run, or pass -NoPull."
+            return
+        }
+    } else {
+        Write-Step "personal data dir is not a git repo - skipping pull"
     }
 }
 
@@ -65,18 +74,18 @@ Write-Step "found $($workspaces.Count) workspace(s) with Copilot transcripts on 
 
 # --- 3. Capture per workspace, attributed with machine + workspace tags ---
 $captureScript = Join-Path $repoRoot 'auto-capture-observations.ps1'
+$logPath = Join-Path $personalRoot $LogFile
 if (-not (Test-Path $captureScript)) {
-    Write-Warning "auto-capture-observations.ps1 not found in repo. Aborting capture phase."
+    Write-Warning "auto-capture-observations.ps1 not found in framework repo. Aborting capture phase."
 } else {
     foreach ($ws in $workspaces) {
         $tags = @("machine:$MachineTag", "workspace:$($ws.Name)")
         Write-Step "capturing $($ws.Name) ..."
-        & $captureScript -TranscriptDir $ws.TranscriptDir -SinceDays $SinceDays -MaxPerRun $MaxPerWorkspace -ExtraTags $tags
+        & $captureScript -TranscriptDir $ws.TranscriptDir -SinceDays $SinceDays -MaxPerRun $MaxPerWorkspace -ExtraTags $tags -LogFile $logPath
     }
 }
 
 # --- 4. Build active-threads.md: cross-machine "what am I working on" view ---
-$logPath = Join-Path $repoRoot $LogFile
 $cutoff = (Get-Date).AddDays(-$SinceDays)
 
 $entries = @()
@@ -157,28 +166,32 @@ if ($groups.Count -eq 0) {
     }
 }
 
-$threadsPath = Join-Path $repoRoot $ThreadsFile
+$threadsPath = Join-Path $personalRoot $ThreadsFile
 Set-Content -Path $threadsPath -Value ($md -join "`n") -Encoding UTF8
 Write-Step "wrote $ThreadsFile ($($groups.Count) workspace group(s))"
 
-# --- 5. Optional commit + push ---
+# --- 5. Optional commit + push (against the PERSONAL repo, not the framework repo) ---
 if ($Commit) {
-    if (-not $CommitMessage) {
-        $CommitMessage = "memory: sync from $MachineTag ($($groups.Count) ws, $($entries.Count) obs)"
-    }
-    git add $LogFile $ThreadsFile 2>$null
-    git diff --cached --quiet
-    if ($LASTEXITCODE -eq 0) {
-        Write-Step "no changes to commit"
+    if (-not $personalIsRepo) {
+        Write-Step "personal data dir is not a git repo - skipping commit/push"
     } else {
-        git commit -m $CommitMessage
-        if ($Push) {
-            Write-Step "pushing..."
-            git push
-            if ($LASTEXITCODE -ne 0) {
-                Write-Step "push failed; pulling and retrying once..."
-                git pull --no-edit
-                git push
+        if (-not $CommitMessage) {
+            $CommitMessage = "memory: sync from $MachineTag ($($groups.Count) ws, $($entries.Count) obs)"
+        }
+        git -C $personalRoot add $LogFile $ThreadsFile 2>$null
+        git -C $personalRoot diff --cached --quiet
+        if ($LASTEXITCODE -eq 0) {
+            Write-Step "no changes to commit"
+        } else {
+            git -C $personalRoot commit -m $CommitMessage
+            if ($Push) {
+                Write-Step "pushing personal repo..."
+                git -C $personalRoot push
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Step "push failed; pulling and retrying once..."
+                    git -C $personalRoot pull --no-edit
+                    git -C $personalRoot push
+                }
             }
         }
     }

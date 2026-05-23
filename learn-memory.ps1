@@ -1,10 +1,14 @@
 param(
     [string]$WorkspaceStorageRoot = "$env:APPDATA\Code\User\workspaceStorage",
     [string]$TranscriptDir = "",
-    [string]$OutputDir = "$env:APPDATA\Code\User\memories"
+    [string]$OutputDir = ""
 )
 
 $ErrorActionPreference = 'Stop'
+
+$repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $repoRoot '_personal-root.ps1')
+if (-not $OutputDir) { $OutputDir = Get-PersonalMemoryRoot $repoRoot }
 
 if (-not (Test-Path $WorkspaceStorageRoot)) {
     Write-Error "Workspace storage root not found: $WorkspaceStorageRoot"

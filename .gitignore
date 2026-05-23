@@ -1,4 +1,27 @@
+# Personal data lives in a separate repo (e.g. e:\my-agent-memory-personal).
+# These files MUST NEVER be committed to the framework repo, even if accidentally
+# created here (e.g. by an older script version or a fresh clone without
+# AGENT_MEMORY_PERSONAL set).
+observations.jsonl
+observations-archive/
+active-threads.md
 active-memory-brief.md
+open-loops.md
+goals.md
+decision-journal.md
+status-update.md
+performance-map.md
+memory-scoreboard.md
+memory-top-patterns.md
 
+# Personal lessons in progress (only README is tracked as a placeholder)
+team-memory/inbox/*
+!team-memory/inbox/README.md
+
+# OS / editor noise
+*.swp
+*.tmp
+.DS_Store
+Thumbs.db
 .launchd-capture.log
 .launchd-capture.err

@@ -8,8 +8,10 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$logPath = Join-Path $repoRoot $LogFile
-$archivePath = Join-Path $repoRoot $ArchiveDir
+. (Join-Path $repoRoot '_personal-root.ps1')
+$personalRoot = Get-PersonalMemoryRoot $repoRoot
+$logPath = Join-Path $personalRoot $LogFile
+$archivePath = Join-Path $personalRoot $ArchiveDir
 
 if (-not (Test-Path $logPath)) {
     Write-Host "No observations log at $logPath. Nothing to prune."
