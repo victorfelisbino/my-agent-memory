@@ -196,6 +196,11 @@ function Get-CandidateFiles {
         $files += Get-ChildItem -Path $generalDir -Filter *.md -File
     }
 
+    $docsDir = Join-Path $Root 'docs'
+    if (Test-Path $docsDir) {
+        $files += Get-ChildItem -Path $docsDir -Filter *.md -File -Recurse
+    }
+
     $domainDir = Join-Path $Root ("domains\" + $SelectedDomain.ToLower())
     if (Test-Path $domainDir) {
         $files += Get-ChildItem -Path $domainDir -Filter *.md -File
