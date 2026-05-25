@@ -239,6 +239,7 @@ See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + t
 - Skills templates and starter packs: [skills/README.md](skills/README.md)
 - Connector contracts: [connectors/README.md](connectors/README.md)
 - Workflow command and router templates: [skills/templates/workflow-command-template.md](skills/templates/workflow-command-template.md), [skills/templates/router-template.md](skills/templates/router-template.md)
+- Salesforce command/router examples: [skills/salesforce/commands/deploy-incident-workflow.md](skills/salesforce/commands/deploy-incident-workflow.md), [skills/salesforce/router/salesforce-router.md](skills/salesforce/router/salesforce-router.md)
 
 ## Why this exists
 

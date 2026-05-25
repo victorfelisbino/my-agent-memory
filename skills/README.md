@@ -28,6 +28,11 @@ Use skills when you need repeatable execution for a known job (deploy triage, PR
 - A **workflow command** chains multiple skills to finish a complete job with approval gates.
 - A **router** maps plain-English requests to the right workflow command.
 
+## Concrete examples
+
+- Salesforce command example: `skills/salesforce/commands/deploy-incident-workflow.md`
+- Salesforce router example: `skills/salesforce/router/salesforce-router.md`
+
 ## Promotion rules
 
 Promote a pattern from a lesson into a skill only if:
