@@ -274,7 +274,7 @@ Keep our current layer progression and extend it in this order:
 
 This preserves simplicity while moving toward a plugin-grade execution model.
 
-## Update (2026-05-25): Business packaging model research (Acquisition.com + comparables)
+## Update (2026-05-25): Business packaging model research (pattern synthesis)
 
 ### Question
 
@@ -287,20 +287,20 @@ Findings were synthesized from a multi-source scan of current business education
 ### Evidence patterns observed
 
 1. Outcome-first positioning dominates
-- Acquisition.com homepage copy emphasizes scale outcomes and revenue scale.
-- Reforge/GrowthMentor similarly lead with applied outcomes, not generic content depth.
+- High-performing models lead with scale outcomes and revenue impact.
+- Applied outcomes consistently outperform generic content-depth messaging.
 
 2. Product ladder from free to higher-commitment is common
-- Acquisition.com prominently offers free advanced training and books/media, then has apply paths.
-- HubSpot runs a large free-resource front end as demand generation.
+- Strong models use a clear ladder from free entry value to higher-commitment offers.
+- Large free resource fronts often act as demand generation and trust builders.
 
 3. Authority flywheel is explicit
-- Acquisition.com has strong books/media surface area linked from main navigation.
-- YC and ForEntrepreneurs rely on trusted founder/operator content as acquisition channel.
+- Authority content (books/media/founder insights) is used as an acquisition flywheel.
+- Trusted operator content tends to improve conversion quality for complex offers.
 
 4. Narrow ICP messaging increases conversion quality
-- Acquisition.com explicitly references a specific founder profile and scale stage.
-- GrowthMentor highlights a specific use case (solve immediate startup problems with vetted practitioners).
+- Specific founder/operator profile targeting tends to increase conversion quality.
+- Narrow use-case messaging improves match quality and reduces wrong-fit leads.
 
 5. Implementation framing beats information framing
 - Top performers emphasize doing, applying, and getting specific results.

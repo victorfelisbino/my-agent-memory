@@ -5,7 +5,9 @@
 - Validate fixes with the affected user persona, not admin only.
 - Add one reusable guardrail after each incident.
 
-# Business Execution Rules
+# Business Execution Rules (current defaults, not doctrine)
+
+- Treat these as revisable defaults. Revalidate monthly against live results.
 
 - Lead every initiative with one measurable outcome statement.
 - Keep an explicit value ladder: free proof -> structured workflow -> high-touch support.
