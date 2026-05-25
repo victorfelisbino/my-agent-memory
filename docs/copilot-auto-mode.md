@@ -69,3 +69,23 @@ Track these in your own use over a week:
 - **% of sessions where you manually overrode auto** (target: <30% after a week of tuning).
 
 If those numbers don't improve, the router-hints aren't being read or the brief is wrong; revisit task-type classifier rules in [summon-memory.ps1](summon-memory.ps1#L75).
+
+## Token-reduction benchmark protocol
+
+Use this when you want evidence that token savings are real and not placebo.
+
+1. Choose 10 recurring tasks from your real workflow.
+2. Run each task in three modes:
+	- no brief
+	- full brief
+	- compact brief (`-Compact -Preflight`)
+3. Record for each run:
+	- turns to resolution
+	- total tokens used
+	- number of retries or wrong-path actions
+	- whether you manually overrode auto model selection
+
+Decision rule:
+- Make compact mode the default only if quality stays stable and median total tokens drop by at least 25% on standard tasks.
+
+This protects you from a common anti-pattern: lower per-prompt tokens but higher total-session tokens due to extra turns.

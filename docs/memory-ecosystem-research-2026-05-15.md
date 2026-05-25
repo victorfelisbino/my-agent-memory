@@ -151,3 +151,59 @@ If applied consistently, this framework should reduce:
 - command-line drift,
 - MCP integration hallucinations,
 - and back-and-forth clarification turns.
+
+## Update (2026-05-24): Token usage reduction research
+
+### Question
+
+How do we reduce token usage without lowering solution quality?
+
+### Best findings
+
+1. Reduce turns first, tokens second.
+- A single extra clarification turn usually costs more than saving 100-300 prompt tokens.
+
+2. Structured task routing beats generic context.
+- Compact, typed headers (task type, complexity, domain) help auto-routing pick the cheapest viable model.
+
+3. Retrieval precision is cheaper than retrieval volume.
+- Fewer, high-confidence snippets outperform large context dumps for both quality and cost.
+
+4. Verification-driven prompts prevent costly retries.
+- Asking for evidence and explicit verification commands reduces "looks right but fails" loops.
+
+### Experiment design (framework-level)
+
+Run the same 10 repeat tasks in three modes:
+
+1. Baseline
+- No memory brief.
+
+2. Full brief
+- `summon-memory` default mode.
+
+3. Compact brief
+- `summon-memory -Compact -Preflight`.
+
+Track for each run:
+
+- Turn count to resolution
+- Total tokens (input + output)
+- Time to first correct action
+- Rework count (wrong command/code path retries)
+- Manual model override (yes/no)
+
+### Success thresholds
+
+Adopt compact-by-default if all are true over one week:
+
+1. Median turns do not increase.
+2. Rework count does not increase.
+3. Total tokens drop by at least 25% on standard tasks.
+
+### Practical recommendation for this repo
+
+1. Keep `-Compact` as default for trivial/standard tasks.
+2. Use full brief only for complex or cross-system work.
+3. Keep preflight instructions that enforce scope and batched questions.
+4. Periodically tune classifier rules in `summon-memory.ps1` based on override and retry data.
