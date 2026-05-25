@@ -238,6 +238,7 @@ See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + t
 - Lesson capture standard: [lesson-template.md](lesson-template.md) and [team-memory/templates/shared-lesson-template.md](team-memory/templates/shared-lesson-template.md)
 - Skills templates and starter packs: [skills/README.md](skills/README.md)
 - Connector contracts: [connectors/README.md](connectors/README.md)
+- Workflow command and router templates: [skills/templates/workflow-command-template.md](skills/templates/workflow-command-template.md), [skills/templates/router-template.md](skills/templates/router-template.md)
 
 ## Why this exists
 

@@ -207,3 +207,69 @@ Adopt compact-by-default if all are true over one week:
 2. Use full brief only for complex or cross-system work.
 3. Keep preflight instructions that enforce scope and batched questions.
 4. Periodically tune classifier rules in `summon-memory.ps1` based on override and retry data.
+
+## Update (2026-05-25): Deep-dive on Anthropic small-business plugin pack
+
+### Source
+
+- X post reference provided by user
+- Repository identified from post metadata: https://github.com/anthropics/knowledge-work-plugins
+- Deep-dive focus: `small-business` plugin layout and skill design
+
+### Why this repo matters
+
+This is a high-signal implementation because it combines:
+
+1. A large, structured skill library
+2. Connector contracts via MCP
+3. Workflow commands that chain multiple skills
+4. A natural-language router so users do not need to memorize command names
+
+### Architecture pattern observed
+
+Per plugin:
+
+1. `.claude-plugin/plugin.json` (manifest)
+2. `.mcp.json` (connectors)
+3. `commands/` (explicit workflows)
+4. `skills/` (auto-invoked expertise)
+
+Small-business pack specifics:
+
+- 15 commands and 15 atomic skills
+- Command docs include trigger phrases, required/optional connectors, and approval gates
+- Skills include explicit failure handling and graceful-degradation behavior when connectors are missing
+
+### What we should adopt into this framework
+
+1. Add a command layer above skills for multi-step workflows
+- Skills answer "how to do one thing".
+- Commands answer "how to complete the whole job".
+
+2. Add trigger-phrase examples in each skill/command
+- Improves routing and lowers user prompt friction.
+
+3. Add required-vs-optional connector matrices
+- Makes capability boundaries explicit and reduces hidden assumptions.
+
+4. Enforce approval gates in workflow docs
+- Include explicit "wait for confirmation" steps before risky actions.
+
+5. Define graceful degradation behavior
+- For each connector/tool failure, document reduced-mode path and caveats.
+
+### Cautions
+
+1. Command explosion can create maintenance burden.
+2. Verbose instructions can increase token usage if retrieval is not scoped.
+3. Business-domain templates should be adapted carefully for engineering workflows.
+
+### Recommendation
+
+Keep our current layer progression and extend it in this order:
+
+1. principles + domains + lessons (already in place)
+2. skills + connectors (now in place)
+3. commands + router templates (next step)
+
+This preserves simplicity while moving toward a plugin-grade execution model.

@@ -7,6 +7,8 @@ Use skills when you need repeatable execution for a known job (deploy triage, PR
 ## Structure
 
 - `skills/templates/skill-template.md` - authoring template for new skills
+- `skills/templates/workflow-command-template.md` - template for multi-skill workflow commands
+- `skills/templates/router-template.md` - template for plain-English intent routing
 - `skills/general/...` - cross-domain skills
 - `skills/salesforce/...` - Salesforce-specific skills
 - `skills/mulesoft/...` - MuleSoft-specific skills
@@ -19,6 +21,12 @@ Use skills when you need repeatable execution for a known job (deploy triage, PR
 4. Verification commands and success criteria
 5. Common failure modes and fallback path
 6. Capture rule for adding reusable lessons after execution
+
+## Skills vs commands
+
+- A **skill** does one thing well.
+- A **workflow command** chains multiple skills to finish a complete job with approval gates.
+- A **router** maps plain-English requests to the right workflow command.
 
 ## Promotion rules
 
