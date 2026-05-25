@@ -15,3 +15,6 @@
 - Use authority content to drive one concrete next action (not passive consumption).
 - Add graceful-degradation paths when required tools/connectors are missing.
 - Review weekly on outcomes: conversion quality, retained usage, and avoided rework.
+- Keep at least one documented counter-opinion for major strategy decisions.
+- Invalidate one stale assumption every week (do not keep legacy rules by default).
+- Update business rules from live signals first; update assets and messaging second.

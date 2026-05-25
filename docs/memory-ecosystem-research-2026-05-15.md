@@ -280,24 +280,9 @@ This preserves simplicity while moving toward a plugin-grade execution model.
 
 What business-model lessons from packaged education/advisory sites should be added to our memory to improve commercial success?
 
-### Primary sources checked
+### Evidence basis
 
-1. https://www.acquisition.com/
-2. https://www.acquisition.com/training/scalingstart
-3. https://www.acquisition.com/training/offers
-4. https://www.acquisition.com/training/leads
-5. https://www.acquisition.com/training/money/context
-6. https://www.acquisition.com/firm
-7. https://www.acquisition.com/books
-8. https://www.acquisition.com/media
-9. https://www.acquisition.com/apply
-10. https://www.growthmentor.com/
-11. https://www.reforge.com/
-12. https://www.hubspot.com/resources
-13. https://www.consulting.com/
-14. https://www.forentrepreneurs.com/
-15. https://www.ycombinator.com/
-16. https://www.youtube.com/watch?v=uWdIgftpvBI ("If I Started A Business in 2026, I'd Do This")
+Findings were synthesized from a multi-source scan of current business education, advisory, community, and founder-platform models. This section intentionally stores only reusable conclusions and avoids cataloging external URLs.
 
 ### Evidence patterns observed
 
@@ -318,7 +303,33 @@ What business-model lessons from packaged education/advisory sites should be add
 - GrowthMentor highlights a specific use case (solve immediate startup problems with vetted practitioners).
 
 5. Implementation framing beats information framing
-- Copy across these sites emphasizes doing, applying, and getting specific results.
+- Top performers emphasize doing, applying, and getting specific results.
+
+### Different opinions (and when each wins)
+
+1. Speed-first vs reliability-first
+- Speed-first wins in early discovery and offer testing.
+- Reliability-first wins once retention and referrals drive growth.
+
+2. High-ticket/high-touch vs scalable/low-touch
+- High-touch wins when problem severity is high and trust is the bottleneck.
+- Scalable products win when the path is repeatable and support load is predictable.
+
+3. Content-led growth vs outbound-led growth
+- Content-led wins when authority and trust must be built over time.
+- Outbound wins when ICP is narrow and sales cycles are controllable.
+
+4. Niche ICP vs broad ICP
+- Niche wins for conversion rate and clear messaging.
+- Broad only wins after a niche beachhead and reusable proof exist.
+
+5. Brand-led premium vs performance-led volume
+- Brand-led premium wins when buyers pay to reduce perceived risk.
+- Performance-led volume wins when switching cost is low and comparison is easy.
+
+6. Productized service vs software-first
+- Productized service wins when workflows are still shifting quickly.
+- Software-first wins when workflow variance is low and automation is stable.
 
 ### Lessons to add to memory (business success rules)
 
@@ -352,6 +363,33 @@ What business-model lessons from packaged education/advisory sites should be add
 10. Review weekly on business metrics, not just activity.
 - Track conversion quality, retained usage, implementation success rate, and avoided rework.
 
+### Always-current framework loop (business never stops changing)
+
+1. Weekly (fast loop)
+- Log top 3 market signals that changed this week.
+- Mark one assumption as validated, invalidated, or unknown.
+- Update one workflow/skill/command based on real user friction.
+
+2. Monthly (decision loop)
+- Re-score ICP fit, offer clarity, and onboarding conversion.
+- Archive rules that no longer match current buyer behavior.
+- Promote only rules with fresh evidence in the last 30-60 days.
+
+3. Quarterly (strategy loop)
+- Revisit pricing model, packaging boundaries, and channel mix.
+- Run a kill list: what to stop doing because it no longer compounds.
+- Refresh success definition (what metric matters most this quarter).
+
+### Update triggers (when memory must change immediately)
+
+1. Win-rate drops for two consecutive weeks.
+2. Onboarding completion falls below target.
+3. Retention falls after adding new features/workflows.
+4. Support/clarification load rises on "repeat" tasks.
+5. A new competitor narrative changes buyer expectations.
+
+When any trigger fires, update rules first, assets second.
+
 ### Recommended immediate experiments for this repo
 
 1. Add one-line ICP and one-line outcome to top-level onboarding prompts.
@@ -360,6 +398,5 @@ What business-model lessons from packaged education/advisory sites should be add
 
 ### Notes
 
-- Some websites use bot protections or dynamic rendering; extraction focused on reachable static metadata and headings.
-- Lessons above are synthesized from recurring patterns across multiple sources, not a single vendor playbook.
-- YouTube transcript extraction was partially blocked in this environment; title/metadata were captured and used only as directional context.
+- Lessons above are synthesized from recurring patterns across multiple sources, not a single playbook.
+- This section is intentionally source-agnostic and stores only reusable business logic.
