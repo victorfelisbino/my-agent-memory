@@ -273,3 +273,91 @@ Keep our current layer progression and extend it in this order:
 3. commands + router templates (next step)
 
 This preserves simplicity while moving toward a plugin-grade execution model.
+
+## Update (2026-05-25): Business packaging model research (Acquisition.com + comparables)
+
+### Question
+
+What business-model lessons from packaged education/advisory sites should be added to our memory to improve commercial success?
+
+### Primary sources checked
+
+1. https://www.acquisition.com/
+2. https://www.acquisition.com/training/scalingstart
+3. https://www.acquisition.com/training/offers
+4. https://www.acquisition.com/training/leads
+5. https://www.acquisition.com/training/money/context
+6. https://www.acquisition.com/firm
+7. https://www.acquisition.com/books
+8. https://www.acquisition.com/media
+9. https://www.acquisition.com/apply
+10. https://www.growthmentor.com/
+11. https://www.reforge.com/
+12. https://www.hubspot.com/resources
+13. https://www.consulting.com/
+14. https://www.forentrepreneurs.com/
+15. https://www.ycombinator.com/
+
+### Evidence patterns observed
+
+1. Outcome-first positioning dominates
+- Acquisition.com homepage copy emphasizes scale outcomes and revenue scale.
+- Reforge/GrowthMentor similarly lead with applied outcomes, not generic content depth.
+
+2. Product ladder from free to higher-commitment is common
+- Acquisition.com prominently offers free advanced training and books/media, then has apply paths.
+- HubSpot runs a large free-resource front end as demand generation.
+
+3. Authority flywheel is explicit
+- Acquisition.com has strong books/media surface area linked from main navigation.
+- YC and ForEntrepreneurs rely on trusted founder/operator content as acquisition channel.
+
+4. Narrow ICP messaging increases conversion quality
+- Acquisition.com explicitly references a specific founder profile and scale stage.
+- GrowthMentor highlights a specific use case (solve immediate startup problems with vetted practitioners).
+
+5. Implementation framing beats information framing
+- Copy across these sites emphasizes doing, applying, and getting specific results.
+
+### Lessons to add to memory (business success rules)
+
+1. Lead with a measurable outcome in one sentence.
+- Avoid feature-first positioning for top-level pages and intros.
+
+2. Always maintain a value ladder.
+- Free diagnostic/resource -> structured training/workflow -> application/high-touch support.
+
+3. Build proof before scale.
+- Capture specific case evidence (before/after metrics, failure recovered, time-to-value).
+
+4. Keep ICP boundaries explicit.
+- State who it is for, who it is not for, and minimum readiness assumptions.
+
+5. Productize implementation, not just advice.
+- Use checklists, commands, templates, and approval gates that reduce execution variance.
+
+6. Pair every offer with a clear verification signal.
+- Define what "success" looks like and how it is measured in the user's environment.
+
+7. Use authority content as distribution, but tie every piece to one next action.
+- Media/books/posts should flow into one concrete step (runbook, checklist, application, pilot).
+
+8. Add graceful-degradation paths.
+- If required tools/data are missing, define reduced-mode value instead of dead-end failure.
+
+9. Keep trust constraints visible.
+- Explicitly state safety/approval gates for any risky action; this improves adoption and retention.
+
+10. Review weekly on business metrics, not just activity.
+- Track conversion quality, retained usage, implementation success rate, and avoided rework.
+
+### Recommended immediate experiments for this repo
+
+1. Add one-line ICP and one-line outcome to top-level onboarding prompts.
+2. Add a case-log section to the pilot runbook with before/after metrics.
+3. Add one "application-style" readiness checklist before advanced workflow execution.
+
+### Notes
+
+- Some websites use bot protections or dynamic rendering; extraction focused on reachable static metadata and headings.
+- Lessons above are synthesized from recurring patterns across multiple sources, not a single vendor playbook.
