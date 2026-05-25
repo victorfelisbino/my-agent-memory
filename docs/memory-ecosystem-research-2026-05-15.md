@@ -297,6 +297,7 @@ What business-model lessons from packaged education/advisory sites should be add
 13. https://www.consulting.com/
 14. https://www.forentrepreneurs.com/
 15. https://www.ycombinator.com/
+16. https://www.youtube.com/watch?v=uWdIgftpvBI ("If I Started A Business in 2026, I'd Do This")
 
 ### Evidence patterns observed
 
@@ -361,3 +362,4 @@ What business-model lessons from packaged education/advisory sites should be add
 
 - Some websites use bot protections or dynamic rendering; extraction focused on reachable static metadata and headings.
 - Lessons above are synthesized from recurring patterns across multiple sources, not a single vendor playbook.
+- YouTube transcript extraction was partially blocked in this environment; title/metadata were captured and used only as directional context.
