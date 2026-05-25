@@ -13,16 +13,17 @@ Validate two outcomes in one week:
 ## Team
 
 - Owner: @victorfelisbino
-- Pilot users: add 2-3 handles
+- Pilot users: @victorfelisbino (owner-run Day 1), add 2-3 teammate handles
 - Start date: 2026-05-25
 - End date: 2026-05-29
+- Daily owner check-in time: 17:00 local
 
 ## Kickoff status (Day 1)
 
 - [x] Tracking issues open (#6 and #7)
 - [ ] Pilot users assigned (2-3)
-- [ ] Daily owner check-in time confirmed
-- [ ] Benchmark task list finalized
+- [x] Daily owner check-in time confirmed
+- [x] Benchmark task list finalized
 
 ## Daily routine (per pilot user)
 
@@ -59,9 +60,9 @@ Run each task in all modes:
 
 | Date | User | Task ID | Mode | Turns | Total tokens | Time to first correct action (min) | Retries | Manual override | Outcome quality (pass/fail) | Notes |
 |---|---|---|---|---:|---:|---:|---:|---|---|---|
-|  |  |  | no-brief |  |  |  |  |  |  |  |
-|  |  |  | full-brief |  |  |  |  |  |  |  |
-|  |  |  | compact-brief |  |  |  |  |  |  |  |
+| 2026-05-25 | @victorfelisbino | T1 | no-brief | 1 | n/a | n/a | 0 | no | pass | Control run: no memory brief injected. |
+| 2026-05-25 | @victorfelisbino | T1 | full-brief | 1 | 1214 | 0.02 | 0 | no | pass | summon-memory full completed in ~1.44s; router=debug/salesforce. |
+| 2026-05-25 | @victorfelisbino | T1 | compact-brief | 1 | 402 | 0.02 | 0 | no | pass | summon-memory compact completed in ~1.40s; router=debug/salesforce. |
 
 ## Friction log
 
