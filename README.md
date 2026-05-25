@@ -218,6 +218,12 @@ See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + t
 - Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - Security policy: [SECURITY.md](SECURITY.md)
 
+## Research and evolution
+
+- Ecosystem landscape: [docs/memory-ecosystem-research-2026-05-15.md](docs/memory-ecosystem-research-2026-05-15.md)
+- Practical adoption protocol: [docs/memory-adoption-playbook.md](docs/memory-adoption-playbook.md)
+- Lesson capture standard: [lesson-template.md](lesson-template.md) and [team-memory/templates/shared-lesson-template.md](team-memory/templates/shared-lesson-template.md)
+
 ## Why this exists
 
 Manual second-brains fail because they require discipline nobody actually has. This system requires one disciplined behavior: type one shell command when something happens. Everything downstream — cross-machine sync, scoring, weekly synthesis, Copilot context injection — happens automatically from that one input.

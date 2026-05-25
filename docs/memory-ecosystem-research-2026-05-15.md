@@ -93,3 +93,61 @@ Your approach is valid and market-aligned. The opportunity is no longer "memory 
 
 - GitHub unauthenticated API rate limits were encountered during deeper counting queries.
 - Despite rate limits, the sample size and category spread are strong enough to confirm this is an established ecosystem.
+
+## Update (2026-05-24): Cross-language, CLI, and MCP memory
+
+### New question
+
+Can this framework reliably improve outcomes across different programming languages, CLI tools, and MCP servers over time?
+
+### Best answer
+
+Yes, if memory entries are captured as verifiable execution patterns instead of generic notes.
+
+The biggest predictor of quality is not memory volume. It is whether each stored lesson includes:
+
+1. Execution context (language/runtime/tooling)
+2. Reproducible command(s)
+3. Verification command(s)
+4. Evidence and freshness metadata
+
+Without those four fields, cross-language retrieval drifts into vague advice.
+
+### Recommended memory unit (portable lesson card)
+
+For each incident or win, store:
+
+- Language(s): e.g., Apex, TypeScript, C#
+- Runtime/toolchain: e.g., Node 20, .NET 8, Java 17
+- CLI/tooling: e.g., sf, git, npm, dotnet
+- MCP servers involved: names + purpose
+- Environment fingerprint: OS + shell + CLI versions
+- Repro command: exact command that failed or produced signal
+- Verify command: exact command that confirmed the fix
+- Evidence: PR/deploy/log id
+- Confidence + last-verified + re-verify-by
+
+### Retrieval strategy that works best
+
+At query time, rank snippets by this order:
+
+1. Same domain (Salesforce/MuleSoft/General)
+2. Same language and runtime
+3. Same CLI or MCP server
+4. Freshness and confidence
+5. Evidence presence
+
+This avoids a common failure mode where a correct pattern for one language or CLI is incorrectly applied to another.
+
+### Governance recommendation
+
+Promote lessons from personal memory to shared docs only when there are at least two successful reuses in different sessions and one explicit verification command is present.
+
+### Expected result
+
+If applied consistently, this framework should reduce:
+
+- repeated setup mistakes across languages,
+- command-line drift,
+- MCP integration hallucinations,
+- and back-and-forth clarification turns.

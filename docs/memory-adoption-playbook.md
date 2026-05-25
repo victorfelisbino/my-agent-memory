@@ -77,3 +77,31 @@ Promote a lesson to shared/domain docs only if all are true:
 2. Backed by concrete evidence (PR/deploy/incident).
 3. Contains a guardrail that changes behavior.
 4. Has owner and verification date.
+
+## Cross-language, CLI, and MCP protocol
+
+To make memory useful across different stacks, every promoted lesson should include these minimum fields:
+
+1. `language`: one or more (e.g., Apex, TypeScript, C#)
+2. `runtime`: versioned execution context (e.g., Node 20, .NET 8)
+3. `cli_tools`: exact tools used (e.g., sf, git, npm, dotnet)
+4. `mcp_servers`: server names if applicable
+5. `repro_command`: command that produced the failure/signal
+6. `verify_command`: command that proved the fix
+
+Why this matters:
+- Language rules drift by runtime version.
+- CLI flags and behavior drift by version.
+- MCP capabilities vary by server and deployment.
+
+### Retrieval ordering (recommended)
+
+When ranking candidate snippets for a task, prefer this order:
+
+1. Same domain
+2. Same language + runtime
+3. Same CLI/MCP context
+4. Freshness + confidence
+5. Evidence links
+
+This ordering is the highest-leverage change for reducing hallucinations on "we have done this many times" tasks.
