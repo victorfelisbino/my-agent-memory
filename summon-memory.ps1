@@ -102,7 +102,7 @@ function Resolve-TaskType {
     param([string]$TaskText)
     $t = $TaskText.ToLower()
     $rules = @(
-        @{ Type = 'debug';    Pattern = '\b(debug|fix|error|broken|fails|failing|stack ?trace|exception|why (does|is)|null|undefined|crash)\b' },
+        @{ Type = 'debug';    Pattern = '\b(debug|fix|triage|incident|error|broken|fails|failing|stack ?trace|exception|why (does|is)|null|undefined|crash)\b' },
         @{ Type = 'refactor'; Pattern = '\b(refactor|rename|extract|simplify|cleanup|reorganize|move|split|consolidate)\b' },
         @{ Type = 'review';   Pattern = '\b(review|audit|check|analyze|assess|evaluate|critique)\b' },
         @{ Type = 'design';   Pattern = '\b(design|architect|approach|propose|plan|spec|how should|trade.?off|decide)\b' },
@@ -199,6 +199,16 @@ function Get-CandidateFiles {
     $docsDir = Join-Path $Root 'docs'
     if (Test-Path $docsDir) {
         $files += Get-ChildItem -Path $docsDir -Filter *.md -File -Recurse
+    }
+
+    $skillsDir = Join-Path $Root 'skills'
+    if (Test-Path $skillsDir) {
+        $files += Get-ChildItem -Path $skillsDir -Filter *.md -File -Recurse
+    }
+
+    $connectorsDir = Join-Path $Root 'connectors'
+    if (Test-Path $connectorsDir) {
+        $files += Get-ChildItem -Path $connectorsDir -Filter *.md -File -Recurse
     }
 
     $domainDir = Join-Path $Root ("domains\" + $SelectedDomain.ToLower())

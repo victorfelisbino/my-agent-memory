@@ -6,10 +6,17 @@ Use this after each failure or near-miss.
 
 - Domain: general | salesforce | mulesoft
 - Scope: session | user | org
+- Language(s):
+- Runtime/toolchain:
+- CLI/tooling used:
+- MCP server(s) involved:
+- Environment fingerprint: OS | shell | tool version(s)
 - What failed:
-- Root cause category: branch process | metadata mismatch | permission model | code defect | deployment process
+- Root cause category: branch process | metadata mismatch | permission model | code defect | deployment process | cli usage | mcp contract
 - Detection that would have caught it earlier:
 - Guardrail to prevent recurrence:
+- Repro command(s):
+- Verification command(s):
 - Evidence: deploy id / PR / commit
 - Stable identifiers: file path(s) / deploy id / PR id / ticket id
 - Confidence: low | medium | high

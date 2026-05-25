@@ -83,6 +83,14 @@ if [[ -d "team-memory" ]]; then
   git add team-memory
 fi
 
+if [[ -d "skills" ]]; then
+  git add skills
+fi
+
+if [[ -d "connectors" ]]; then
+  git add connectors
+fi
+
 echo "[5/6] Show staged status..."
 git status --short
 

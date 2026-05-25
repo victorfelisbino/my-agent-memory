@@ -93,3 +93,183 @@ Your approach is valid and market-aligned. The opportunity is no longer "memory 
 
 - GitHub unauthenticated API rate limits were encountered during deeper counting queries.
 - Despite rate limits, the sample size and category spread are strong enough to confirm this is an established ecosystem.
+
+## Update (2026-05-24): Cross-language, CLI, and MCP memory
+
+### New question
+
+Can this framework reliably improve outcomes across different programming languages, CLI tools, and MCP servers over time?
+
+### Best answer
+
+Yes, if memory entries are captured as verifiable execution patterns instead of generic notes.
+
+The biggest predictor of quality is not memory volume. It is whether each stored lesson includes:
+
+1. Execution context (language/runtime/tooling)
+2. Reproducible command(s)
+3. Verification command(s)
+4. Evidence and freshness metadata
+
+Without those four fields, cross-language retrieval drifts into vague advice.
+
+### Recommended memory unit (portable lesson card)
+
+For each incident or win, store:
+
+- Language(s): e.g., Apex, TypeScript, C#
+- Runtime/toolchain: e.g., Node 20, .NET 8, Java 17
+- CLI/tooling: e.g., sf, git, npm, dotnet
+- MCP servers involved: names + purpose
+- Environment fingerprint: OS + shell + CLI versions
+- Repro command: exact command that failed or produced signal
+- Verify command: exact command that confirmed the fix
+- Evidence: PR/deploy/log id
+- Confidence + last-verified + re-verify-by
+
+### Retrieval strategy that works best
+
+At query time, rank snippets by this order:
+
+1. Same domain (Salesforce/MuleSoft/General)
+2. Same language and runtime
+3. Same CLI or MCP server
+4. Freshness and confidence
+5. Evidence presence
+
+This avoids a common failure mode where a correct pattern for one language or CLI is incorrectly applied to another.
+
+### Governance recommendation
+
+Promote lessons from personal memory to shared docs only when there are at least two successful reuses in different sessions and one explicit verification command is present.
+
+### Expected result
+
+If applied consistently, this framework should reduce:
+
+- repeated setup mistakes across languages,
+- command-line drift,
+- MCP integration hallucinations,
+- and back-and-forth clarification turns.
+
+## Update (2026-05-24): Token usage reduction research
+
+### Question
+
+How do we reduce token usage without lowering solution quality?
+
+### Best findings
+
+1. Reduce turns first, tokens second.
+- A single extra clarification turn usually costs more than saving 100-300 prompt tokens.
+
+2. Structured task routing beats generic context.
+- Compact, typed headers (task type, complexity, domain) help auto-routing pick the cheapest viable model.
+
+3. Retrieval precision is cheaper than retrieval volume.
+- Fewer, high-confidence snippets outperform large context dumps for both quality and cost.
+
+4. Verification-driven prompts prevent costly retries.
+- Asking for evidence and explicit verification commands reduces "looks right but fails" loops.
+
+### Experiment design (framework-level)
+
+Run the same 10 repeat tasks in three modes:
+
+1. Baseline
+- No memory brief.
+
+2. Full brief
+- `summon-memory` default mode.
+
+3. Compact brief
+- `summon-memory -Compact -Preflight`.
+
+Track for each run:
+
+- Turn count to resolution
+- Total tokens (input + output)
+- Time to first correct action
+- Rework count (wrong command/code path retries)
+- Manual model override (yes/no)
+
+### Success thresholds
+
+Adopt compact-by-default if all are true over one week:
+
+1. Median turns do not increase.
+2. Rework count does not increase.
+3. Total tokens drop by at least 25% on standard tasks.
+
+### Practical recommendation for this repo
+
+1. Keep `-Compact` as default for trivial/standard tasks.
+2. Use full brief only for complex or cross-system work.
+3. Keep preflight instructions that enforce scope and batched questions.
+4. Periodically tune classifier rules in `summon-memory.ps1` based on override and retry data.
+
+## Update (2026-05-25): Deep-dive on Anthropic small-business plugin pack
+
+### Source
+
+- X post reference provided by user
+- Repository identified from post metadata: https://github.com/anthropics/knowledge-work-plugins
+- Deep-dive focus: `small-business` plugin layout and skill design
+
+### Why this repo matters
+
+This is a high-signal implementation because it combines:
+
+1. A large, structured skill library
+2. Connector contracts via MCP
+3. Workflow commands that chain multiple skills
+4. A natural-language router so users do not need to memorize command names
+
+### Architecture pattern observed
+
+Per plugin:
+
+1. `.claude-plugin/plugin.json` (manifest)
+2. `.mcp.json` (connectors)
+3. `commands/` (explicit workflows)
+4. `skills/` (auto-invoked expertise)
+
+Small-business pack specifics:
+
+- 15 commands and 15 atomic skills
+- Command docs include trigger phrases, required/optional connectors, and approval gates
+- Skills include explicit failure handling and graceful-degradation behavior when connectors are missing
+
+### What we should adopt into this framework
+
+1. Add a command layer above skills for multi-step workflows
+- Skills answer "how to do one thing".
+- Commands answer "how to complete the whole job".
+
+2. Add trigger-phrase examples in each skill/command
+- Improves routing and lowers user prompt friction.
+
+3. Add required-vs-optional connector matrices
+- Makes capability boundaries explicit and reduces hidden assumptions.
+
+4. Enforce approval gates in workflow docs
+- Include explicit "wait for confirmation" steps before risky actions.
+
+5. Define graceful degradation behavior
+- For each connector/tool failure, document reduced-mode path and caveats.
+
+### Cautions
+
+1. Command explosion can create maintenance burden.
+2. Verbose instructions can increase token usage if retrieval is not scoped.
+3. Business-domain templates should be adapted carefully for engineering workflows.
+
+### Recommendation
+
+Keep our current layer progression and extend it in this order:
+
+1. principles + domains + lessons (already in place)
+2. skills + connectors (now in place)
+3. commands + router templates (next step)
+
+This preserves simplicity while moving toward a plugin-grade execution model.
