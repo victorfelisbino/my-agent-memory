@@ -95,6 +95,8 @@ foreach ($f in $frameworkFiles) {
 
 if (Test-Path '.\team-memory') { git add team-memory }
 if (Test-Path '.\domains')     { git add domains }
+if (Test-Path '.\skills')      { git add skills }
+if (Test-Path '.\connectors')  { git add connectors }
 
 Write-Host "[5/6] Show staged status..."
 git status --short

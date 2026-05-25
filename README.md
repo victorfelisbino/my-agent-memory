@@ -115,6 +115,19 @@ Manual but one-command, with hard caps:
 - [loop.ps1](loop.ps1) / [loop.sh](loop.sh) — one command, six verbs: `idea`, `start`, `promise`, `wait`, `done`, `show`. Every capture also writes to `observations.jsonl`.
 - `goals.md`, `decision-journal.md`, `performance-map.md` — longer-arc tracking.
 
+## Skills and connectors layer
+
+For repeatable outcomes, use skills and connector contracts:
+
+- [skills/](skills/) — outcome-focused execution packs (steps, verification, failure modes)
+- [connectors/](connectors/) — integration setup contracts (auth, verification, fallback)
+
+Use this rule:
+
+1. Use `skills/` when the job is known and repeatable.
+2. Use `domains/` when you need broad domain guidance and decision context.
+3. Use lessons/templates for incident capture and future promotion.
+
 ## How the layers connect
 
 ```
@@ -223,6 +236,8 @@ See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + t
 - Ecosystem landscape: [docs/memory-ecosystem-research-2026-05-15.md](docs/memory-ecosystem-research-2026-05-15.md)
 - Practical adoption protocol: [docs/memory-adoption-playbook.md](docs/memory-adoption-playbook.md)
 - Lesson capture standard: [lesson-template.md](lesson-template.md) and [team-memory/templates/shared-lesson-template.md](team-memory/templates/shared-lesson-template.md)
+- Skills templates and starter packs: [skills/README.md](skills/README.md)
+- Connector contracts: [connectors/README.md](connectors/README.md)
 
 ## Why this exists
 
