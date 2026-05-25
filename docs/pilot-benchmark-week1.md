@@ -14,8 +14,15 @@ Validate two outcomes in one week:
 
 - Owner: @victorfelisbino
 - Pilot users: add 2-3 handles
-- Start date: YYYY-MM-DD
-- End date: YYYY-MM-DD
+- Start date: 2026-05-25
+- End date: 2026-05-29
+
+## Kickoff status (Day 1)
+
+- [x] Tracking issues open (#6 and #7)
+- [ ] Pilot users assigned (2-3)
+- [ ] Daily owner check-in time confirmed
+- [ ] Benchmark task list finalized
 
 ## Daily routine (per pilot user)
 
@@ -30,16 +37,16 @@ Use recurring tasks from your real workflow. Keep them stable for all 3 modes.
 
 | Task ID | Task description | Domain | Complexity |
 |---|---|---|---|
-| T1 |  |  |  |
-| T2 |  |  |  |
-| T3 |  |  |  |
-| T4 |  |  |  |
-| T5 |  |  |  |
-| T6 |  |  |  |
-| T7 |  |  |  |
-| T8 |  |  |  |
-| T9 |  |  |  |
-| T10 |  |  |  |
+| T1 | Triage Salesforce deploy failure from deploy id to verified fix | Salesforce | standard |
+| T2 | Validate branch readiness for QA (commit diff + deploy status) | Salesforce | standard |
+| T3 | Run PR risk review and produce severity-ranked findings | General | standard |
+| T4 | Execute MuleSoft API rollout smoke-check workflow | MuleSoft | complex |
+| T5 | Configure and verify one connector using connector template | General | trivial |
+| T6 | Generate Monday business/engineering brief from current signals | General | standard |
+| T7 | Capture one reusable lesson from real incident with evidence | General | trivial |
+| T8 | Run compact summon-memory preflight for a cross-system task | General | standard |
+| T9 | Update router intent mapping after one observed misroute | General | standard |
+| T10 | Perform end-to-end workflow command run with approval gate | Salesforce | complex |
 
 ## Modes to run
 
