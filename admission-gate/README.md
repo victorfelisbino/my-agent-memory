@@ -19,26 +19,32 @@ The kill switch fires if the scoring function cannot beat random (50/50) on the 
 - [`extract-corpus.ps1`](extract-corpus.ps1) — pulls top-level bullets from real .md files in the repo into a JSONL corpus, so the scorer can be aimed at real memory (not just the synthetic fixture). Output is gitignored — regenerate on demand.
 - [`score-memory.sh`](score-memory.sh) — parity stub that delegates to `pwsh`.
 
-## Current baseline (v1, 20-item fixture)
+## Current baseline (v2, 40-item fixture)
 
 ```
-total       : 20
-accuracy    : 100%   (random baseline: 50.0%)
-junk recall : 100%   (Wave 3 exit: >= 80%)
-good recall : 100%   (Wave 3 exit: >= 80%)
+total       : 40
+accuracy    : 95%   (random baseline: 50.0%)
+junk recall : 90%   (Wave 3 exit: >= 80%)
+good recall : 100%  (Wave 3 exit: >= 80%)
 ```
 
-**A 100% score on a 20-item fixture is not a victory — it's a known overfitting warning.** The scorer was tuned in three iterations using this fixture as ground truth. The next step (grow the fixture toward 100 items with new junk shapes drawn from real engineering memory) will deliberately push these numbers down so the actual blind spots become visible.
+Fixture grew from 20 (v1) to 40 (v2) and accuracy dropped 100% -> 95% -- as designed. The v2 fixture intentionally adds 10 new junk shapes drawn from real engineering-memory failure modes, and surfaced two scorer blind spots:
+
+- `reject-15` named-person-preference ("Tom from accounting prefers the old layout") -- needs proper-noun / personal-preference detection.
+- `reject-16` generic-world-noise ("Coffee was cold this morning and the office was loud") -- current world-noise pattern is keyed on a small wordlist (sunny/raining/wifi/weather) and does not generalize.
+
+These two are the **next iteration's only targets** and are documented as known misses rather than hidden behind a percentage.
 
 Iteration history:
 - v1 (20-item fixture, stub rules): 75 / 100 / 50.
 - Iter 1 (real-corpus extractor; reusability rule stopped penalizing bare technical vocabulary like "branch"/"repo"/"src"): 80 / 100 / 60.
-- Iter 2 (lower baseline rewards so vague items can dip negative; tautology penalty -0.5 → -1.0; new heartbeat / still-alive / sync-interval pattern): 95 / 100 / 90.
-- Iter 3 (contradiction-shape with phrase-overlap detection — distinguishes `always X; never X` from `always X; never Y`): **100 / 100 / 100**.
+- Iter 2 (lower baseline rewards so vague items can dip negative; tautology penalty -0.5 -> -1.0; new heartbeat / still-alive / sync-interval pattern): 95 / 100 / 90.
+- Iter 3 (contradiction-shape with phrase-overlap detection): 100 / 100 / 100 on v1.
+- Iter 4 (v1 -> v2 fixture growth +20 items; new rules for placeholder/TODO, boot-completion, UI-event, non-content hedge, stale-status, anecdotal-singleton; threshold tightened from `>= 0` to `> 0`): **95 / 100 / 90** on v2 (two documented misses).
 
-Unlabeled run over the current real-memory corpus (~403 items extracted from this repo): 0% rejection, mean ~0.65, all items above the keep threshold. The phrase-overlap contradiction check produces no false positives on legitimate dual-rule memories.
+Unlabeled run over the current real-memory corpus (~403 items extracted from this repo): 0% rejection, min 0.1, mean 0.65. The new rules did not produce any false rejections on real memory.
 
-The **honest next milestone** is not "keep 100%" — it's "grow the fixture to ~100 items, expose what the scorer doesn't catch, and iterate from a real baseline." 100% on 20 items is one data point; 80%+ on 100 items is the Wave 3 exit criterion.
+The **honest next milestones** are: close the two v2 misses (iter 5), then continue growing the fixture toward the Wave 3 exit criterion (>=100 items). 95% on 40 items is a stronger signal than 100% on 20 items was, but neither is the finish line.
 
 ## Honesty contract
 
