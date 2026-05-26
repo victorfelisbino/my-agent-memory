@@ -22,7 +22,7 @@
   Exit codes: 0 ok, 2 fixture missing/malformed, 3 accuracy below threshold.
 #>
 param(
-  [string] $Fixture    = "admission-gate/fixtures/memories-v3.jsonl",
+  [string] $Fixture    = "admission-gate/fixtures/memories-v4.jsonl",
   [switch] $Verbose,
   [int]    $FailUnder  = 0,
   [switch] $Unlabeled,
@@ -221,6 +221,38 @@ function Score-Actionability([string]$t) {
   # whether|not sure if|should I|do we need|can we use". A memory that is
   # itself a question hasn't been resolved into a rule yet.
   if ($lc -match '^(wondering|not sure)\s+(whether|if)\b|\b(should i|do we need|can we use|what is the best way to)\b') { $score -= 1.5 }
+  # Status-update ping (iter 7): "Status: OK", "nothing to report", "all
+  # systems operational/nominal/green", "checked in", "everything is fine",
+  # "just a (quick) update / check-in". Heartbeat-style chat noise without
+  # a portable rule. Catches "Status: OK. Nothing to report." and
+  # "GitHub status page shows all systems operational".
+  if ($lc -match '^\s*(status|update)\s*[:\-]|\b(nothing to report|all systems (operational|nominal|green)|everything (is fine|looks good)|just a (quick )?(update|check[- ]?in))\b') { $score -= 1.5 }
+  # Self-reminder shape (iter 7): "remember to <verb>". Personal note, not
+  # a portable engineering rule. Catches "Remember to drink water during
+  # long debugging sessions".
+  if ($lc -match '\bremember to\b') { $score -= 1.5 }
+  # Hedge stacking (iter 7): two or more soft hedges in the same bullet
+  # ("might ... possibly", "may ... maybe", "could ... probably"). Single
+  # hedges appear in legitimate engineering memory ("may not exist"); a
+  # stack signals pure speculation. Requires one from each group.
+  if (($lc -match '\b(might|may|could|perhaps)\b') -and ($lc -match '\b(possibly|maybe|probably|likely)\b')) { $score -= 1.5 }
+  # Personal scheduling (iter 7): "I have/got a (meeting|standup|call|sync|
+  # 1:1|appointment)". Calendar status, not memory.
+  if ($lc -match '\bi\s+(have|got|''ve got)\s+(a\s+)?(meeting|standup|call|sync|1:1|appointment)\b') { $score -= 1.5 }
+  # Greeting / sign-off (iter 7): "Hi team / hello all / hey everyone" or
+  # "hope (everyone|you all) is doing well". Chat-thread artifacts.
+  if ($lc -match '^(hi|hello|hey)\s+(team|all|everyone|folks)\b|\bhope (everyone|you all|y''all)\s+(is|are)\s+(doing\s+)?(well|great|good)\b') { $score -= 1.5 }
+  # Side-note / off-topic (iter 7): "side note", "off topic", "btw", "by
+  # the way", "fun fact". The bullet is explicitly tangential.
+  if ($lc -match '\b(side note|off[- ]topic|btw|by the way|fun fact)\b') { $score -= 1.5 }
+  # Pure user-speculation (iter 7): "the user (probably|likely|maybe|
+  # presumably|might have) <verb>". Guessing about intent is not memory.
+  if ($lc -match '\b(the\s+)?(user|customer|client)\s+(probably|likely|maybe|presumably|might have)\b') { $score -= 1.5 }
+  # Restated documentation (iter 7): "according to the docs / documentation
+  # / spec / manual / readme". Pointing at docs is not a memory; the rule
+  # extracted from the docs would be. Allows an optional adjective between
+  # "the/our" and the doc-type word ("according to the official docs").
+  if ($lc -match '\baccording to (the |our )?(\w+\s+)?(docs|documentation|spec|specification|manual|readme)\b') { $score -= 1.5 }
   # Cap.
   if ($score -gt  1.0) { $score =  1.0 }
   if ($score -lt -1.0) { $score = -1.0 }

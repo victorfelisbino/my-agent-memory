@@ -103,6 +103,13 @@ foreach ($f in $files) {
     $body = $body.Trim()
     if ($body.Length -lt $MinLength) { continue }
 
+    # Skip heading-only sub-bullets (iter 7): a short line ending in ":" with
+    # no content after is a section header, not a memory. Iter 6 surfaced
+    # this when the heading-only scorer rule started rejecting 22 such
+    # bullets on the real corpus; the right fix is to not emit them in the
+    # first place. Keep ":" mid-text intact (only matches trailing colons).
+    if ($body -match '^.{1,80}:\s*$') { continue }
+
     $counter++
     $items.Add([pscustomobject]@{
       id     = "real-$counter"
