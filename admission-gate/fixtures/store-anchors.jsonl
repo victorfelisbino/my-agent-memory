@@ -1,0 +1,6 @@
+{"id":"anchor-01","text":"Always rebase feature branches before merging to main."}
+{"id":"anchor-02","text":"Never commit secrets or API keys to the repository."}
+{"id":"anchor-03","text":"Prefer Permission Sets over Profiles in Salesforce."}
+{"id":"anchor-04","text":"Avoid SOQL queries inside Apex for loops; bulkify and use collections."}
+{"id":"anchor-05","text":"Always use Document setter when loading large files into AvaloniaEdit."}
+{"id":"anchor-06","text":"Never disable git hooks with --no-verify when committing."}

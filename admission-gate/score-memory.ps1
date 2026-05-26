@@ -26,7 +26,8 @@ param(
   [switch] $Verbose,
   [int]    $FailUnder  = 0,
   [switch] $Unlabeled,
-  [int]    $ShowWorst  = 15
+  [int]    $ShowWorst  = 15,
+  [string] $Store      = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -116,9 +117,103 @@ function Score-Atomicity([string]$t) {
   return $score
 }
 
-# Novelty: stubbed (no memory store wired in yet). Neutral so it does not
-# bias the baseline. Hooks into the future store check.
+# ---------------------------------------------------------------------------
+# Contradiction-against-store (iter 10).
+#
+# Extract a (polarity, subject-token-set) claim signature from a memory line.
+# Markers checked in order; multi-word markers first so "do not X" beats a
+# stray "X" later. Polarity:
+#   + (asserts X is true / should be done)   : always | prefer | ensure | require
+#   - (asserts X is false / should be avoided): do not | don't | never | avoid
+# When -Store is provided, Score-Novelty compares each candidate's claim
+# against every loaded anchor: same subject (>= 2 shared content tokens)
+# AND opposite polarity -> return -2.0 (a hard reject that overcomes the
+# best-case +1.6 keep score). Same polarity = reinforcement; ignored.
+# ---------------------------------------------------------------------------
+
+$claimStopwords = @(
+  'the','a','an','some','any','to','for','on','in','of','and','or','but',
+  'with','that','it','its','this','these','those','your','their','my','our',
+  'do','be','have','make','take','get','give','call','as','at','by',
+  'is','are','was','were','when','if','before','after','from','into',
+  'instead','over','under','about','because','since','so','then','than',
+  'too','very','not','no','only','also','both','either','neither',
+  'can','will','would','should','must','may','might','could',
+  'you','we','they','he','she','i','them','us','here','there'
+)
+
+# Multi-word markers first.
+$claimMarkers = @(
+  @{ Marker = 'do not'; Polarity = '-' },
+  @{ Marker = "don't";  Polarity = '-' },
+  @{ Marker = 'never';  Polarity = '-' },
+  @{ Marker = 'avoid';  Polarity = '-' },
+  @{ Marker = 'always'; Polarity = '+' },
+  @{ Marker = 'prefer'; Polarity = '+' },
+  @{ Marker = 'ensure'; Polarity = '+' },
+  @{ Marker = 'require';Polarity = '+' }
+)
+
+function Get-Claim([string]$t) {
+  $lc = $t.ToLowerInvariant()
+  foreach ($m in $claimMarkers) {
+    $pattern = "\b" + [regex]::Escape($m.Marker) + "\b\s+(.+)"
+    if ($lc -match $pattern) {
+      $tail = $Matches[1]
+      $tokens = [regex]::Matches($tail, "[a-z0-9_-]+") | ForEach-Object { $_.Value }
+      $subject = New-Object System.Collections.Generic.HashSet[string]
+      foreach ($tok in $tokens) {
+        if ($tok.Length -le 1) { continue }
+        if ($claimStopwords -contains $tok) { continue }
+        [void] $subject.Add($tok)
+      }
+      if ($subject.Count -eq 0) { return $null }
+      return [pscustomobject]@{ Polarity = $m.Polarity; Subject = $subject }
+    }
+  }
+  return $null
+}
+
+function Load-StoreClaims([string]$path) {
+  $claims = @{}
+  if ([string]::IsNullOrWhiteSpace($path)) { return $claims }
+  if (-not (Test-Path $path)) {
+    [Console]::Error.WriteLine("Store fixture not found: $path")
+    exit 2
+  }
+  $storeLines = Get-Content $path -Encoding UTF8 | Where-Object { $_.Trim() -ne '' -and -not $_.TrimStart().StartsWith('#') }
+  foreach ($line in $storeLines) {
+    $rec = $null
+    try { $rec = $line | ConvertFrom-Json } catch {
+      [Console]::Error.WriteLine("Malformed store JSONL line: $line")
+      exit 2
+    }
+    $c = Get-Claim $rec.text
+    if ($c) { $claims[$rec.id] = $c }
+  }
+  return $claims
+}
+
+$script:StoreClaims = Load-StoreClaims $Store
+$script:LastContradictionAnchor = ''
+
+# Novelty (iter 10): contradiction-against-store. Neutral (0.0) when no
+# store is loaded -- preserves the existing labeled-fixture baseline.
 function Score-Novelty([string]$t) {
+  $script:LastContradictionAnchor = ''
+  if (-not $script:StoreClaims -or $script:StoreClaims.Count -eq 0) { return 0.0 }
+  $cand = Get-Claim $t
+  if (-not $cand) { return 0.0 }
+  foreach ($anchorId in $script:StoreClaims.Keys) {
+    $anc = $script:StoreClaims[$anchorId]
+    if ($anc.Polarity -eq $cand.Polarity) { continue }
+    $overlap = 0
+    foreach ($tok in $cand.Subject) { if ($anc.Subject.Contains($tok)) { $overlap++ } }
+    if ($overlap -ge 2) {
+      $script:LastContradictionAnchor = $anchorId
+      return -2.0
+    }
+  }
   return 0.0
 }
 
@@ -310,6 +405,13 @@ function Score-Memory([string]$text) {
   $reason = @()
   if ($r -lt 0) { $reason += "reusability=$r" }
   if ($a -lt 0) { $reason += "atomicity=$a" }
+  if ($n -lt 0) {
+    if ($script:LastContradictionAnchor) {
+      $reason += "novelty=$n (contradicts-store=$($script:LastContradictionAnchor))"
+    } else {
+      $reason += "novelty=$n"
+    }
+  }
   if ($c -lt 0) { $reason += "actionability=$c" }
   return [pscustomobject]@{
     reusability   = $r

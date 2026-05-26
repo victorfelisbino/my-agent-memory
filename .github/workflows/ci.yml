@@ -93,6 +93,17 @@ jobs:
         shell: pwsh
         run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/memories-v4.jsonl
 
+      - name: Run PowerShell scorer on v5 fixture with store (contradiction-against-store)
+        shell: pwsh
+        run: ./admission-gate/score-memory.ps1 -Fixture admission-gate/fixtures/memories-v5.jsonl -Store admission-gate/fixtures/store-anchors.jsonl -FailUnder 85
+
+      - name: Run Python scorer on v5 fixture with store (contradiction-against-store)
+        run: python admission-gate/score_memory.py --fixture admission-gate/fixtures/memories-v5.jsonl --store admission-gate/fixtures/store-anchors.jsonl --fail-under 85
+
+      - name: Cross-language parity (v5 fixture with store)
+        shell: pwsh
+        run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/memories-v5.jsonl -Store admission-gate/fixtures/store-anchors.jsonl
+
       - name: Re-extract real-memory corpus and score (unlabeled smoke)
         shell: pwsh
         run: |
@@ -102,4 +113,8 @@ jobs:
       - name: Cross-language parity (real corpus)
         shell: pwsh
         run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/real-memory.ci.jsonl
+
+      - name: Cross-language parity (real corpus with store)
+        shell: pwsh
+        run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/real-memory.ci.jsonl -Store admission-gate/fixtures/store-anchors.jsonl
 
