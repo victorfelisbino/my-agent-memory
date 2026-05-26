@@ -36,18 +36,22 @@ Three columns:
 
 - Run the anti-hallucination test harness on real workflows and publish first-party results (Wave 1 exit criterion).
 - Read the signal from [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10) (Wave 2 exit).
-- **Competence map.** A `competence-map.yml` at repo root + generator script + `docs/competence-map.md` that publishes what this brain claims to know, at what depth, with computed evidence panels (file count, heading count, last git touch). Depth is author-set; the generator refuses to render dishonest claims (e.g. `expert` with zero evidence). Two-repo merge with the personal sibling is the follow-up (Wave 2.5).
-- Decision gate: pivot, contribute & integrate, or archive (Wave 3).
-- "Copilot Guardrail Layer" on top of mem0 / OpenMemory as MCP server, if signal is good (Wave 4-A).
-- Upstream PRs to `memory-bank-mcp` and OpenMemory if signal is mixed (Wave 4-B).
-- Transfer-test harness, router-hints measurement loop, promotion telemetry, public benchmarks (Wave 5).
-- Real CONTRIBUTING / CHANGELOG / release cadence / outside contributor (Wave 6).
+- PR quality-gate middleware to `memory-bank-mcp` (Wave 2, Probe B — after Wave 3 prototype exists).
+- **Competence map.** `competence-map.yml` + generator script + `docs/competence-map.md`. Depth author-set; generator refuses dishonest claims. Two-repo merge follow-up (Wave 2.5).
+- **Memory admission gate + dashboard** — scoring function that rejects low-value memories before storage. Feedback loop prevention. Contradiction detection. Local web UI showing live scoring, rejections, contradictions, and memory health (Wave 3).
+- Decision gate: pivot, contribute & integrate, or archive (Wave 4).
+- **MCP quality-gate server** wrapping the official MCP Memory server with admission scoring, contradiction detection, staleness decay, anti-hallucination injection, and competence-aware retrieval. Copilot-native path via hook/extension (Wave 5-A).
+- Upstream PRs to `memory-bank-mcp` and mem0 (#4573 quality gate) if signal is mixed (Wave 5-B).
+- Transfer-test harness, LoCoMo/BEAM benchmarks, promotion telemetry, competence map v2, Claude Code hook integration, public benchmarks (Wave 6).
+- Real CONTRIBUTING / CHANGELOG / release cadence / outside contributor (Wave 7).
 
 ## Things the docs deliberately do NOT claim
 
-- That this is a framework. The word is reserved for Wave 4 onward.
+- That this is a framework. The word is reserved for Wave 5 onward.
 - That it has users beyond me.
 - That the token-savings numbers in [copilot-auto-mode.md](copilot-auto-mode.md) are measured benchmarks. They're observed ranges with a documented measurement protocol you can run yourself.
 - That `team-memory/canonical/` is canonical anything. It's an empty folder with an aspirational name.
+- That the quality gate exists today. It's designed and the scoring criteria are defined, but no code implements it yet. That's Wave 3.
+- That we compete with mem0 / Letta / Zep on storage. We don't store memories — we filter them.
 
 If you find a claim on the site that contradicts this page, the site is wrong. Open an issue.

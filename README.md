@@ -3,14 +3,19 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/victorfelisbino/my-agent-memory/ci.yml?branch=main)](https://github.com/victorfelisbino/my-agent-memory/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-One person's working version of a two-repo memory pattern for AI coding agents (mostly GitHub Copilot). It is **not a framework yet** &mdash; that word is on the [roadmap](docs/roadmap.md), Wave 4 onward. Today it's a curated, shared layer of reusable rules, playbooks, and scripts, paired with a separate **private** personal repo that holds active state.
+**The quality gate for AI agent memory.** Not another storage layer &mdash; the opinionated filter that prevents your agent's memory from becoming 97% garbage.
 
-The two-repo split exists so this side can be shared safely without leaking anyone's working state. The shared side is what an agent reads from; the private side is what you write to as you work.
+mem0 (56.8k stars) has a [documented 97.8% junk rate](https://github.com/mem0ai/mem0/issues/4573) in production. The official MCP Memory server stores everything with no filter. Claude Code's auto-memory relies on LLM judgment alone. Every memory system stores indiscriminately. This project builds the part that says **no**.
+
+Today it's one person's working version of a two-repo memory pattern for AI coding agents (Copilot, Cline, Cursor, Claude Code). It is **not a framework yet** &mdash; that word is on the [roadmap](docs/roadmap.md), Wave 5 onward. The shared side holds curated rules, playbooks, quality-gate designs, and scripts; a separate **private** repo holds active state.
 
 What this repo solves, in plain language:
 
-1. **Stop relearning the same lesson.** When the same shape of bug or decision shows up twice, the principle gets distilled, promoted here, and stays for next time.
-2. **Make Copilot start warm.** Lessons, guardrails, and decisions already paid for can bias every new session through a context brief.
+1. **Stop storing garbage.** A memory admission gate that scores candidate memories on reusability, atomicity, novelty, and actionability &mdash; and rejects the ones that fail. (Building &mdash; Wave 3.)
+2. **Advertise what this brain knows.** A competence map that publishes expertise depth with computed evidence &mdash; honest by construction, refuses to render unsubstantiated claims. (Building &mdash; Wave 2.5.)
+3. **Stop relearning the same lesson.** When the same shape of bug or decision shows up twice, the principle gets distilled, promoted here, and stays for next time.
+4. **Make your agent start warm.** Lessons, guardrails, and decisions already paid for bias every new session through a context brief.
+5. **Stop hallucination feedback loops.** Prevent recalled memories from being re-extracted as "new" observations &mdash; the failure mode that created 668 copies of a single hallucination in mem0.
 
 What to read first:
 
