@@ -21,6 +21,7 @@ Three columns:
 - **Documented principles, gotchas, and domain playbooks** &mdash; `thinking-principles.md`, `decision-framework.md`, `cognitive-bias-checks.md`, `gotchas.md`, `salesforce-debugging.md`, `domains/`. These are the things `summon-memory` ranks and pulls from.
 - **Anti-hallucination skill (load-it-yourself).** Packaged from `anti-hallucination-protocol.md` into [`skills/general/anti-hallucination/`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/) with copy-paste block, per-agent install paths (Copilot / Cline / Cursor), a five-prompt before/after test harness, a results template, and a redacted [example results file](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/results-examples/example-redacted.md). See [Anti-hallucination skill](anti-hallucination-skill.md). Effectiveness in any specific setup still requires running the harness; real-run results across agents not yet aggregated.
 - **Public probe.** Anti-hallucination skill submitted upstream to [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10), open and awaiting review (Wave 2). Outcome is the real signal; PR being open is just the probe being live.
+- **Competence map.** [`competence-map.yml`](https://github.com/victorfelisbino/my-agent-memory/blob/main/competence-map.yml) at the repo root + [`scripts/generate-competence-map.ps1`](https://github.com/victorfelisbino/my-agent-memory/blob/main/scripts/generate-competence-map.ps1) generator + [Competence map](competence-map.md) page. Depth is author-set; the generator refuses to render `expert` claims without backing evidence and downgrades anything untouched for 90+ days to dormant. Seven shared-scope entries seeded. Two-repo merge with the sibling personal repo + Actions cron are roadmap follow-ups.
 - **mkdocs site.** Builds clean with `--strict`, deploys via GitHub Pages workflow.
 
 ## Documented only (NOT yet shipped end-to-end)
@@ -37,7 +38,6 @@ Three columns:
 - Run the anti-hallucination test harness on real workflows and publish first-party results (Wave 1 exit criterion).
 - Read the signal from [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10) (Wave 2 exit).
 - PR quality-gate middleware to `memory-bank-mcp` (Wave 2, Probe B — after Wave 3 prototype exists).
-- **Competence map.** `competence-map.yml` + generator script + `docs/competence-map.md`. Depth author-set; generator refuses dishonest claims. Two-repo merge follow-up (Wave 2.5).
 - **Memory admission gate + dashboard** — scoring function that rejects low-value memories before storage. Feedback loop prevention. Contradiction detection. Local web UI showing live scoring, rejections, contradictions, and memory health (Wave 3).
 - Decision gate: pivot, contribute & integrate, or archive (Wave 4).
 - **MCP quality-gate server** wrapping the official MCP Memory server with admission scoring, contradiction detection, staleness decay, anti-hallucination injection, and competence-aware retrieval. Copilot-native path via hook/extension (Wave 5-A).
