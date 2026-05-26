@@ -73,12 +73,14 @@ The auto-router reads this and biases its choice. Empirically the suggested-mode
 
 ## Two modes, two budgets
 
-| Mode    | Snippets | Observations | Active threads | Score breakdown | Typical size |
-|---------|---------:|-------------:|---------------:|----------------:|-------------:|
+| Mode    | Snippets | Observations | Active threads | Score breakdown | Typical size* |
+|---------|---------:|-------------:|---------------:|----------------:|--------------:|
 | full    | 10       | 5            | yes (top 5)    | yes             | ~1000-1500 tokens |
 | compact | 5        | 3            | dropped        | stripped        | ~250-400 tokens |
 
-`full` is for non-trivial work where the brief's signal is worth the tokens. `compact` is the default for quick tasks — same router hints, ~70% fewer tokens.
+<small>*Estimated ranges based on this repo's default brief structure; measure your own with the benchmark protocol below before treating them as exact.</small>
+
+`full` is for non-trivial work where the brief's signal is worth the tokens. `compact` is the default for quick tasks — roughly 60-75% fewer tokens in observed runs.
 
 ```powershell
 .\summon-memory.ps1 -Task "fix the deployment error in staging" -Compact -Preflight
