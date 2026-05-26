@@ -3,6 +3,7 @@
 # created here (e.g. by an older script version or a fresh clone without
 # AGENT_MEMORY_PERSONAL set).
 observations.jsonl
+observations.rejected.jsonl
 observations-archive/
 active-threads.md
 active-memory-brief.md

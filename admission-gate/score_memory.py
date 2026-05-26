@@ -561,6 +561,45 @@ def _parity_dump(items: list[dict], store_claims: dict | None = None, recalled_c
 
 
 # ---------------------------------------------------------------------------
+# Single-item write-path mode (iter 13). Reads one JSON record from stdin,
+# scores it, prints a decision JSON to stdout, and exits 0 (keep) or 3
+# (reject). Used by capture-observation.* to gate writes to observations.jsonl.
+# ---------------------------------------------------------------------------
+
+def _score_one_stdin(store_path: str, recalled_path: str, log_to: str) -> int:
+    raw = sys.stdin.read()
+    try:
+        rec = json.loads(raw)
+    except Exception as exc:
+        print(json.dumps({"error": f"bad-json: {exc}"}))
+        return 2
+    text = rec.get("text") or rec.get("note") or ""
+    if not text:
+        print(json.dumps({"error": "missing text/note"}))
+        return 2
+    store_claims = load_store_claims(store_path)
+    recalled_claims = load_store_claims(recalled_path)
+    s = score_memory(text, store_claims, recalled_claims)
+    out = {
+        "scorer": "py",
+        "decision": s.decision,
+        "total": round(s.total, 2),
+        "reusability": round(s.reusability, 2),
+        "atomicity": round(s.atomicity, 2),
+        "novelty": round(s.novelty, 2),
+        "actionability": round(s.actionability, 2),
+        "reason": s.reason,
+    }
+    print(json.dumps(out))
+    if log_to:
+        log_path = Path(log_to)
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with log_path.open("a", encoding="utf-8") as fh:
+            _write_score_log(fh, rec.get("id", ""), text, s)
+    return 0 if s.decision == "keep" else 3
+
+
+# ---------------------------------------------------------------------------
 # CLI.
 # ---------------------------------------------------------------------------
 
@@ -587,7 +626,11 @@ def main() -> int:
     parser.add_argument("--store", default="", help="Path to anchor JSONL ({id,text}). Enables contradiction-against-store check.")
     parser.add_argument("--recalled", default="", help="Path to recalled-session JSONL ({id,text}). Enables feedback-loop check (iter 11).")
     parser.add_argument("--log-to", default="", help="Append one JSON line per scored item to this path. Used by render-dashboard.ps1 (iter 12).")
+    parser.add_argument("--score-one", action="store_true", help="Read one JSON record from stdin ({text,...}); print decision JSON; exit 0 (keep) or 3 (reject). Iter 13 write-path mode.")
     args = parser.parse_args()
+
+    if args.score_one:
+        return _score_one_stdin(args.store, args.recalled, args.log_to)
 
     _args_fixture = args.fixture
     items = _read_fixture(Path(args.fixture))

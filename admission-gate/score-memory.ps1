@@ -29,7 +29,8 @@ param(
   [int]    $ShowWorst  = 15,
   [string] $Store      = "",
   [string] $Recalled   = "",
-  [string] $LogTo      = ""
+  [string] $LogTo      = "",
+  [switch] $ScoreOne
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,7 +39,7 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot  = Split-Path -Parent $scriptDir
 Set-Location $repoRoot
 
-if (-not (Test-Path $Fixture)) {
+if (-not $ScoreOne -and -not (Test-Path $Fixture)) {
   [Console]::Error.WriteLine("Fixture not found: $Fixture")
   exit 2
 }
@@ -453,6 +454,58 @@ function Score-Memory([string]$text) {
     decision      = $decision
     reason        = ($reason -join '; ')
   }
+}
+
+# ---------------------------------------------------------------------------
+# Single-item write-path mode (iter 13). Reads one JSON record from stdin
+# ({text/note,...}), scores it, prints decision JSON to stdout, and exits
+# 0 (keep) or 3 (reject). Used by capture-observation.ps1 to gate writes.
+# ---------------------------------------------------------------------------
+if ($ScoreOne) {
+  $raw = [Console]::In.ReadToEnd()
+  try { $rec = $raw | ConvertFrom-Json } catch {
+    Write-Output (ConvertTo-Json @{ error = "bad-json: $($_.Exception.Message)" } -Compress)
+    exit 2
+  }
+  $text = $rec.text
+  if (-not $text) { $text = $rec.note }
+  if (-not $text) {
+    Write-Output (ConvertTo-Json @{ error = "missing text/note" } -Compress)
+    exit 2
+  }
+  $storeClaims = Load-StoreClaims $Store
+  $recalledClaims = Load-StoreClaims $Recalled
+  $script:StoreClaims = $storeClaims
+  $script:RecalledClaims = $recalledClaims
+  $s = Score-Memory $text
+  $out = [ordered]@{
+    scorer        = 'ps'
+    decision      = $s.decision
+    total         = [math]::Round($s.total, 2)
+    reusability   = [math]::Round($s.reusability, 2)
+    atomicity     = [math]::Round($s.atomicity, 2)
+    novelty       = [math]::Round($s.novelty, 2)
+    actionability = [math]::Round($s.actionability, 2)
+    reason        = $s.reason
+  }
+  Write-Output (ConvertTo-Json $out -Compress)
+  if ($LogTo) {
+    $logDir = Split-Path -Parent $LogTo
+    if ($logDir -and -not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+    $script:LogFs = [System.IO.File]::AppendText($LogTo)
+    $itemId = if ($rec.id) { $rec.id } else { "" }
+    $snippet = if ($text.Length -gt 240) { $text.Substring(0, 237) + '...' } else { $text }
+    $row = [ordered]@{
+      ts = (Get-Date).ToUniversalTime().ToString('o'); scorer = 'ps'; fixture = '<stdin>'; id = $itemId
+      decision = $s.decision; total = [math]::Round($s.total,2)
+      reusability = [math]::Round($s.reusability,2); atomicity = [math]::Round($s.atomicity,2)
+      novelty = [math]::Round($s.novelty,2); actionability = [math]::Round($s.actionability,2)
+      reason = $s.reason; text = $snippet
+    }
+    $script:LogFs.WriteLine((ConvertTo-Json $row -Compress))
+    $script:LogFs.Dispose()
+  }
+  if ($s.decision -eq 'keep') { exit 0 } else { exit 3 }
 }
 
 # ---------------------------------------------------------------------------
