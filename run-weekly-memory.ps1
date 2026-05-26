@@ -49,6 +49,11 @@ if ((Test-Path '.\lint-memory.ps1') -and (Test-Path '.\team-memory')) {
     .\lint-memory.ps1 -IncludeCanonical
 }
 
+if (Test-Path '.\scripts\generate-competence-map.ps1') {
+    Write-Host "[3a/6] Regenerate competence map..."
+    & .\scripts\generate-competence-map.ps1
+}
+
 Write-Host "[4/6] Stage framework files (shared knowledge, scripts, playbooks)..."
 $frameworkFiles = @(
     'README.md',
@@ -65,6 +70,10 @@ $frameworkFiles = @(
     'docs/memory-adoption-playbook.md',
     'docs/memory-ecosystem-research-2026-05-15.md',
     'docs/copilot-auto-mode.md',
+    'docs/competence-map.md',
+    'competence-map.yml',
+    'scripts/generate-competence-map.ps1',
+    'scripts/generate-competence-map.sh',
     'lint-memory.ps1',
     'lint-memory.sh',
     'capture-observation.ps1',
