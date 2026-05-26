@@ -58,21 +58,20 @@
 - Before adding new lessons, rules, or strategy notes.
 - During weekly review when pruning or promoting knowledge.
 
-## What this framework is
+## What this repo is (today)
 
-- A shared operating system for memory-enabled execution with GitHub Copilot.
-- A place for reusable rules, playbooks, scripts, and verified lessons.
-- A framework repo designed to be safely shared with collaborators.
+- The shared, semantic half of a two-repo memory split &mdash; the part safe to commit and read from publicly.
+- A working set of reusable rules, playbooks, scripts, and lessons that have survived a transfer-test.
 - A decision and learning layer that favors measurable rules over opinion-only notes.
-- A system that captures lessons, promotes verified patterns, and prunes stale guidance.
+- A capture/synthesis/promotion/prune loop, run by one person on a weekly cadence.
 
-## What this framework is not
+## What this repo is not (today)
 
-- Not a personal memory vault.
-- Not a place for active personal working state.
+- Not a framework. The word is aspirational until the [roadmap](../roadmap/) Wave 4+ ships. Today it's one person's working version of the pattern.
+- Not a personal memory vault. Active state lives in a separate private repo.
 - Not a transcript dump or raw research scrapbook.
-- Not a replacement for source systems (ticketing, analytics, CRM, incident tools).
-- Not a one-time static document set; defaults are revisable and time-bounded.
+- Not a hosted product, SaaS, or replacement for source systems.
+- Not a one-time static document set; entries carry confidence and last-verified metadata and are revisable.
 
 ## Always private (never commit here)
 

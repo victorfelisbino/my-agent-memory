@@ -62,6 +62,9 @@
 !!! note "What this is and isn't"
     This is one person's working version of that idea: the shared, semantic layer of a two-repo memory pattern. There are no customers, no production metrics, no team consuming it &mdash; just me running it daily and tightening it weekly so my own agents age into seniority instead of resetting every session. The memory category is crowded (mem0, OpenMemory, cursor-memory-bank, memory-bank-mcp); if you want a polished product or hosted service, use one of those. The specific thing on offer here is the **transfer-test pattern**: keep episodic signal private, promote only what survives the "would this still apply in a language you haven't met yet?" test, and let agents read from the result.
 
+!!! warning "Status, in one paragraph"
+    Today this repo is a curated set of patterns and scripts, not a framework. Several of the most interesting ideas &mdash; auto-injected anti-hallucination, transfer-test promotion, router-hints loop &mdash; are documented but not yet shipped end-to-end. See [Status](status.md) for the real/documented/planned breakdown and the [Roadmap](roadmap.md) for the waves that turn the documented things into shipped things.
+
 ## Pages worth reading
 
 <div class="bento-grid">
@@ -94,5 +97,15 @@
 		<span class="meta">Notes</span>
 		<h3>Memory ecosystem research</h3>
 		<p>Patterns I borrowed from existing memory frameworks and what I deliberately chose not to copy.</p>
+	</a>
+	<a class="bento-card tall" href="status/">
+		<span class="meta">Reality check</span>
+		<h3>Status</h3>
+		<p>What's real today, what's documented-only, what's planned. The single source of truth for what actually works.</p>
+	</a>
+	<a class="bento-card tall" href="roadmap/">
+		<span class="meta">Direction</span>
+		<h3>Roadmap</h3>
+		<p>Six waves from honest baseline to a real guardrail layer for coding agents. Each wave has a kill switch.</p>
 	</a>
 </div>

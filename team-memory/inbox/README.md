@@ -1,12 +1,12 @@
 # Team Memory Inbox
 
-Put candidate lessons here before approval.
+**Status:** Empty. No lessons have been queued for promotion. This folder exists so the structure is visible; the [roadmap](../../docs/roadmap.md) will either populate, repurpose, or remove it.
 
-Naming convention:
+Intended naming convention (when used):
 
 - `YYYY-MM-DD-topic-short-title.md`
 
-Before promotion:
+Intended pre-promotion steps:
 
 1. Fill all template fields.
 2. Run memory lint.

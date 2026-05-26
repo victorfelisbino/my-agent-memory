@@ -1,5 +1,5 @@
 site_name: my-agent-memory
-site_description: A personal toolkit for keeping AI coding agents (mostly Copilot) usefully grounded across sessions.
+site_description: One person's working set of patterns for keeping AI coding agents grounded across sessions. The shared half of a two-repo memory split. Not a framework yet — see the roadmap.
 site_url: https://victorfelisbino.github.io/my-agent-memory/
 
 theme:
@@ -49,5 +49,8 @@ nav:
   - How it works:
       - Memory adoption playbook: memory-adoption-playbook.md
       - Copilot auto-mode: copilot-auto-mode.md
+  - Where this is going:
+      - Status (what's real today): status.md
+      - Roadmap: roadmap.md
   - Notes:
       - Memory ecosystem research: memory-ecosystem-research-2026-05-15.md

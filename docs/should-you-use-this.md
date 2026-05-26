@@ -55,4 +55,4 @@
 4. Either fork this repo as your shared layer, or just steal the parts of the pattern that fit.
 
 !!! tip "What to take first if you're cherry-picking"
-    The two pieces I haven't seen packaged elsewhere are the Copilot router-hints header (see [Copilot auto-mode](../copilot-auto-mode/)) and the anti-hallucination protocol auto-injected by <code>summon-memory</code>. Everything else &mdash; markdown KB, weekly review, decision journal &mdash; is well-trodden territory you can lift from anywhere.
+    The two pieces I haven't seen packaged elsewhere are the Copilot router-hints header (see [Copilot auto-mode](../copilot-auto-mode/)) and the anti-hallucination protocol (`anti-hallucination-protocol.md`) used as injected agent context. The protocol is currently load-it-yourself; auto-injection is a planned Wave 1 item in the [roadmap](../roadmap/). Everything else &mdash; markdown KB, weekly review, decision journal &mdash; is well-trodden territory you can lift from anywhere.

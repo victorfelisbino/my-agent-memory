@@ -102,7 +102,7 @@ Tokens spent on a too-cheap model that drifts dwarf the tokens saved by being ch
 1. **Stay-scoped instruction** in the preflight prompt: *"Do not expand scope without asking."* Cuts unsolicited refactors.
 2. **One-batched-question rule**: *"If required values are org/project-specific, ask for them explicitly (one batched question, not many)."* Cuts back-and-forth round trips.
 3. **Skip-restating instruction**: *"Skip restating context back to me. Go straight to the answer."* Cuts the polite-but-expensive recap.
-4. **Anti-hallucination guardrails** from `anti-hallucination-protocol.md` are auto-included by relevance scoring. Cuts retries caused by invented file paths, APIs, or component names.
+4. **Anti-hallucination guardrails** &mdash; the protocol in `anti-hallucination-protocol.md` documents the rules. Today you have to load it manually (paste it, or reference it from your agent instructions); it is *not* auto-included by `summon-memory`. Making this a one-line opt-in is tracked in the [roadmap](roadmap.md) as Wave 1. When loaded, it cuts retries caused by invented file paths, APIs, or component names.
 
 Even on a heavy model, these four reliably cut a 4-turn conversation to 1-2 turns.
 
