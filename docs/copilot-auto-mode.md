@@ -1,10 +1,10 @@
-# Copilot Auto-Mode Strategy
+# Copilot auto-mode
 
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>Make auto-mode route accurately, not expensively.</h1>
-			<p class="lead">This strategy improves model routing quality by injecting compact, structured task metadata so Copilot picks the cheapest viable model on the first pass.</p>
+			<h1>Get auto-mode to pick the right model the first time.</h1>
+			<p class="lead">Auto-mode is fine on its own, but a few lines of structured task metadata at the top of the prompt nudge it toward the cheapest model that can actually finish the job &mdash; which usually saves more tokens than the discount itself.</p>
 			<div class="pill-row">
 				<span class="pill">Routing hints</span>
 				<span class="pill">Compact by default</span>

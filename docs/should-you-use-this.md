@@ -1,86 +1,58 @@
-# Should You Use This Framework?
+# Is this for you?
 
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>Decide in under 60 seconds.</h1>
-			<p class="lead">Use this framework when you want governed memory, measurable quality signals, and fast context recovery. Skip it when you want unstructured notes.</p>
+			<h1>Probably not, and that's fine.</h1>
+			<p class="lead">This is a personal toolkit, not a product. Copy the parts that fit your day. If none of the signals below feel like you, walk away &mdash; there are slicker memory tools out there.</p>
 			<div class="pill-row">
-				<span class="pill">Go / no-go</span>
-				<span class="pill">Cadence required</span>
-				<span class="pill">Low ambiguity</span>
+				<span class="pill">No install required</span>
+				<span class="pill">Markdown + scripts</span>
+				<span class="pill">Weekly cadence assumed</span>
 			</div>
 		</div>
 		<div class="kpi-panel">
 			<div class="kpi-item">
-				<strong>Adopt now</strong>
-				<span>3+ signals are true and cadence commitment is accepted.</span>
+				<strong>Likely fit</strong>
+				<span>You use Copilot daily, hit the same gotchas more than once, and already keep notes somewhere.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Pilot first</strong>
-				<span>Signals are true but operating rhythm is still unproven.</span>
+				<strong>Maybe</strong>
+				<span>You like the idea but won't commit to a weekly 20-30 minute review. It will rot without one.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Not now</strong>
-				<span>Fewer than 3 signals or no weekly review commitment.</span>
+				<strong>Probably not</strong>
+				<span>You want a polished app, a team product, or zero discipline overhead. Use <a href="https://github.com/mem0ai/mem0">mem0</a> or similar.</span>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="scan-grid">
-	<div class="scan-card">
-		<span class="meta">Fit check</span>
-		<h3>Needs weekly cadence</h3>
-		<p>If you will not review weekly, this system will decay fast.</p>
-	</div>
-	<div class="scan-card">
-		<span class="meta">Core payoff</span>
-		<h3>Faster context recovery</h3>
-		<p>Work resumes with less ramp time and fewer repeated decisions.</p>
-	</div>
-	<div class="scan-card">
-		<span class="meta">Decision rule</span>
-		<h3>Use 3+ true signals</h3>
-		<p>Adopt only when the checklist crosses the threshold.</p>
-	</div>
-</div>
+## Copy something from here if
 
-## Use it if 3 or more are true
+- You use a coding agent (Copilot, Cursor, Cline, etc.) daily and notice it relearning the same things every session.
+- You already fix the same classes of problems repeatedly and want them captured as guardrails the agent actually reads.
+- You're comfortable with plain markdown and a couple of PowerShell or bash scripts &mdash; no SaaS, no DB, no MCP server required to start.
+- You're willing to run a weekly review. The system rots fast without one.
 
-- You manage multiple projects or machines and lose task context.
-- You repeatedly fix the same classes of problems.
-- Your team makes decisions but does not track outcome quality.
-- You want Copilot responses grounded in prior verified lessons.
-- You need a shared way to promote useful knowledge and reject noise.
-- You value weekly review with measurable signals.
+## Skip it if
 
-## Do not use it if these are true
+- You want a hosted product with a UI. There isn't one here.
+- You won't maintain a weekly cadence. The whole promotion/retirement loop depends on it.
+- You're after a turnkey team memory tool. This wasn't built for that and pretending otherwise would be dishonest.
+- You need enterprise governance, SSO, audit logs, etc. Not here.
 
-- You want a notes app with no governance or verification.
-- You do not plan to run weekly review.
-- You are not willing to maintain private/shared data boundaries.
-- You need heavy enterprise workflow orchestration on day one.
+## Realistic time cost
 
-## Expected time commitment
+- **Daily**: under two minutes to capture an observation or run the restart routine, assuming fewer than ten active threads. More threads = longer.
+- **Weekly**: 20-30 minutes to review observations, promote what's reusable, and prune what's stale. This is the part that matters and the first thing to slip.
 
-- Daily: 60-120 seconds to capture open loops and state changes.
-- Weekly: 20-30 minutes to review, promote, and prune rules.
+## If you want to try it
 
-## Fast start path
+1. Skim the [Quick restart routine](../quick-restart-routine/) to see the daily shape.
+2. Read [What stays private](../framework-scope/) before copying anything &mdash; the public/private split matters.
+3. Look at [Memory adoption playbook](../memory-adoption-playbook/) for the promotion rules.
+4. Steal whatever fits. Drop whatever doesn't.
 
-1. Run the quick restart routine.
-2. Run one real task through summon-memory.
-3. Complete one weekly scorecard cycle.
-4. Decide keep/adjust/stop based on measurable outcomes.
-
-## Decision output
-
-!!! success "Adopt now"
-    3+ signals true **and** weekly cadence commitment accepted.
-
-!!! tip "Pilot first"
-    Signals are true but cadence and rules are still unproven. Run the one-week pilot.
-
-!!! warning "Not now"
-    Fewer than 3 signals or no review commitment. Revisit when conditions change.
+!!! tip "What to take first if you're cherry-picking"
+    The Copilot router-hints header (see [Copilot auto-mode](../copilot-auto-mode/)) and the anti-hallucination protocol are the two pieces I haven't seen packaged elsewhere. Everything else is well-trodden territory.
