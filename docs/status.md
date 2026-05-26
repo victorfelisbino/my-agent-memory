@@ -19,7 +19,8 @@ Three columns:
 - **Weekly synthesis loop.** `run-weekly-memory.ps1` runs the learner, captures, synthesizes, lints team-memory, and commits.
 - **Daily scheduled task install (Windows).** `install-scheduled-task.ps1` registers the daily sync.
 - **Documented principles, gotchas, and domain playbooks** &mdash; `thinking-principles.md`, `decision-framework.md`, `cognitive-bias-checks.md`, `gotchas.md`, `salesforce-debugging.md`, `domains/`. These are the things `summon-memory` ranks and pulls from.
-- **Anti-hallucination skill (load-it-yourself).** Packaged from `anti-hallucination-protocol.md` into [`skills/general/anti-hallucination/`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/) with copy-paste block, per-agent install paths (Copilot / Cline / Cursor), a five-prompt before/after test harness, and a results template. See [Anti-hallucination skill](anti-hallucination-skill.md). Effectiveness in any specific setup still requires running the harness; results across agents not yet aggregated.
+- **Anti-hallucination skill (load-it-yourself).** Packaged from `anti-hallucination-protocol.md` into [`skills/general/anti-hallucination/`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/) with copy-paste block, per-agent install paths (Copilot / Cline / Cursor), a five-prompt before/after test harness, a results template, and a redacted [example results file](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/results-examples/example-redacted.md). See [Anti-hallucination skill](anti-hallucination-skill.md). Effectiveness in any specific setup still requires running the harness; real-run results across agents not yet aggregated.
+- **Public probe.** Anti-hallucination skill submitted upstream to [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10), open and awaiting review (Wave 2). Outcome is the real signal; PR being open is just the probe being live.
 - **mkdocs site.** Builds clean with `--strict`, deploys via GitHub Pages workflow.
 
 ## Documented only (NOT yet shipped end-to-end)
@@ -34,7 +35,7 @@ Three columns:
 ## Planned (see [roadmap](roadmap.md))
 
 - Run the anti-hallucination test harness on real workflows and publish first-party results (Wave 1 exit criterion).
-- Public probe: PR the anti-hallucination skill into [`groupzer0/vs-code-agents`](https://github.com/groupzer0/vs-code-agents) (Wave 2).
+- Read the signal from [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10) (Wave 2 exit).
 - Decision gate: pivot, contribute & integrate, or archive (Wave 3).
 - "Copilot Guardrail Layer" on top of mem0 / OpenMemory as MCP server, if signal is good (Wave 4-A).
 - Upstream PRs to `memory-bank-mcp` and OpenMemory if signal is mixed (Wave 4-B).

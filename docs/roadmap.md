@@ -53,11 +53,18 @@ This roadmap moves in waves. Each wave has a single goal, a cheap exit criterion
 
 ---
 
-## Wave 2 — Public probe (2-3 weeks, ~15-20h)
+## Wave 2 — Public probe (2-3 weeks, ~15-20h) &mdash; **IN PROGRESS**
 
 **Goal:** Get one real external data point before investing another 50+ hours. Cheapest credible probe wins.
 
 **Do:** Open a PR contributing the Wave 1 anti-hallucination skill to [`groupzer0/vs-code-agents`](https://github.com/groupzer0/vs-code-agents). They have a first-class skills system, an active maintainer, and explicitly invite contributions. 268 stars = small enough that a real PR gets attention, large enough that signal is meaningful.
+
+**Done:**
+- PR opened: [groupzer0/vs-code-agents#10](https://github.com/groupzer0/vs-code-agents/pull/10) — adds `vs-code-agents/skills/anti-hallucination/SKILL.md` matching their existing skill convention, with a per-agent usage table (Planner / Architect / Implementer / Critic / Code-Reviewer / Security / QA / UAT / DevOps).
+
+**Still to do:**
+- Watch for review / reaction. Clock starts on the PR-open date.
+- Optionally post a recorded harness run against one of their agents in the PR thread if maintainers ask for evidence.
 
 **Track:**
 - Was the PR reviewed within 2 weeks?
