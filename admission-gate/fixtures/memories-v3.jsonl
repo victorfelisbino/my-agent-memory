@@ -1,0 +1,60 @@
+{"id":"keep-01","label":"keep","category":"gotcha","text":"Avalonia DataGrid is a separate NuGet package; must dotnet add package Avalonia.Controls.DataGrid before using it."}
+{"id":"keep-02","label":"keep","category":"domain-rule","text":"Salesforce: always check field-level security after an Apex deploy; profile/permset changes do not deploy automatically with classes."}
+{"id":"keep-03","label":"keep","category":"principle","text":"Never accept 'done' claims without independent verification: build success, targeted tests, and requirement-by-requirement pass/fail."}
+{"id":"keep-04","label":"keep","category":"cross-language","text":"Prefer streaming generators over building a full list when the input may be larger than memory."}
+{"id":"keep-05","label":"keep","category":"tool-quirk","text":"Windows PowerShell 5.1 reads .ps1 files as ANSI unless they have a UTF-8 BOM; use ASCII separators in script literals to avoid mojibake."}
+{"id":"keep-06","label":"keep","category":"heuristic","text":"Promote a memory to expert depth only after 3+ independent uses in different contexts; otherwise it is working at best."}
+{"id":"keep-07","label":"keep","category":"anti-pattern","text":"If a PR has 0 test changes and 100+ line diffs, request tests before reviewing the implementation."}
+{"id":"keep-08","label":"keep","category":"tool-decision","text":"Prefer batched multi-replace over sequential single-replace edits when the edits are independent; one round-trip beats N."}
+{"id":"keep-09","label":"keep","category":"domain-gotcha","text":"MuleSoft DataWeave: 'as Object {}' coerces to an empty object, not null; use 'default {}' on the upstream value if you need a null-safe empty."}
+{"id":"keep-10","label":"keep","category":"process","text":"Before merging a PR that touches CI, run the new job locally against a known-good and known-bad input to confirm exit codes match expectations."}
+{"id":"keep-11","label":"keep","category":"tool-quirk","text":"git log -1 --format=%cs returns the committer date as a plain YYYY-MM-DD string; prefer it over %ci when you want a date-only field that does not drift across timezones."}
+{"id":"keep-12","label":"keep","category":"cross-language","text":"PowerShell closures capture variables by reference; mutating the variable after creating the closure changes what the closure observes when later invoked."}
+{"id":"keep-13","label":"keep","category":"domain-rule","text":"Salesforce: a flow with a deactivated version still counts toward the per-org active-flow limit until it is deleted; deactivation alone does not free the slot."}
+{"id":"keep-14","label":"keep","category":"process","text":"When CI green disagrees with local red, suspect timezone or line-ending normalization before suspecting flake; reproduce locally with TZ=UTC and unix line endings first."}
+{"id":"keep-15","label":"keep","category":"anti-pattern","text":"If a deploy needs more than one manual step in its rollback plan, the plan is wishful; either automate the steps or treat the deploy as irreversible."}
+{"id":"keep-16","label":"keep","category":"tool-quirk","text":"MkDocs strict mode treats a broken internal link as a build failure; run mkdocs build --strict locally before pushing so CI does not have to catch it."}
+{"id":"keep-17","label":"keep","category":"heuristic","text":"When a regex starts needing more than two lookarounds for a single rule, split the rule into a tokenizer plus a matcher; readability beats cleverness here."}
+{"id":"keep-18","label":"keep","category":"cross-language","text":"In Python, modifying a list while iterating it skips elements silently; iterate over list(xs) when you need to mutate the original during the loop."}
+{"id":"keep-19","label":"keep","category":"domain-gotcha","text":"Salesforce: validation rules fire on flow-driven record updates the same as on UI updates; 'but it is a flow' is not an exemption."}
+{"id":"keep-20","label":"keep","category":"process","text":"For irreversible operations, require two independent gates (build pass + targeted test pass on the impacted code) before sign-off; either gate alone is insufficient."}
+{"id":"keep-21","label":"keep","category":"cross-language","text":"In TypeScript, 'any' silently disables type checking for downstream chains; prefer 'unknown' so the compiler still forces a narrowing step before use."}
+{"id":"keep-22","label":"keep","category":"domain-rule","text":"Salesforce Apex governor limit on SOQL is 100 queries per transaction; bulkify into one query with WHERE Id IN :collection instead of looping a SOQL inside a for loop."}
+{"id":"keep-23","label":"keep","category":"tool-quirk","text":"git rebase -i drops empty commits by default; pass --keep-empty if a merge-commit shape matters to your release tooling or downstream auditors."}
+{"id":"keep-24","label":"keep","category":"devops","text":"A CI cache keyed only on lockfile hash misses when transitive resolution changes upstream; include the registry config and the lock-tool version in the cache key."}
+{"id":"keep-25","label":"keep","category":"process","text":"Reproduce a CI-only bug locally with act or a matching container before suspecting flake; flake is the diagnosis of last resort, not the first guess."}
+{"id":"keep-26","label":"keep","category":"observability","text":"A metric with no alert is decoration; either wire an alert with a real owner or delete the metric to stop pretending it is monitored."}
+{"id":"keep-27","label":"keep","category":"design","text":"For an irreversible action behind a button, require a typed confirmation that matches the resource name; modal dialogs alone get muscle-memoried away within a week."}
+{"id":"keep-28","label":"keep","category":"refactoring","text":"When extracting a function, pass parameters explicitly even if the caller has them in scope; future readers cannot see what was implicit in the closure."}
+{"id":"keep-29","label":"keep","category":"testing","text":"A test that never fails is not a passing test, it is a missing test; add a known-bad input variant to confirm the assertion can actually fail."}
+{"id":"keep-30","label":"keep","category":"cross-language","text":"In Rust, the ? operator on a Result only converts via the From trait; if the error types do not have a From impl you get a confusing trait-not-satisfied message rather than a missing-conversion hint."}
+{"id":"reject-01","label":"reject","category":"boot-noise","text":"Session started 2026-05-26 at 09:00 on office-pc."}
+{"id":"reject-02","label":"reject","category":"transient-state","text":"Currently reading file src/foo.ts at line 42; about to scroll down."}
+{"id":"reject-03","label":"reject","category":"hallucinated-profile","text":"User is named John, works at Acme Corp, is 35 years old, and lives in Seattle."}
+{"id":"reject-04","label":"reject","category":"vague","text":"Code quality matters and we should care about it."}
+{"id":"reject-05","label":"reject","category":"self-referential","text":"Agent answered the user's question with confidence today."}
+{"id":"reject-06","label":"reject","category":"world-noise","text":"It is sunny outside today and the wifi is fast."}
+{"id":"reject-07","label":"reject","category":"project-private","text":"File ClientBilling.cls in repo acme-internal branch feature/sprint-47 has a bug on line 312 that Mark will fix Tuesday."}
+{"id":"reject-08","label":"reject","category":"tautology","text":"If a function returns null then the result of calling that function is null."}
+{"id":"reject-09","label":"reject","category":"contradiction-shape","text":"Always use tabs for indentation; never use tabs for indentation."}
+{"id":"reject-10","label":"reject","category":"heartbeat","text":"Heartbeat: still alive, no new observations to capture, sync interval 60 seconds."}
+{"id":"reject-11","label":"reject","category":"boot-completion","text":"Loading complete. System ready for input."}
+{"id":"reject-12","label":"reject","category":"ui-event","text":"User clicked the Save button on the settings page."}
+{"id":"reject-13","label":"reject","category":"placeholder","text":"TODO: figure this out later when I have time."}
+{"id":"reject-14","label":"reject","category":"anecdotal-singleton","text":"The code worked when I ran it just now in my local terminal."}
+{"id":"reject-15","label":"reject","category":"named-person-preference","text":"Tom from accounting prefers the old dashboard layout over the new one."}
+{"id":"reject-16","label":"reject","category":"world-noise","text":"Coffee was cold this morning and the office was loud."}
+{"id":"reject-17","label":"reject","category":"stale-status","text":"Yesterday's deploy is still rolling out across the production fleet."}
+{"id":"reject-18","label":"reject","category":"no-content","text":"It depends on the situation; sometimes yes, sometimes no, hard to say."}
+{"id":"reject-19","label":"reject","category":"meeting-reference","text":"We discussed this issue in standup at 9:30 on Monday."}
+{"id":"reject-20","label":"reject","category":"fixme-comment","text":"FIXME: this throws on null input. Will revisit after the demo."}
+{"id":"reject-21","label":"reject","category":"heading-only","text":"How to confirm routing quality:"}
+{"id":"reject-22","label":"reject","category":"template-placeholder","text":"Required inputs: TBD. Mitigation: TODO. Owner: <name>."}
+{"id":"reject-23","label":"reject","category":"mixed-purpose","text":"Always validate input before persisting; also Jane said the new dashboard is ugly and we should redo it."}
+{"id":"reject-24","label":"reject","category":"long-undifferentiated-dump","text":"On Monday we deployed v3.4.7 to staging and noticed slow queries; Bob from ops mentioned we might need more RAM; the dashboard was down for 12 minutes; the standup ran long; someone asked about Q4 OKRs; we agreed to revisit caching next sprint; lunch was delayed; the AC was broken; the new intern started; documentation is still behind; we did not fix the bug."}
+{"id":"reject-25","label":"reject","category":"status-ping","text":"Build #4521 finished green at 14:32."}
+{"id":"reject-26","label":"reject","category":"aspirational-no-rule","text":"We should be better at writing tests for our shared utilities."}
+{"id":"reject-27","label":"reject","category":"vague-comparison","text":"X is generally faster than Y in most cases for most workloads."}
+{"id":"reject-28","label":"reject","category":"apology-meta","text":"Sorry, I missed your message earlier; I was deep in another task."}
+{"id":"reject-29","label":"reject","category":"restated-question","text":"Wondering whether to use Apex triggers or Flow here for the after-update logic."}
+{"id":"reject-30","label":"reject","category":"numeric-heartbeat","text":"3 of 5 deploys succeeded today (60% success rate so far this week)."}

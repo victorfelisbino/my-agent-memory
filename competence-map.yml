@@ -126,13 +126,13 @@
   name: Memory admission gate (Wave 3 harness)
   depth: explore
   scope: shared
-  description: Measurement harness for the quality gate that decides which memories are worth storing. v2 = 40-item labeled fixture + corpus extractor that pulls real bullets from the repo's own .md files + baseline stub scorer across four dimensions (reusability, atomicity, novelty, actionability) with both labeled-accuracy mode and unlabeled real-corpus distribution mode. After five iterations against real memory, baseline is 100% accuracy, 100% good-recall, 100% junk-recall on v2 (both v2 misses closed in iter 5 via case-sensitive proper-noun detection with tech allowlist + environmental anchor-word rule). Wave 3 exit criterion still ahead (>=100-item fixture). CI gate enforces >= 95% on v2. Real-corpus smoke unchanged at 0 percent rejection. No write-path integration, no dashboard, no real novelty lookup yet.
+  description: Measurement harness for the quality gate that decides which memories are worth storing. v3 = 60-item labeled fixture + corpus extractor that pulls real bullets from the repo's own .md files + baseline stub scorer across four dimensions (reusability, atomicity, novelty, actionability) with both labeled-accuracy mode and unlabeled real-corpus distribution mode. After six iterations against real memory, baseline is 100% accuracy, 100% good-recall, 100% junk-recall on v3 (raw run of the iter-5 ruleset against v3 was 90/100/80; iter 6 closed six new miss shapes -- heading-only / bare-placeholder / aspirational / vague-comparison / apology-meta / open-question). Wave 3 exit criterion still ahead (>=100-item fixture). CI gate enforces >= 95% on v3. Real-corpus smoke now rejects 5.5% (was 0%), and every reject is a true heading-extraction artifact -- the new heading-only rule surfaced an upstream extractor bug. No write-path integration, no dashboard, no real novelty lookup yet.
   sources:
     - admission-gate/README.md
     - admission-gate/score-memory.ps1
     - admission-gate/extract-corpus.ps1
-    - admission-gate/fixtures/memories-v1.jsonl
-  last_reviewed: 2026-05-26
+    - admission-gate/fixtures/memories-v3.jsonl
+  last_reviewed: 2026-05-27
   related:
     - ai-memory-architecture
     - thinking-principles
