@@ -20,7 +20,7 @@ if ([System.IO.Path]::IsPathRooted($LogFile)) {
     $logPath = Join-Path $personalRoot $LogFile
 }
 
-if (-not (Test-Path $WorkspaceStorageRoot)) {
+if (-not $TranscriptDir -and -not (Test-Path $WorkspaceStorageRoot)) {
     Write-Error "Workspace storage root not found: $WorkspaceStorageRoot"
 }
 
@@ -248,3 +248,4 @@ if ($rejectedCount -gt 0) {
 } else {
     Write-Host "Appended $keptCount auto-captured observation(s) to $logPath"
 }
+exit 0

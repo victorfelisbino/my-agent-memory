@@ -60,17 +60,17 @@ fi
 if [[ "${MEMORY_GATE:-}" == "off" ]]; then
   NO_GATE="true"
 fi
-, repo_root, no_gate = sys.argv[1:9]
+
+python3 - "$WS_ROOT" "$LOG_PATH" "$SINCE_DAYS" "$MAX_PER_RUN" "$DRY_RUN" "$TRANSCRIPT_DIR" "$REPO_ROOT" "$NO_GATE" <<'PY'
+import json, os, re, sys, glob, hashlib, datetime as dt, subprocess
+
+ws_root, log_path, since_days, max_per_run, dry_run, explicit_dir, repo_root, no_gate = sys.argv[1:9]
 since_days = int(since_days); max_per_run = int(max_per_run)
 dry_run = (dry_run == 'true')
 no_gate = (no_gate == 'true')
 scorer = os.path.join(repo_root, 'admission-gate', 'score_memory.py')
 gate_on = (not no_gate) and os.path.isfile(scorer)
-reject_path = os.path.join(os.path.dirname(log_path), 'observations.rejected.jsonllob, hashlib, datetime as dt, subprocess
-
-ws_root, log_path, since_days, max_per_run, dry_run, explicit_dir = sys.argv[1:7]
-since_days = int(since_days); max_per_run = int(max_per_run)
-dry_run = (dry_run == 'true')
+reject_path = os.path.join(os.path.dirname(log_path), 'observations.rejected.jsonl')
 cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=since_days)
 
 # Collect transcript dirs
@@ -208,6 +208,14 @@ candidates = candidates[:max_per_run]
 
 if not candidates:
     print("No new observations to capture.")
+    sys.exit(0)
+
+if dry_run:
+    print(f"DRY RUN: would append {len(candidates)} observation(s).")
+    for c in candidates:
+        print(f"  [{c['type']}] {c['timestamp'][:10]} | {c['domain']} - {c['note']}")
+    sys.exit(0)
+
 def gate(note):
     # Returns (keep_bool, reason). When gate_on is False, always keep.
     if not gate_on:
@@ -246,13 +254,5 @@ with open(log_path, 'a', encoding='utf-8') as f:
 if rejected:
     print(f"Appended {kept} auto-captured observation(s) to {log_path}; gate rejected {rejected} (see {reject_path})")
 else:
-    print(f"Appended {kept
-        print(f"  [{c['type']}] {c['timestamp'][:10]} | {c['domain']} - {c['note']}")
-    sys.exit(0)
-
-with open(log_path, 'a', encoding='utf-8') as f:
-    for c in candidates:
-        f.write(json.dumps(c, ensure_ascii=False) + '\n')
-
-print(f"Appended {len(candidates)} auto-captured observation(s) to {log_path}")
+    print(f"Appended {kept} auto-captured observation(s) to {log_path}")
 PY

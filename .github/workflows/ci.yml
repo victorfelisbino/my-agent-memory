@@ -199,7 +199,7 @@ jobs:
           New-Item -ItemType Directory -Path $td -Force | Out-Null
           $env:AGENT_MEMORY_PERSONAL = $tmp
           $ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
-          $keep   = (@{type='user.message';timestamp=$ts;data=@{content='Always run mkdocs --strict before pushing docs changes; otherwise warnings ship.'}} | ConvertTo-Json -Compress)
+          $keep   = (@{type='user.message';timestamp=$ts;data=@{content='Key insight: mkdocs strict mode catches missing-link warnings before they ship to the docs site.'}} | ConvertTo-Json -Compress)
           $reject = (@{type='user.message';timestamp=$ts;data=@{content='today I fixed the bug at line 42 in src/foo.py and it works now.'}} | ConvertTo-Json -Compress)
           Set-Content -Path (Join-Path $td 'a.jsonl') -Value ($keep + "`n" + $reject) -Encoding UTF8
 
