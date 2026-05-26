@@ -77,13 +77,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run scorer on v4 fixture
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run PowerShell scorer on v4 fixture
         shell: pwsh
         run: ./admission-gate/score-memory.ps1 -FailUnder 85
+
+      - name: Run Python scorer on v4 fixture
+        run: python admission-gate/score_memory.py --fail-under 85
+
+      - name: Cross-language parity (v4 fixture)
+        shell: pwsh
+        run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/memories-v4.jsonl
 
       - name: Re-extract real-memory corpus and score (unlabeled smoke)
         shell: pwsh
         run: |
           ./admission-gate/extract-corpus.ps1 -Out admission-gate/fixtures/real-memory.ci.jsonl
           ./admission-gate/score-memory.ps1 -Fixture admission-gate/fixtures/real-memory.ci.jsonl -Unlabeled -ShowWorst 5
+
+      - name: Cross-language parity (real corpus)
+        shell: pwsh
+        run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/real-memory.ci.jsonl
 

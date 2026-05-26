@@ -144,13 +144,12 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 
 **Still to do (concrete, ordered):**
 
-1. **Standalone port.** Lift the rules out of `score-memory.ps1` into a Python or TypeScript module so the scorer can be embedded as middleware in any pipeline (not just CI). Same labeled fixture as the contract; cross-language parity tests in CI. v4 is saturated at 100/100/100, so further regex tuning without a real store check would be measurement theater -- the next leverage is making the scorer reusable outside this repo.
-2. **Contradiction-against-store detection.** Currently we only detect single-line contradictions (`always X; never X`). Wire up a similarity check against a stored memory index so a new candidate can be flagged when it conflicts with something already kept.
-3. **Feedback-loop prevention.** Track per-session recall so a memory surfaced during a session cannot be re-ingested as a "new" observation in the same session.
-4. **Dashboard.** Local web UI showing: live scoring feed (per-dimension scores + decision + reason), contradiction warnings, feedback-loop blocks, rejection-rate over time, top rejection reasons, staleness view. Reads from the scoring log; no auth, local-only.
+1. **Contradiction-against-store detection.** Currently we only detect single-line contradictions (`always X; never X`). Wire up a similarity check against a stored memory index so a new candidate can be flagged when it conflicts with something already kept.
+2. **Feedback-loop prevention.** Track per-session recall so a memory surfaced during a session cannot be re-ingested as a "new" observation in the same session.
+3. **Dashboard.** Local web UI showing: live scoring feed (per-dimension scores + decision + reason), contradiction warnings, feedback-loop blocks, rejection-rate over time, top rejection reasons, staleness view. Reads from the scoring log; no auth, local-only.
 
 **Done so far:**
-- Steps 0a-0d above (fixture + scorer + extractor + CI gate at 85% with 15-pt headroom under the current 100% baseline, real-corpus smoke at 1.0% rejection -- all 4 defensible, eight iteration loops landed with honest before/after numbers per PR; **iter 7 cleared the Wave 3 exit criterion on the labeled fixture for the first time** at 91/100/82; **iter 8 saturated v4 at 100/100/100** by closing all nine named iter-7 misses with no keep regressions).
+- Steps 0a-0d above (fixture + PowerShell scorer + Python port + cross-language parity + extractor + CI gate at 85% with 15-pt headroom under the current 100% baseline, real-corpus smoke at 1.0% rejection -- all 4 defensible, nine iteration loops landed with honest before/after numbers per PR; **iter 7 cleared the Wave 3 exit criterion on the labeled fixture for the first time** at 91/100/82; **iter 8 saturated v4 at 100/100/100**; **iter 9 added a standalone Python port** so the scorer is now reusable as middleware outside this repo's CI, with per-item decision parity enforced in CI on both v4 and the live real-memory corpus).
 
 **Exit criterion:** Given a sample of 100 memories (50 good, 50 from the documented junk categories), the gate correctly rejects 80%+ of junk while keeping 80%+ of good memories. The dashboard renders the scoring decisions in real time.
 
