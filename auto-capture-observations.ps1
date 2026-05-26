@@ -5,7 +5,8 @@ param(
     [int]$SinceDays = 14,
     [int]$MaxPerRun = 50,
     [string[]]$ExtraTags = @(),
-    [switch]$DryRun
+    [switch]$DryRun,
+    [switch]$NoGate
 )
 
 $ErrorActionPreference = 'Stop'
@@ -19,7 +20,7 @@ if ([System.IO.Path]::IsPathRooted($LogFile)) {
     $logPath = Join-Path $personalRoot $LogFile
 }
 
-if (-not (Test-Path $WorkspaceStorageRoot)) {
+if (-not $TranscriptDir -and -not (Test-Path $WorkspaceStorageRoot)) {
     Write-Error "Workspace storage root not found: $WorkspaceStorageRoot"
 }
 
@@ -193,6 +194,19 @@ if ($DryRun) {
     }
     return
 }
+# Iter 14: admission-gate write-path integration for the automated capture path.
+# Same contract as capture-observation.ps1: per-item score via score_memory.py
+# --score-one; rejects diverted to observations.rejected.jsonl with reason; set
+# MEMORY_GATE=off or pass -NoGate to bypass (e.g. for backfills).
+$gateOff = $NoGate -or ($env:MEMORY_GATE -eq 'off')
+$scorer = Join-Path $repoRoot 'admission-gate\score_memory.py'
+$pyCmd = $null
+if (-not $gateOff -and (Test-Path $scorer)) {
+    $pyCmd = if (Get-Command python -ErrorAction SilentlyContinue) { 'python' } elseif (Get-Command py -ErrorAction SilentlyContinue) { 'py' } else { $null }
+}
+$rejectPath = Join-Path $personalRoot 'observations.rejected.jsonl'
+$keptCount = 0
+$rejectedCount = 0
 
 foreach ($c in $candidates) {
     $entry = [ordered]@{
@@ -203,7 +217,35 @@ foreach ($c in $candidates) {
         note      = $c.Note
     }
     $json = ($entry | ConvertTo-Json -Compress -Depth 5)
+
+    if ($pyCmd) {
+        $candidate = (@{ text = $c.Note } | ConvertTo-Json -Compress)
+        $decisionJson = $candidate | & $pyCmd $scorer --score-one 2>$null
+        if ($LASTEXITCODE -eq 3) {
+            $reason = ''
+            try { $reason = ($decisionJson | ConvertFrom-Json).reason } catch {}
+            $rejected = [ordered]@{
+                timestamp = $entry.timestamp
+                type      = $c.Type
+                domain    = $c.Domain
+                tags      = $c.Tags
+                note      = $c.Note
+                reason    = $reason
+                source    = 'auto-capture'
+            }
+            Add-Content -Path $rejectPath -Value ($rejected | ConvertTo-Json -Compress -Depth 5) -Encoding UTF8
+            $rejectedCount++
+            continue
+        }
+    }
+
     Add-Content -Path $logPath -Value $json -Encoding UTF8
+    $keptCount++
 }
 
-Write-Host "Appended $($candidates.Count) auto-captured observation(s) to $logPath"
+if ($rejectedCount -gt 0) {
+    Write-Host "Appended $keptCount auto-captured observation(s) to $logPath; gate rejected $rejectedCount (see $rejectPath)"
+} else {
+    Write-Host "Appended $keptCount auto-captured observation(s) to $logPath"
+}
+exit 0
