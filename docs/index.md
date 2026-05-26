@@ -3,8 +3,8 @@
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>Operational memory for teams shipping in AI-speed environments.</h1>
-			<p class="lead">Capture execution signals, convert them into reusable guardrails, and keep those guardrails current so your team moves faster with less rework.</p>
+			<h1>Durable working memory for people building with AI coding agents.</h1>
+			<p class="lead">Capture decisions and recurring failures as you work, promote the reusable ones into guardrails, and feed that context back into Copilot so the next session starts informed instead of cold.</p>
 			<div class="pill-row">
 				<span class="pill">Reusable knowledge</span>
 				<span class="pill">Context recovery</span>
@@ -18,15 +18,15 @@
 		<div class="kpi-panel">
 			<div class="kpi-item">
 				<strong>Recover context fast</strong>
-				<span>Resume work without rebuilding state manually.</span>
+				<span>Open loops and active threads are written down, so you resume from where you stopped instead of rebuilding it in your head.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Reduce repeat failures</strong>
-				<span>Promote only verified lessons with measurable signals.</span>
+				<span>A weekly review promotes only patterns you have verified more than once, and retires the ones that go stale.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Copilot starts informed</strong>
-				<span>Inject proven context instead of starting every session cold.</span>
+				<span>A small script (<code>summon-memory</code>) injects the most relevant lessons and router hints at the top of your prompt.</span>
 			</div>
 		</div>
 	</div>

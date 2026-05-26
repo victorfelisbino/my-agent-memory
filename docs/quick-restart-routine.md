@@ -6,7 +6,7 @@
 			<h1>Re-enter work with current context in minutes.</h1>
 			<p class="lead">This routine restores focus after interruptions, selects one high-impact action, and logs state so execution stays continuous.</p>
 			<div class="pill-row">
-				<span class="pill">2-minute reset</span>
+				<span class="pill">~2-minute reset</span>
 				<span class="pill">One next action</span>
 				<span class="pill">Low token overhead</span>
 			</div>
