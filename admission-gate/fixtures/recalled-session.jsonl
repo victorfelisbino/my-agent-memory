@@ -1,0 +1,4 @@
+{"id":"recall-01","text":"Always run unit tests before pushing to main; CI catches less than the local suite."}
+{"id":"recall-02","text":"Never trust a green build without checking the actual test output for skipped suites."}
+{"id":"recall-03","text":"Prefer typed configuration over JSON dictionaries for runtime safety."}
+{"id":"recall-04","text":"Avoid mutable global state in worker threads; use thread-local stores instead."}

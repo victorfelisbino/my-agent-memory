@@ -213,24 +213,43 @@ def score_atomicity(text: str) -> float:
     return score
 
 
-def score_novelty(text: str, store_claims: dict | None = None) -> tuple[float, str]:
-    """Iter-10: contradiction-against-store.
+def score_novelty(
+    text: str,
+    store_claims: dict | None = None,
+    recalled_claims: dict | None = None,
+) -> tuple[float, str, str]:
+    """Iter-10 + iter-11: contradiction-against-store, then feedback-loop.
 
-    Returns (score, contradiction_anchor_id). Neutral (0.0, "") when no
-    store is provided -- preserves the existing labeled-fixture baseline.
+    Returns (score, contradiction_anchor_id, feedback_loop_id). At most one
+    of the two ids is set (first match wins). Neutral (0.0, "", "") when
+    neither set is loaded -- preserves the existing labeled-fixture baseline.
+
+    Rules:
+      - contradiction-against-store: same subject (>= 2 shared tokens)
+        AND opposite polarity vs any store anchor -> -2.0.
+      - feedback-loop (iter 11): same subject (>= 4 shared tokens) AND
+        same polarity vs any recalled-session item -> -2.0. Higher overlap
+        bar because we want real redundancy, not topic similarity.
     """
-    if not store_claims:
-        return 0.0, ""
+    if not store_claims and not recalled_claims:
+        return 0.0, "", ""
     cand = extract_claim(text)
     if cand is None:
-        return 0.0, ""
+        return 0.0, "", ""
     cand_pol, cand_subj = cand
-    for anchor_id, (a_pol, a_subj) in store_claims.items():
-        if a_pol == cand_pol:
-            continue
-        if len(cand_subj & a_subj) >= 2:
-            return -2.0, anchor_id
-    return 0.0, ""
+    if store_claims:
+        for anchor_id, (a_pol, a_subj) in store_claims.items():
+            if a_pol == cand_pol:
+                continue
+            if len(cand_subj & a_subj) >= 2:
+                return -2.0, anchor_id, ""
+    if recalled_claims:
+        for recall_id, (r_pol, r_subj) in recalled_claims.items():
+            if r_pol != cand_pol:
+                continue
+            if len(cand_subj & r_subj) >= 4:
+                return -2.0, "", recall_id
+    return 0.0, "", ""
 
 
 def extract_claim(text: str) -> tuple[str, set[str]] | None:
@@ -327,10 +346,10 @@ class ItemScore:
     reason: str
 
 
-def score_memory(text: str, store_claims: dict | None = None) -> ItemScore:
+def score_memory(text: str, store_claims: dict | None = None, recalled_claims: dict | None = None) -> ItemScore:
     r = score_reusability(text)
     a = score_atomicity(text)
-    n, anchor = score_novelty(text, store_claims)
+    n, anchor, feedback = score_novelty(text, store_claims, recalled_claims)
     c = score_actionability(text)
     total = r + a + n + c
     decision = "keep" if total > 0 else "reject"
@@ -342,6 +361,8 @@ def score_memory(text: str, store_claims: dict | None = None) -> ItemScore:
     if n < 0:
         if anchor:
             reasons.append(f"novelty={_fmt(n)} (contradicts-store={anchor})")
+        elif feedback:
+            reasons.append(f"novelty={_fmt(n)} (feedback-loop={feedback})")
         else:
             reasons.append(f"novelty={_fmt(n)}")
     if c < 0:
@@ -380,12 +401,12 @@ def _read_fixture(path: Path) -> list[dict]:
 # Modes.
 # ---------------------------------------------------------------------------
 
-def _labeled_summary(items: list[dict], verbose: bool, fail_under: int, store_claims: dict | None = None) -> int:
+def _labeled_summary(items: list[dict], verbose: bool, fail_under: int, store_claims: dict | None = None, recalled_claims: dict | None = None) -> int:
     tp = fp = tn = fn = 0
     detailed: list[tuple[str, str, str, str, float, str, str]] = []
 
     for rec in items:
-        s = score_memory(rec["text"], store_claims)
+        s = score_memory(rec["text"], store_claims, recalled_claims)
         label = rec.get("label", "")
         matched = s.decision == label
         if label == "keep" and s.decision == "keep":
@@ -440,10 +461,10 @@ def _pct(v: float) -> str:
     return f"{v:g}"
 
 
-def _unlabeled_summary(items: list[dict], show_worst: int, store_claims: dict | None = None) -> int:
+def _unlabeled_summary(items: list[dict], show_worst: int, store_claims: dict | None = None, recalled_claims: dict | None = None) -> int:
     scored = []
     for rec in items:
-        s = score_memory(rec["text"], store_claims)
+        s = score_memory(rec["text"], store_claims, recalled_claims)
         scored.append({
             "id": rec.get("id", ""),
             "source": rec.get("source", ""),
@@ -499,9 +520,9 @@ def _unlabeled_summary(items: list[dict], show_worst: int, store_claims: dict | 
 # cross-language parity test in CI.
 # ---------------------------------------------------------------------------
 
-def _parity_dump(items: list[dict], store_claims: dict | None = None) -> int:
+def _parity_dump(items: list[dict], store_claims: dict | None = None, recalled_claims: dict | None = None) -> int:
     for rec in items:
-        s = score_memory(rec["text"], store_claims)
+        s = score_memory(rec["text"], store_claims, recalled_claims)
         print(json.dumps({
             "id": rec.get("id", ""),
             "decision": s.decision,
@@ -535,17 +556,19 @@ def main() -> int:
     parser.add_argument("--show-worst", type=int, default=15, help="Unlabeled: how many low-scored items to show.")
     parser.add_argument("--parity", action="store_true", help="Emit per-item JSON {id,decision,total} for cross-language parity tests.")
     parser.add_argument("--store", default="", help="Path to anchor JSONL ({id,text}). Enables contradiction-against-store check.")
+    parser.add_argument("--recalled", default="", help="Path to recalled-session JSONL ({id,text}). Enables feedback-loop check (iter 11).")
     args = parser.parse_args()
 
     _args_fixture = args.fixture
     items = _read_fixture(Path(args.fixture))
     store_claims = load_store_claims(args.store)
+    recalled_claims = load_store_claims(args.recalled)
 
     if args.parity:
-        return _parity_dump(items, store_claims)
+        return _parity_dump(items, store_claims, recalled_claims)
     if args.unlabeled:
-        return _unlabeled_summary(items, args.show_worst, store_claims)
-    return _labeled_summary(items, args.verbose, args.fail_under, store_claims)
+        return _unlabeled_summary(items, args.show_worst, store_claims, recalled_claims)
+    return _labeled_summary(items, args.verbose, args.fail_under, store_claims, recalled_claims)
 
 
 if __name__ == "__main__":

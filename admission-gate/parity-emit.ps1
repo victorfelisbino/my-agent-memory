@@ -21,8 +21,9 @@
 # with "# Load fixture, score, summarize.".
 
 param(
-  [string] $Fixture = "admission-gate/fixtures/memories-v4.jsonl",
-  [string] $Store   = ""
+  [string] $Fixture  = "admission-gate/fixtures/memories-v4.jsonl",
+  [string] $Store    = "",
+  [string] $Recalled = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -51,15 +52,18 @@ if ($idx -lt 0) {
 # would overwrite our $Fixture variable back to its default when
 # evaluated via Invoke-Expression, so save and restore it.
 $prelude = $raw.Substring(0, $idx)
-$savedFixture = $Fixture
-$savedStore   = $Store
+$savedFixture  = $Fixture
+$savedStore    = $Store
+$savedRecalled = $Recalled
 Invoke-Expression $prelude
-$Fixture = $savedFixture
-$Store   = $savedStore
+$Fixture  = $savedFixture
+$Store    = $savedStore
+$Recalled = $savedRecalled
 
-# Re-load store claims now that prelude functions are defined and that
-# $Store has been restored to the caller value.
-$script:StoreClaims = Load-StoreClaims $Store
+# Re-load store + recalled claims now that prelude functions are defined
+# and the caller-supplied values have been restored.
+$script:StoreClaims    = Load-StoreClaims $Store
+$script:RecalledClaims = Load-StoreClaims $Recalled
 
 $lines = Get-Content $Fixture -Encoding UTF8 | Where-Object { $_.Trim() -ne '' -and -not $_.TrimStart().StartsWith('#') }
 foreach ($line in $lines) {
