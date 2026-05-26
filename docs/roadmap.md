@@ -130,11 +130,18 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 
 ---
 
-## Wave 3 — Memory admission gate + dashboard (3-4 weeks, ~20h) &mdash; **PLANNED**
+## Wave 3 — Memory admission gate + dashboard (3-4 weeks, ~20h) &mdash; **IN PROGRESS**
 
 **Goal:** Build the first working version of the quality gate — the thing that says "no" to bad memories — and make the filtering **visible**. This is the #1 unmet need in the ecosystem (mem0 issue #4573 proves it). Pain point #3 is that nobody can see what's stored or why things were rejected.
 
-**Do:**
+**Done (measurement harness, v1):**
+
+- [`admission-gate/fixtures/memories-v1.jsonl`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/fixtures/memories-v1.jsonl) — 20 labeled memories (10 keep, 10 reject) covering the documented junk categories: boot noise, heartbeat, transient task state, hallucinated profile, vague non-actionable, self-referential, world noise, project-private without portable lesson, tautology, contradiction-in-one-line.
+- [`admission-gate/score-memory.ps1`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/score-memory.ps1) — baseline scorer across the four spec dimensions (reusability, atomicity, novelty stubbed, actionability). Emits per-memory decision + summary; supports `-FailUnder` for CI gating.
+- CI job `admission-gate-harness` runs the scorer with `-FailUnder 70` on every PR.
+- Current baseline: **75% accuracy, 100% good-recall, 50% junk-recall**. Above random (50%), below the exit bar (80%+ on both recalls). Five documented misses are the iteration backlog, not hidden failures.
+
+**Still to do:**
 
 **Admission gate (core):**
 - Implement a scoring function that evaluates a candidate memory on: reusability (does it generalize?), atomicity (one fact, not a dump?), novelty (not already stored?), actionability (would an agent use this?).
