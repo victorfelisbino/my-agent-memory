@@ -1,0 +1,100 @@
+{"id":"keep-01","label":"keep","category":"gotcha","text":"Avalonia DataGrid is a separate NuGet package; must dotnet add package Avalonia.Controls.DataGrid before using it."}
+{"id":"keep-02","label":"keep","category":"domain-rule","text":"Salesforce: always check field-level security after an Apex deploy; profile/permset changes do not deploy automatically with classes."}
+{"id":"keep-03","label":"keep","category":"principle","text":"Never accept 'done' claims without independent verification: build success, targeted tests, and requirement-by-requirement pass/fail."}
+{"id":"keep-04","label":"keep","category":"cross-language","text":"Prefer streaming generators over building a full list when the input may be larger than memory."}
+{"id":"keep-05","label":"keep","category":"tool-quirk","text":"Windows PowerShell 5.1 reads .ps1 files as ANSI unless they have a UTF-8 BOM; use ASCII separators in script literals to avoid mojibake."}
+{"id":"keep-06","label":"keep","category":"heuristic","text":"Promote a memory to expert depth only after 3+ independent uses in different contexts; otherwise it is working at best."}
+{"id":"keep-07","label":"keep","category":"anti-pattern","text":"If a PR has 0 test changes and 100+ line diffs, request tests before reviewing the implementation."}
+{"id":"keep-08","label":"keep","category":"tool-decision","text":"Prefer batched multi-replace over sequential single-replace edits when the edits are independent; one round-trip beats N."}
+{"id":"keep-09","label":"keep","category":"domain-gotcha","text":"MuleSoft DataWeave: 'as Object {}' coerces to an empty object, not null; use 'default {}' on the upstream value if you need a null-safe empty."}
+{"id":"keep-10","label":"keep","category":"process","text":"Before merging a PR that touches CI, run the new job locally against a known-good and known-bad input to confirm exit codes match expectations."}
+{"id":"keep-11","label":"keep","category":"tool-quirk","text":"git log -1 --format=%cs returns the committer date as a plain YYYY-MM-DD string; prefer it over %ci when you want a date-only field that does not drift across timezones."}
+{"id":"keep-12","label":"keep","category":"cross-language","text":"PowerShell closures capture variables by reference; mutating the variable after creating the closure changes what the closure observes when later invoked."}
+{"id":"keep-13","label":"keep","category":"domain-rule","text":"Salesforce: a flow with a deactivated version still counts toward the per-org active-flow limit until it is deleted; deactivation alone does not free the slot."}
+{"id":"keep-14","label":"keep","category":"process","text":"When CI green disagrees with local red, suspect timezone or line-ending normalization before suspecting flake; reproduce locally with TZ=UTC and unix line endings first."}
+{"id":"keep-15","label":"keep","category":"anti-pattern","text":"If a deploy needs more than one manual step in its rollback plan, the plan is wishful; either automate the steps or treat the deploy as irreversible."}
+{"id":"keep-16","label":"keep","category":"tool-quirk","text":"MkDocs strict mode treats a broken internal link as a build failure; run mkdocs build --strict locally before pushing so CI does not have to catch it."}
+{"id":"keep-17","label":"keep","category":"heuristic","text":"When a regex starts needing more than two lookarounds for a single rule, split the rule into a tokenizer plus a matcher; readability beats cleverness here."}
+{"id":"keep-18","label":"keep","category":"cross-language","text":"In Python, modifying a list while iterating it skips elements silently; iterate over list(xs) when you need to mutate the original during the loop."}
+{"id":"keep-19","label":"keep","category":"domain-gotcha","text":"Salesforce: validation rules fire on flow-driven record updates the same as on UI updates; 'but it is a flow' is not an exemption."}
+{"id":"keep-20","label":"keep","category":"process","text":"For irreversible operations, require two independent gates (build pass + targeted test pass on the impacted code) before sign-off; either gate alone is insufficient."}
+{"id":"keep-21","label":"keep","category":"cross-language","text":"In TypeScript, 'any' silently disables type checking for downstream chains; prefer 'unknown' so the compiler still forces a narrowing step before use."}
+{"id":"keep-22","label":"keep","category":"domain-rule","text":"Salesforce Apex governor limit on SOQL is 100 queries per transaction; bulkify into one query with WHERE Id IN :collection instead of looping a SOQL inside a for loop."}
+{"id":"keep-23","label":"keep","category":"tool-quirk","text":"git rebase -i drops empty commits by default; pass --keep-empty if a merge-commit shape matters to your release tooling or downstream auditors."}
+{"id":"keep-24","label":"keep","category":"devops","text":"A CI cache keyed only on lockfile hash misses when transitive resolution changes upstream; include the registry config and the lock-tool version in the cache key."}
+{"id":"keep-25","label":"keep","category":"process","text":"Reproduce a CI-only bug locally with act or a matching container before suspecting flake; flake is the diagnosis of last resort, not the first guess."}
+{"id":"keep-26","label":"keep","category":"observability","text":"A metric with no alert is decoration; either wire an alert with a real owner or delete the metric to stop pretending it is monitored."}
+{"id":"keep-27","label":"keep","category":"design","text":"For an irreversible action behind a button, require a typed confirmation that matches the resource name; modal dialogs alone get muscle-memoried away within a week."}
+{"id":"keep-28","label":"keep","category":"refactoring","text":"When extracting a function, pass parameters explicitly even if the caller has them in scope; future readers cannot see what was implicit in the closure."}
+{"id":"keep-29","label":"keep","category":"testing","text":"A test that never fails is not a passing test, it is a missing test; add a known-bad input variant to confirm the assertion can actually fail."}
+{"id":"keep-30","label":"keep","category":"cross-language","text":"In Rust, the ? operator on a Result only converts via the From trait; if the error types do not have a From impl you get a confusing trait-not-satisfied message rather than a missing-conversion hint."}
+{"id":"keep-31","label":"keep","category":"domain-rule","text":"Postgres: SELECT ... FOR UPDATE SKIP LOCKED is the safe way to pop work from a queue table; without SKIP LOCKED, concurrent workers serialize on the row lock instead of parallelizing."}
+{"id":"keep-32","label":"keep","category":"devops","text":"Docker multi-stage builds: copy only the final binary out of the build stage; this is one of the few changes that reliably cuts image size by an order of magnitude."}
+{"id":"keep-33","label":"keep","category":"domain-gotcha","text":"Kafka: a topic without an explicit retention.ms inherits the broker default; assume nothing and set retention.ms per topic, or data silently drops once the broker window expires."}
+{"id":"keep-34","label":"keep","category":"security","text":"JWT: never trust the alg field from an incoming token; pin the expected algorithm server-side and reject the token if it does not match the pinned value."}
+{"id":"keep-35","label":"keep","category":"domain-gotcha","text":"CORS preflight: a 200 OPTIONS response missing Access-Control-Allow-Credentials true fails credentialed fetches in the browser with no useful console error."}
+{"id":"keep-36","label":"keep","category":"domain-rule","text":"SQL planner: when an index scan returns more than ~20% of a table the optimizer prefers a sequential scan; do not assume index access is always the faster path."}
+{"id":"keep-37","label":"keep","category":"tool-quirk","text":"Bash: set -euo pipefail at the top of every script catches unset variables and broken-pipe failures that would otherwise return exit 0 from the broken stage."}
+{"id":"keep-38","label":"keep","category":"devops","text":"AWS Lambda cold starts are dominated by package size and VPC ENI attach time; keep secrets out of the package and the function outside a VPC unless private subnet access is actually required."}
+{"id":"keep-39","label":"keep","category":"cross-language","text":"React list keys must be stable identifiers, not array indices; index keys cause sibling component state to bleed when the list reorders or items are removed."}
+{"id":"keep-40","label":"keep","category":"cross-language","text":"Python subprocess: pass check=True so a non-zero exit raises CalledProcessError; without it the failure is silent and the next line runs against a stale return code."}
+{"id":"keep-41","label":"keep","category":"domain-rule","text":"Salesforce: a Flow calling an Apex action inside a loop hits the same SOQL governor limits as nested SOQL; collect inputs into a collection first and invoke the action once with the whole batch."}
+{"id":"keep-42","label":"keep","category":"tool-quirk","text":"git bisect only works when every commit in the range builds; pass --first-parent to keep merge commits from polluting the search when the history is full of merges."}
+{"id":"keep-43","label":"keep","category":"security","text":"TLS wildcard cert *.example.com covers exactly one subdomain level; it does not cover the apex example.com nor two-level subdomains like a.b.example.com."}
+{"id":"keep-44","label":"keep","category":"domain-gotcha","text":"DataWeave: a nested map over the same collection is O(n^2); when both inputs are bounded, fold once into a lookup map and read by key in the inner pass."}
+{"id":"keep-45","label":"keep","category":"tool-quirk","text":"SQLite WAL mode lets readers and writers run in parallel, but the WAL file must live on the same filesystem as the database; a symlinked WAL across filesystems can corrupt on crash."}
+{"id":"keep-46","label":"keep","category":"devops","text":"Terraform: count on a resource is positional, so reordering the input list destroys-and-recreates every shifted index; prefer for_each with stable keys when the set is not strictly ordered."}
+{"id":"keep-47","label":"keep","category":"security","text":"HTTP 401 means authenticate first; 403 means authenticated but not allowed. Returning 401 in an authorization failure leaks whether the user account exists."}
+{"id":"keep-48","label":"keep","category":"observability","text":"Alert on p99 or p99.9 for user-facing endpoints, not average; averages hide the worst tail pain by design and never page on a tail spike."}
+{"id":"keep-49","label":"keep","category":"process","text":"A PR over ~400 lines reliably gets rubber-stamped; split before requesting review or accept that the review will not be a meaningful check."}
+{"id":"keep-50","label":"keep","category":"design","text":"A thread-safe data structure does not make a sequence of operations on it thread-safe; the lock has to span the whole read-modify-write, not each individual step."}
+{"id":"reject-01","label":"reject","category":"boot-noise","text":"Session started 2026-05-26 at 09:00 on office-pc."}
+{"id":"reject-02","label":"reject","category":"transient-state","text":"Currently reading file src/foo.ts at line 42; about to scroll down."}
+{"id":"reject-03","label":"reject","category":"hallucinated-profile","text":"User is named John, works at Acme Corp, is 35 years old, and lives in Seattle."}
+{"id":"reject-04","label":"reject","category":"vague","text":"Code quality matters and we should care about it."}
+{"id":"reject-05","label":"reject","category":"self-referential","text":"Agent answered the user's question with confidence today."}
+{"id":"reject-06","label":"reject","category":"world-noise","text":"It is sunny outside today and the wifi is fast."}
+{"id":"reject-07","label":"reject","category":"project-private","text":"File ClientBilling.cls in repo acme-internal branch feature/sprint-47 has a bug on line 312 that Mark will fix Tuesday."}
+{"id":"reject-08","label":"reject","category":"tautology","text":"If a function returns null then the result of calling that function is null."}
+{"id":"reject-09","label":"reject","category":"contradiction-shape","text":"Always use tabs for indentation; never use tabs for indentation."}
+{"id":"reject-10","label":"reject","category":"heartbeat","text":"Heartbeat: still alive, no new observations to capture, sync interval 60 seconds."}
+{"id":"reject-11","label":"reject","category":"boot-completion","text":"Loading complete. System ready for input."}
+{"id":"reject-12","label":"reject","category":"ui-event","text":"User clicked the Save button on the settings page."}
+{"id":"reject-13","label":"reject","category":"placeholder","text":"TODO: figure this out later when I have time."}
+{"id":"reject-14","label":"reject","category":"anecdotal-singleton","text":"The code worked when I ran it just now in my local terminal."}
+{"id":"reject-15","label":"reject","category":"named-person-preference","text":"Tom from accounting prefers the old dashboard layout over the new one."}
+{"id":"reject-16","label":"reject","category":"world-noise","text":"Coffee was cold this morning and the office was loud."}
+{"id":"reject-17","label":"reject","category":"stale-status","text":"Yesterday's deploy is still rolling out across the production fleet."}
+{"id":"reject-18","label":"reject","category":"no-content","text":"It depends on the situation; sometimes yes, sometimes no, hard to say."}
+{"id":"reject-19","label":"reject","category":"meeting-reference","text":"We discussed this issue in standup at 9:30 on Monday."}
+{"id":"reject-20","label":"reject","category":"fixme-comment","text":"FIXME: this throws on null input. Will revisit after the demo."}
+{"id":"reject-21","label":"reject","category":"heading-only","text":"How to confirm routing quality:"}
+{"id":"reject-22","label":"reject","category":"template-placeholder","text":"Required inputs: TBD. Mitigation: TODO. Owner: <name>."}
+{"id":"reject-23","label":"reject","category":"mixed-purpose","text":"Always validate input before persisting; also Jane said the new dashboard is ugly and we should redo it."}
+{"id":"reject-24","label":"reject","category":"long-undifferentiated-dump","text":"On Monday we deployed v3.4.7 to staging and noticed slow queries; Bob from ops mentioned we might need more RAM; the dashboard was down for 12 minutes; the standup ran long; someone asked about Q4 OKRs; we agreed to revisit caching next sprint; lunch was delayed; the AC was broken; the new intern started; documentation is still behind; we did not fix the bug."}
+{"id":"reject-25","label":"reject","category":"status-ping","text":"Build #4521 finished green at 14:32."}
+{"id":"reject-26","label":"reject","category":"aspirational-no-rule","text":"We should be better at writing tests for our shared utilities."}
+{"id":"reject-27","label":"reject","category":"vague-comparison","text":"X is generally faster than Y in most cases for most workloads."}
+{"id":"reject-28","label":"reject","category":"apology-meta","text":"Sorry, I missed your message earlier; I was deep in another task."}
+{"id":"reject-29","label":"reject","category":"restated-question","text":"Wondering whether to use Apex triggers or Flow here for the after-update logic."}
+{"id":"reject-30","label":"reject","category":"numeric-heartbeat","text":"3 of 5 deploys succeeded today (60% success rate so far this week)."}
+{"id":"reject-31","label":"reject","category":"date-only-stamp","text":"2026-05-26 - checked in, all green so far on the morning runs."}
+{"id":"reject-32","label":"reject","category":"status-update-ping","text":"Status: OK. Nothing to report. Will check again in the next interval."}
+{"id":"reject-33","label":"reject","category":"self-reminder","text":"Remember to drink water during long debugging sessions; it keeps you focused on the actual problem."}
+{"id":"reject-34","label":"reject","category":"pop-culture-reference","text":"This bug situation reminds me of that one episode where everything goes sideways at the worst possible moment."}
+{"id":"reject-35","label":"reject","category":"confidence-only","text":"I am very confident this approach will work without any issues at all once we ship it."}
+{"id":"reject-36","label":"reject","category":"task-restatement","text":"The user asked us to fix the deployment bug, and so we fixed the deployment bug as requested."}
+{"id":"reject-37","label":"reject","category":"empty-agreement","text":"Yes, that approach is good. We should definitely do it as soon as we possibly can this week."}
+{"id":"reject-38","label":"reject","category":"speculation-hedge-stack","text":"This might be related to the caching layer; possibly an issue with TTL settings, maybe a propagation lag."}
+{"id":"reject-39","label":"reject","category":"tool-availability-ping","text":"GitHub status page shows all systems operational as of this morning's check-in."}
+{"id":"reject-40","label":"reject","category":"personal-scheduling","text":"I have a meeting at 3pm so will check this later in the afternoon when I get back to my desk."}
+{"id":"reject-41","label":"reject","category":"greeting-signoff","text":"Hi team, hope everyone is doing well! Just a quick update on where things stand right now."}
+{"id":"reject-42","label":"reject","category":"self-praise","text":"This is one of my best implementations yet; very clean code that reads well in my opinion."}
+{"id":"reject-43","label":"reject","category":"vague-urgency","text":"We urgently need to address this important issue as soon as possible across the entire codebase."}
+{"id":"reject-44","label":"reject","category":"acronym-soup","text":"PR LGTM but CI flaky; TBD vs WONTFIX, also IDK on the ETA for the patch landing."}
+{"id":"reject-45","label":"reject","category":"number-only-summary","text":"Total: 14 files, 432 lines, 3 reviewers, 2 approvals, 1 merge conflict pending review."}
+{"id":"reject-46","label":"reject","category":"side-note-offtopic","text":"Side note: the new MacBook keyboard feels amazing for long coding sessions, very satisfying to type on."}
+{"id":"reject-47","label":"reject","category":"user-speculation","text":"The user probably wanted a different output format but did not say anything specific about it in the ticket."}
+{"id":"reject-48","label":"reject","category":"restated-docs","text":"According to the official docs, you can use the API endpoint to fetch the data you need from the server."}
+{"id":"reject-49","label":"reject","category":"imperative-only-short","text":"Run the script once the build completes."}
+{"id":"reject-50","label":"reject","category":"self-correction-loop","text":"Wait, actually no - that is wrong; let me think again about the whole approach before answering."}
