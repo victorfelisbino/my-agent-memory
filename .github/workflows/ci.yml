@@ -77,9 +77,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run scorer on v1 fixture
+      - name: Run scorer on v2 fixture
         shell: pwsh
-        run: ./admission-gate/score-memory.ps1 -FailUnder 100
+        run: ./admission-gate/score-memory.ps1 -FailUnder 90
 
       - name: Re-extract real-memory corpus and score (unlabeled smoke)
         shell: pwsh

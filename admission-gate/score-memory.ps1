@@ -22,7 +22,7 @@
   Exit codes: 0 ok, 2 fixture missing/malformed, 3 accuracy below threshold.
 #>
 param(
-  [string] $Fixture    = "admission-gate/fixtures/memories-v1.jsonl",
+  [string] $Fixture    = "admission-gate/fixtures/memories-v2.jsonl",
   [switch] $Verbose,
   [int]    $FailUnder  = 0,
   [switch] $Unlabeled,
@@ -140,6 +140,27 @@ function Score-Actionability([string]$t) {
   # Heartbeat / liveness noise: "still alive", "no new observations", "sync interval",
   # "keep-alive", "heartbeat". These are runtime telemetry, not memory.
   if ($lc -match '\b(heartbeat|still alive|no new observations?|sync interval|keep[- ]?alive)\b') { $score -= 1.5 }
+  # Placeholder / WIP comments (iter 4): TODO / TBD / FIXME / XXX / WIP followed
+  # by colon or whitespace are notes-to-self, not durable memory. Catches
+  # "TODO: figure this out later" and "FIXME: throws on null input".
+  if ($lc -match '\b(todo|tbd|fixme|wip|xxx)\b\s*[:\-]') { $score -= 1.5 }
+  # Boot / liveness completion (iter 4): "loading complete", "system ready",
+  # "ready for input", "all systems go", "startup complete". Distinct from the
+  # heartbeat pattern in that these fire at a single moment.
+  if ($lc -match '\b(loading complete|system ready|ready for input|all systems (go|ok)|startup complete|booted up)\b') { $score -= 1.5 }
+  # UI event noise (iter 4): "User clicked / tapped / typed / scrolled / ..."
+  # These are interaction logs, not engineering knowledge.
+  if ($lc -match '\buser\s+(clicked|tapped|hovered|opened|closed|typed|scrolled|navigated|pressed|selected|dragged)\b') { $score -= 1.5 }
+  # Non-content / hedge (iter 4): "it depends", "hard to say", "could be", "not sure".
+  # A memory whose central claim is "it depends" carries no transferable rule.
+  if ($lc -match '\b(it depends|hard to say|could be either|not sure|who knows)\b') { $score -= 1.0 }
+  # Stale-status / rollout-in-progress (iter 4): "rolling out", "in progress",
+  # "currently (running|deploying|processing|building)". Combined with a date
+  # marker via the reusability rule, these classify as event-log noise.
+  if ($lc -match '\b(rolling out|in progress|currently\s+(running|deploying|processing|building|loading))\b') { $score -= 0.5 }
+  # Anecdotal singleton (iter 4): "worked when I", "broke when we", "happened
+  # when I". A one-time anecdote is not a reusable lesson.
+  if ($lc -match '\b(worked|broke|crashed|failed|happened)\s+when\s+(i|we)\b') { $score -= 1.5 }
   # Cap.
   if ($score -gt  1.0) { $score =  1.0 }
   if ($score -lt -1.0) { $score = -1.0 }
@@ -152,7 +173,11 @@ function Score-Memory([string]$text) {
   $n = Score-Novelty       $text
   $c = Score-Actionability $text
   $total = $r + $a + $n + $c
-  $decision = if ($total -ge 0) { 'keep' } else { 'reject' }
+  # Threshold is strictly > 0 (iter 4): items that score exactly 0 are
+  # borderline noise (one weak negative signal balanced by the baseline
+  # rewards) and should be rejected. No current keep item lands at 0;
+  # lowest legitimate keep scores 0.85.
+  $decision = if ($total -gt 0) { 'keep' } else { 'reject' }
   $reason = @()
   if ($r -lt 0) { $reason += "reusability=$r" }
   if ($a -lt 0) { $reason += "atomicity=$a" }
