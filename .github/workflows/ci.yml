@@ -146,3 +146,46 @@ jobs:
           if ($html -notmatch 'Feedback-loop hits') { Write-Error 'Dashboard missing feedback-loop section'; exit 1 }
           Write-Host "Dashboard smoke OK ($(($html.Length)) chars)"
 
+      - name: Write-path smoke (iter 13)
+        shell: pwsh
+        run: |
+          # Score-one mode: a keep candidate exits 0; a reject candidate exits 3. Same shape from PS and Python.
+          $keep = '{"text":"Always run mkdocs --strict before pushing docs changes."}'
+          $reject = '{"text":"today I fixed the bug at line 42 in src/foo.py"}'
+
+          $psKeep = $keep | pwsh -NoProfile -File admission-gate/score-memory.ps1 -ScoreOne
+          if ($LASTEXITCODE -ne 0) { Write-Error "PS score-one keep wrong exit: $LASTEXITCODE"; exit 1 }
+          $psReject = $reject | pwsh -NoProfile -File admission-gate/score-memory.ps1 -ScoreOne
+          if ($LASTEXITCODE -ne 3) { Write-Error "PS score-one reject wrong exit: $LASTEXITCODE"; exit 1 }
+
+          $pyKeep = $keep | python admission-gate/score_memory.py --score-one
+          if ($LASTEXITCODE -ne 0) { Write-Error "Py score-one keep wrong exit: $LASTEXITCODE"; exit 1 }
+          $pyReject = $reject | python admission-gate/score_memory.py --score-one
+          if ($LASTEXITCODE -ne 3) { Write-Error "Py score-one reject wrong exit: $LASTEXITCODE"; exit 1 }
+
+          # Cross-language decision parity for score-one (decision field, not exit code).
+          $psKeepDecision = ($psKeep | ConvertFrom-Json).decision
+          $pyKeepDecision = ($pyKeep | ConvertFrom-Json).decision
+          $psRejectDecision = ($psReject | ConvertFrom-Json).decision
+          $pyRejectDecision = ($pyReject | ConvertFrom-Json).decision
+          if ($psKeepDecision -ne $pyKeepDecision) { Write-Error "score-one parity mismatch on keep: ps=$psKeepDecision py=$pyKeepDecision"; exit 1 }
+          if ($psRejectDecision -ne $pyRejectDecision) { Write-Error "score-one parity mismatch on reject: ps=$psRejectDecision py=$pyRejectDecision"; exit 1 }
+
+          # End-to-end via capture-observation.ps1: keep appends; reject diverts; -NoGate bypasses.
+          $tmp = Join-Path $env:RUNNER_TEMP "gate-ci-$([guid]::NewGuid())"
+          New-Item -ItemType Directory -Path $tmp | Out-Null
+          $env:AGENT_MEMORY_PERSONAL = $tmp
+          pwsh -NoProfile -File ./capture-observation.ps1 -Type insight -Note "Always run mkdocs --strict before pushing docs changes."
+          if ($LASTEXITCODE -ne 0) { Write-Error "capture keep wrong exit: $LASTEXITCODE"; exit 1 }
+          pwsh -NoProfile -File ./capture-observation.ps1 -Type progress -Note "today I fixed the bug at line 42 in src/foo.py"
+          if ($LASTEXITCODE -ne 3) { Write-Error "capture reject wrong exit: $LASTEXITCODE"; exit 1 }
+          pwsh -NoProfile -File ./capture-observation.ps1 -Type progress -Note "today I fixed the bug at line 42 in src/foo.py" -NoGate
+          if ($LASTEXITCODE -ne 0) { Write-Error "capture -NoGate wrong exit: $LASTEXITCODE"; exit 1 }
+
+          $obs = Get-Content (Join-Path $tmp 'observations.jsonl') -ErrorAction Stop
+          $rej = Get-Content (Join-Path $tmp 'observations.rejected.jsonl') -ErrorAction Stop
+          if ($obs.Count -ne 2) { Write-Error "expected 2 observations (keep + NoGate); got $($obs.Count)"; exit 1 }
+          if ($rej.Count -ne 1) { Write-Error "expected 1 rejected; got $($rej.Count)"; exit 1 }
+          Remove-Item Env:\AGENT_MEMORY_PERSONAL
+          Write-Host "Write-path smoke OK (2 kept, 1 rejected, 1 bypassed)"
+

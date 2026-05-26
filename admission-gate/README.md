@@ -79,6 +79,7 @@ Iteration history:
 - Iter 11 (**feedback-loop prevention**; v5 -> v6 fixture growth 108 -> 116: +4 distinct-topic keeps, +4 feedback-loop rejects; new `-Recalled` / `--recalled` flag in both scorers loads a recalled-session JSONL; novelty dimension extended to flag candidates that mirror an already-surfaced memory; -2.0 penalty when same subject + same polarity AND >= 4 shared content tokens; parity extended): **116 / 116 / 116** with store + recalled on v6 in both languages; v4 and v5 baselines unchanged; real corpus parity: **381 / 381** with store + recalled (no real bullet collides with the recalled set)._
   Why two overlap thresholds: contradiction-against-store uses >= 2 shared tokens because opposite polarity already makes false positives unlikely; feedback-loop uses >= 4 because same polarity needs a higher bar to distinguish redundancy ("you just read this") from mere topic similarity (two distinct memories about the same area).
 - Iter 12 (**dashboard slice 1**; new `-LogTo` / `--log-to` flag in both scorers appends one JSON line per scored item to a shared log; new [`render-dashboard.ps1`](render-dashboard.ps1) reads any log produced by either scorer and emits a single self-contained `dashboard.html` (summary tiles, top rejection reasons, contradiction-against-store hits + anchor ids, feedback-loop hits + recall ids, 50 most recent decisions); log + dashboard are gitignored, local-only audit tool, no server, no JS framework; CI smoke step runs PS+Py with logging, renders the dashboard, and asserts the expected sections are present). No rules changed; all baselines and parity numbers unchanged.
+- Iter 13 (**write-path integration**; new `-ScoreOne` / `--score-one` flag in both scorers reads one JSON record from stdin, prints a decision JSON to stdout, and exits 0 (keep) or 3 (reject); [`capture-observation.ps1`](../capture-observation.ps1) and [`capture-observation.sh`](../capture-observation.sh) now route every candidate through the gate before appending -- rejected items divert to `observations.rejected.jsonl` (gitignored) with the rejection reason, so nothing is silently lost; bypass with `-NoGate` / `--no-gate` or `MEMORY_GATE=off`; CI smoke step exercises the keep / reject / bypass paths end-to-end and asserts the resulting files contain exactly the expected lines). No rules changed; all baselines and parity numbers unchanged. **This is the first iter where the scorer actually filters real writes** -- the dashboard will now start showing decisions from real captures, not just fixture runs.
 
 ## Honesty contract
 
@@ -132,8 +133,27 @@ Exit codes: `0` ok, `2` fixture missing or malformed, `3` accuracy below `-FailU
 
 ## Not in scope here
 
-- No write-path integration yet (Wave 3 deliverable, separate PR).
 - Contradiction-against-store (iter 10) and feedback-loop (iter 11) both use a polarity+subject-overlap heuristic, not embeddings. Good for the obvious "always X / never X" inversion and verbatim-paraphrase shapes; would not catch a deeply rephrased contradiction or a synonym-swapped re-ingestion with no shared content tokens.
+- Dashboard is local-only (slice 1) -- no time-series chart, no staleness view, no live refresh.
+
+## Write-path integration (iter 13)
+
+The scorer now actually filters writes. `capture-observation.ps1` / `capture-observation.sh` pipe every candidate through `score_memory.py --score-one` before appending to `observations.jsonl`. Rejected items divert to `observations.rejected.jsonl` (gitignored) along with the rejection reason -- nothing is silently lost. Bypass via `-NoGate` / `--no-gate` or `MEMORY_GATE=off` when the gate misfires.
+
+```powershell
+# Normal use -- gate runs by default.
+pwsh ./capture-observation.ps1 -Type insight -Note "Always run mkdocs --strict before pushing docs changes."
+# -> [insight] General :: ...  (appended to observations.jsonl, exit 0)
+
+pwsh ./capture-observation.ps1 -Type progress -Note "today I fixed the bug at line 42 in src/foo.py"
+# -> [gate-reject] General :: ...  reason: reusability=-1  (logged to observations.rejected.jsonl, exit 3)
+
+# Bypass when you disagree with the gate.
+pwsh ./capture-observation.ps1 -Type progress -Note "..." -NoGate
+$env:MEMORY_GATE = 'off'   # session-wide bypass
+```
+
+The same JSON shape is emitted by `score-memory.ps1 -ScoreOne` and `score_memory.py --score-one`, so callers in either language get identical decisions (cross-language parity is enforced in CI). Combine with `-LogTo` / `--log-to` (iter 12) to feed real capture decisions into the dashboard.
 
 ## Dashboard (iter 12)
 
