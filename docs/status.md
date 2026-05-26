@@ -36,6 +36,7 @@ Three columns:
 
 - Run the anti-hallucination test harness on real workflows and publish first-party results (Wave 1 exit criterion).
 - Read the signal from [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10) (Wave 2 exit).
+- **Competence map.** A `competence-map.yml` at repo root + generator script + `docs/competence-map.md` that publishes what this brain claims to know, at what depth, with computed evidence panels (file count, heading count, last git touch). Depth is author-set; the generator refuses to render dishonest claims (e.g. `expert` with zero evidence). Two-repo merge with the personal sibling is the follow-up (Wave 2.5).
 - Decision gate: pivot, contribute & integrate, or archive (Wave 3).
 - "Copilot Guardrail Layer" on top of mem0 / OpenMemory as MCP server, if signal is good (Wave 4-A).
 - Upstream PRs to `memory-bank-mcp` and OpenMemory if signal is mixed (Wave 4-B).
