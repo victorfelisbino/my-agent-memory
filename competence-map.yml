@@ -1,0 +1,123 @@
+# Competence map for my-agent-memory (shared / public scope)
+#
+# Honesty contract:
+# - `depth` is author-set (explore / working / expert / dormant).
+# - `sources` are the files that back the claim. The generator computes evidence
+#   from them (file count, total bytes, heading count, gotcha/lesson markers,
+#   last git touch). If a `depth: expert` entry has zero evidence or hasn't been
+#   touched in 180+ days, the generator exits non-zero.
+# - `scope: shared` entries appear on the public site. `scope: personal-only`
+#   entries (in the sibling personal repo) never appear here.
+# - No client / project names. The generator lints for them before render.
+#
+# Schema (per entry):
+#   id            : slug, unique within this file
+#   name          : human-readable label
+#   depth         : explore | working | expert | dormant
+#   scope         : shared | personal-only   (this file = shared only)
+#   description   : one-line summary
+#   sources       : list of repo-relative paths backing the claim
+#   last_reviewed : YYYY-MM-DD (author-set)
+#   related       : list of other entry ids (optional)
+
+- id: anti-hallucination
+  name: Anti-hallucination protocol
+  depth: working
+  scope: shared
+  description: A skill that refuses the four most common agent hallucination shapes; shipped as a load-it-yourself skill plus a 5-prompt before/after harness. Working, not expert, until the harness has been run end-to-end in a real chat.
+  sources:
+    - anti-hallucination-protocol.md
+    - skills/general/anti-hallucination/skill.md
+    - skills/general/anti-hallucination/install.md
+    - skills/general/anti-hallucination/test-prompts.md
+    - skills/general/anti-hallucination/results-template.md
+    - skills/general/anti-hallucination/results-examples/example-redacted.md
+    - docs/anti-hallucination-skill.md
+  last_reviewed: 2026-05-26
+  related:
+    - thinking-principles
+    - ai-memory-architecture
+
+- id: ai-memory-architecture
+  name: AI agent memory architecture
+  depth: working
+  scope: shared
+  description: Working model of the agent-memory landscape (mem0, MCP Memory, memory-bank-mcp, Zep, Letta, Tensory, Claude Code auto-memory) and the quality-gate thesis. Backed by competitive landscape and ecosystem research docs.
+  sources:
+    - docs/competitive-landscape-2026-05.md
+    - docs/memory-ecosystem-research-2026-05-15.md
+    - docs/roadmap.md
+    - docs/framework-purpose.md
+    - docs/framework-scope.md
+  last_reviewed: 2026-05-26
+  related:
+    - anti-hallucination
+    - thinking-principles
+
+- id: thinking-principles
+  name: Thinking principles & decision frameworks
+  depth: working
+  scope: shared
+  description: First-principles thinking, decision frameworks, cognitive bias checks, exploration modes. The meta-layer that the rest of the brain runs on top of.
+  sources:
+    - thinking-principles.md
+    - decision-framework.md
+    - cognitive-bias-checks.md
+    - exploration-modes.md
+    - anti-hallucination-protocol.md
+  last_reviewed: 2026-05-26
+  related:
+    - anti-hallucination
+
+- id: salesforce
+  name: Salesforce
+  depth: working
+  scope: shared
+  description: Apex, flows, debugging patterns, deployment incidents, router heuristics. Multiple playbooks and a domain-specific debugging file. No client names.
+  sources:
+    - domains/salesforce/playbook.md
+    - domains/salesforce/black-widow-playbook.md
+    - salesforce-debugging.md
+    - skills/salesforce/deploy-incident/skill.md
+    - skills/salesforce/router/salesforce-router.md
+    - skills/salesforce/commands/deploy-incident-workflow.md
+  last_reviewed: 2026-05-26
+  related:
+    - mulesoft
+
+- id: mulesoft
+  name: Mulesoft
+  depth: explore
+  scope: shared
+  description: Integration patterns and an API rollout skill. One playbook plus a skill template — enough to scaffold work but not enough to call working yet.
+  sources:
+    - domains/mulesoft/playbook.md
+    - skills/mulesoft/api-rollout/skill.md
+  last_reviewed: 2026-05-26
+  related:
+    - salesforce
+
+- id: code-review
+  name: Code review patterns
+  depth: explore
+  scope: shared
+  description: PR-review skill scaffold. Currently a template; promotes to working once it has been used on real PRs and the patterns are captured back.
+  sources:
+    - skills/general/pr-review/skill.md
+  last_reviewed: 2026-05-26
+  related:
+    - anti-hallucination
+
+- id: memory-operations
+  name: Memory operations (capture, sync, weekly review)
+  depth: working
+  scope: shared
+  description: The day-to-day operating procedures of the brain itself — weekly synthesis checklist, lesson template, project-commands reference. Capture / sync scripts and the per-day operating files (active brief, scoreboard, decision journal, performance map) live in the personal repo and are tracked there.
+  sources:
+    - docs/memory-adoption-playbook.md
+    - weekly-review-checklist.md
+    - lesson-template.md
+    - project-commands.md
+  last_reviewed: 2026-05-26
+  related:
+    - thinking-principles

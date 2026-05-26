@@ -28,6 +28,7 @@ What to read first:
 ## Start Here
 
 - Reality check first: [docs/status.md](docs/status.md) &mdash; what's real today vs documented-only vs planned.
+- What this brain knows: [docs/competence-map.md](docs/competence-map.md) &mdash; depth, evidence, and last-touch per domain. Generated, not hand-typed.
 - Where this is going: [docs/roadmap.md](docs/roadmap.md) &mdash; 6 waves, each with a kill switch.
 - New user setup: [Quick Start (5 minutes)](#quick-start-5-minutes)
 - Published docs entry: [docs/index.md](docs/index.md)
