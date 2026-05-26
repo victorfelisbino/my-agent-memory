@@ -175,11 +175,14 @@ foreach ($e in $entries) {
     }
     $fi = Get-Item $src
     $fileCount += 1
-    $totalBytes += $fi.Length
 
     $text = Get-Content $src -Raw -Encoding UTF8
-    $headingCount += ([regex]::Matches($text, '(?m)^##\s')).Count
-    $markerCount  += ([regex]::Matches($text, '(?im)\b(gotcha|lesson)\s*:')).Count
+    # Normalize CRLF -> LF before measuring so the count is identical on
+    # Windows (CRLF on checkout) and Linux CI (LF on checkout).
+    $normalized = $text -replace "`r", ""
+    $totalBytes += [System.Text.Encoding]::UTF8.GetByteCount($normalized)
+    $headingCount += ([regex]::Matches($normalized, '(?m)^##\s')).Count
+    $markerCount  += ([regex]::Matches($normalized, '(?im)\b(gotcha|lesson)\s*:')).Count
 
     $iso = Get-LastGitTouchIso $src
     if ($iso) {
