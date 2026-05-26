@@ -126,7 +126,7 @@
   name: Memory admission gate (Wave 3 harness)
   depth: explore
   scope: shared
-  description: Measurement harness for the quality gate that decides which memories are worth storing. v1 = 20-item labeled fixture + corpus extractor that pulls real bullets from the repo's own .md files + baseline stub scorer across four dimensions (reusability, atomicity, novelty, actionability) with both labeled-accuracy mode and unlabeled real-corpus distribution mode. After iteration 1 (tightened reusability rule using real-memory feedback) baseline is 80% accuracy, 100% good-recall, 60% junk-recall on v1. CI gate enforces >= 75%. No write-path integration, no dashboard, no real novelty lookup yet.
+  description: Measurement harness for the quality gate that decides which memories are worth storing. v1 = 20-item labeled fixture + corpus extractor that pulls real bullets from the repo's own .md files + baseline stub scorer across four dimensions (reusability, atomicity, novelty, actionability) with both labeled-accuracy mode and unlabeled real-corpus distribution mode. After two iterations against real memory, baseline is 95% accuracy, 100% good-recall, 90% junk-recall on v1 -- clears the 80% percentage threshold on all three but the Wave 3 exit criterion also requires the fixture to be >=100 items (today 20), so this is on track, not done. CI gate enforces >= 90%. One documented miss remains (contradiction-shape). No write-path integration, no dashboard, no real novelty lookup yet.
   sources:
     - admission-gate/README.md
     - admission-gate/score-memory.ps1

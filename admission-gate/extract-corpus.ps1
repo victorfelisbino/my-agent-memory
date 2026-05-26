@@ -39,6 +39,7 @@ param(
     'README\.md$',
     'CONTRIBUTING\.md$',
     'team-memory/templates/',
+    'skills/templates/',
     'admission-gate/fixtures/',
     'admission-gate/README\.md$',
     'memory-ecosystem-research',

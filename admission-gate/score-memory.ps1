@@ -69,14 +69,17 @@ function Score-Reusability([string]$t) {
   foreach ($p in $reusabilityNegativePatterns) {
     if ($t -match $p) { $hits++ }
   }
-  if ($hits -eq 0) { return  0.5 }
+  # Lower baseline reward (was 0.5) so vague memories with no positive signal
+  # can dip below zero on actionability alone. Keeps still score well clear of
+  # the threshold because they pick up actionability bonuses too.
+  if ($hits -eq 0) { return  0.3 }
   if ($hits -eq 1) { return -0.3 }
   return -1.0
 }
 
 # Atomicity: penalize very long memories and contradictory-shape claims.
 function Score-Atomicity([string]$t) {
-  $score = 0.5
+  $score = 0.3
   if ($t.Length -gt 240) { $score -= 0.5 }
   # Contradiction shape: "always X ... never X" / "do X ... don't X" in one line.
   if ($t -match '\balways\b.*\bnever\b' -or $t -match '\bnever\b.*\balways\b') {
@@ -101,11 +104,14 @@ function Score-Actionability([string]$t) {
   foreach ($v in $actionableVerbs)  { if ($lc -match "\b$v\b") { $score += 0.25 } }
   foreach ($f in $vagueFillers)     { if ($lc -match "\b$([regex]::Escape($f))\b") { $score -= 0.5 } }
   # Tautology shape: "if X then X" with same predicate echoed.
-  if ($lc -match '\bif\s+.+\bthen\b.+\b(is|returns)\b') { $score -= 0.5 }
+  if ($lc -match '\bif\s+.+\bthen\b.+\b(is|returns?)\b') { $score -= 1.0 }
   # Self-referential filler.
   if ($lc -match '\bagent\b.*\b(answered|responded|said)\b') { $score -= 0.75 }
   # World noise (weather / wifi / generic environment statements).
   if ($lc -match '\b(sunny|raining|wifi|weather)\b') { $score -= 1.0 }
+  # Heartbeat / liveness noise: "still alive", "no new observations", "sync interval",
+  # "keep-alive", "heartbeat". These are runtime telemetry, not memory.
+  if ($lc -match '\b(heartbeat|still alive|no new observations?|sync interval|keep[- ]?alive)\b') { $score -= 1.5 }
   # Cap.
   if ($score -gt  1.0) { $score =  1.0 }
   if ($score -lt -1.0) { $score = -1.0 }
