@@ -3,64 +3,64 @@
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>The shared brain for my AI coding agents.</h1>
-			<p class="lead">Two-repo pattern: a private repo holds raw observations, client names, and active project state; <strong>this</strong> repo holds only the generalized lessons, guardrails, and reasoning patterns that survive the promotion bar. Every agent session pulls from here, so the more it learns, the smarter the next session starts &mdash; without leaking anything private.</p>
+			<h1>A brain that learns once and carries it forward.</h1>
+			<p class="lead">A senior developer picks up a new language faster than a beginner not because they remember more syntax, but because the <em>principles</em> transfer: scope, state, error boundaries, naming, debugging instincts. This repo is that for an AI coding agent. Project-specific facts stay in a private repo and get forgotten. Generalized principles graduate into this shared brain and stay forever, so every new session starts with years of compounded expertise instead of from scratch.</p>
 			<div class="pill-row">
-				<span class="pill">Shared layer</span>
+				<span class="pill">Transferable principles</span>
 				<span class="pill">Promotion-gated</span>
-				<span class="pill">No private data</span>
+				<span class="pill">Compounds over time</span>
 			</div>
 			<div class="cta-row">
 				<a class="md-button md-button--primary" href="should-you-use-this/">Is this for you?</a>
-				<a class="md-button" href="quick-restart-routine/">See the daily routine</a>
+				<a class="md-button" href="principles-ways-of-thinking/">See the principles</a>
 			</div>
 		</div>
 		<div class="kpi-panel">
 			<div class="kpi-item">
-				<strong>Compounds over time</strong>
-				<span>Every promoted lesson permanently raises the floor for the next session, across machines and projects.</span>
+				<strong>Principles, not facts</strong>
+				<span>Only patterns that transfer across languages, frameworks, and projects earn a place here. Facts stay private and get forgotten on purpose.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Private stays private</strong>
-				<span>A hard boundary keeps client names, active state, and project-specific notes in the personal repo, never here.</span>
+				<strong>Pattern recognition compounds</strong>
+				<span>The 50th gotcha promoted is more valuable than the 1st &mdash; because by then the agent recognizes the <em>shape</em> of the problem before it asks.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Copilot starts informed</strong>
-				<span><code>summon-memory</code> pulls the most relevant generalized lessons + router hints into every prompt.</span>
+				<strong>Every session starts senior</strong>
+				<span><code>summon-memory</code> injects the relevant principles, gotchas, and guardrails into the prompt &mdash; so a new project never starts at zero.</span>
 			</div>
 		</div>
 	</div>
 </div>
 
-## How the two repos fit together
+## How human expertise works — and how this mirrors it
 
 <div class="bento-grid">
 	<div class="bento-card wide">
-		<span class="meta">01 / Private repo (yours)</span>
-		<h3>Raw signal lives here</h3>
-		<p>Observations as you work, client and project names, decision journal, active threads, goals, anything specific to what you're shipping today. Never leaves your machine.</p>
+		<span class="meta">01 / Episodic (private repo)</span>
+		<h3>What happened, with names attached</h3>
+		<p>Raw observations as you work, client and project names, the specific bug on the specific Tuesday. Like episodic memory: vivid but local, mostly forgotten within months. Lives only in the private repo.</p>
 	</div>
 	<div class="bento-card wide">
-		<span class="meta">02 / This repo (shared)</span>
-		<h3>Generalized lessons only</h3>
-		<p>A pattern only lands here once it has been hit more than once, generalized past the specific project, and verified. Reasoning principles, gotchas, domain playbooks, anti-hallucination rules, router hints.</p>
+		<span class="meta">02 / Semantic (this repo)</span>
+		<h3>The pattern, stripped of the story</h3>
+		<p>Once the same shape shows up more than once, it gets distilled to a principle and graduates here. Like semantic memory: "async state in any UI framework leaks if you don't cancel on unmount" survives long after you forget which project taught you that.</p>
 	</div>
 	<div class="bento-card tall">
 		<span class="meta">03 / The promotion gate</span>
-		<h3>What earns a place here</h3>
-		<p>Reusable across projects, measurable, falsifiable, and fresh. If a lesson fails any of the four, it stays in the private repo.</p>
+		<h3>Transfer test before promotion</h3>
+		<p>A lesson only lands here if it would still apply in a language or framework you haven't used yet. Reusable, measurable, falsifiable, fresh. If it fails the transfer test, it stays private.</p>
 	</div>
 	<div class="bento-card tall">
-		<span class="meta">04 / The agent loop</span>
-		<h3>How it gets smarter</h3>
-		<p><code>summon-memory</code> reads from this repo every session, injects relevant lessons + router hints + anti-hallucination context, so each new prompt starts on top of everything already learned.</p>
+		<span class="meta">04 / Compounding intuition</span>
+		<h3>Year 1 vs year 10</h3>
+		<p>A junior with 50 facts loses to a senior with 50 principles every time. The shared brain is built so the agent ages like a senior dev: fewer surprises, faster pattern matches, better defaults &mdash; even on stacks it has never touched.</p>
 	</div>
 </div>
 
 ## Honest scope
 
 !!! note "What this is and isn't"
-    This is the public, shared layer of one person's two-repo memory pattern. There are no customers, no production metrics, no team consuming it &mdash; just me, running it daily and tightening it weekly so my own agents stay sharp across projects. The category is crowded (mem0, OpenMemory, cursor-memory-bank, memory-bank-mcp). If you want a polished product or hosted service, use one of those. The specific thing on offer here is the **separation pattern**: keep private signal in a private repo, promote only generalized lessons into a shared brain the agent reads from every session.
+    This is one person's working version of that idea: the shared, semantic layer of a two-repo memory pattern. There are no customers, no production metrics, no team consuming it &mdash; just me running it daily and tightening it weekly so my own agents age into seniority instead of resetting every session. The memory category is crowded (mem0, OpenMemory, cursor-memory-bank, memory-bank-mcp); if you want a polished product or hosted service, use one of those. The specific thing on offer here is the **transfer-test pattern**: keep episodic signal private, promote only what survives the "would this still apply in a language you haven't met yet?" test, and let agents read from the result.
 
 ## Pages worth reading
 
