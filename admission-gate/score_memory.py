@@ -26,6 +26,7 @@ import json
 import re
 import sys
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -401,12 +402,39 @@ def _read_fixture(path: Path) -> list[dict]:
 # Modes.
 # ---------------------------------------------------------------------------
 
-def _labeled_summary(items: list[dict], verbose: bool, fail_under: int, store_claims: dict | None = None, recalled_claims: dict | None = None) -> int:
+def _write_score_log(fh, item_id: str, text: str, s) -> None:
+    """Iter 12: optional per-item JSON-line log for the dashboard renderer.
+
+    Same shape emitted by both PowerShell and Python scorers (one JSONL
+    row per scored item) so render-dashboard.ps1 is language-agnostic.
+    """
+    if fh is None:
+        return
+    snippet = text if len(text) <= 240 else text[:237] + "..."
+    row = {
+        "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        "scorer": "py",
+        "fixture": _args_fixture,
+        "id": item_id,
+        "decision": s.decision,
+        "total": round(s.total, 2),
+        "reusability": round(s.reusability, 2),
+        "atomicity": round(s.atomicity, 2),
+        "novelty": round(s.novelty, 2),
+        "actionability": round(s.actionability, 2),
+        "reason": s.reason,
+        "text": snippet,
+    }
+    fh.write(json.dumps(row) + "\n")
+
+
+def _labeled_summary(items: list[dict], verbose: bool, fail_under: int, store_claims: dict | None = None, recalled_claims: dict | None = None, log_fh=None) -> int:
     tp = fp = tn = fn = 0
     detailed: list[tuple[str, str, str, str, float, str, str]] = []
 
     for rec in items:
         s = score_memory(rec["text"], store_claims, recalled_claims)
+        _write_score_log(log_fh, rec.get("id", ""), rec.get("text", ""), s)
         label = rec.get("label", "")
         matched = s.decision == label
         if label == "keep" and s.decision == "keep":
@@ -461,10 +489,11 @@ def _pct(v: float) -> str:
     return f"{v:g}"
 
 
-def _unlabeled_summary(items: list[dict], show_worst: int, store_claims: dict | None = None, recalled_claims: dict | None = None) -> int:
+def _unlabeled_summary(items: list[dict], show_worst: int, store_claims: dict | None = None, recalled_claims: dict | None = None, log_fh=None) -> int:
     scored = []
     for rec in items:
         s = score_memory(rec["text"], store_claims, recalled_claims)
+        _write_score_log(log_fh, rec.get("id", ""), rec.get("text", ""), s)
         scored.append({
             "id": rec.get("id", ""),
             "source": rec.get("source", ""),
@@ -557,6 +586,7 @@ def main() -> int:
     parser.add_argument("--parity", action="store_true", help="Emit per-item JSON {id,decision,total} for cross-language parity tests.")
     parser.add_argument("--store", default="", help="Path to anchor JSONL ({id,text}). Enables contradiction-against-store check.")
     parser.add_argument("--recalled", default="", help="Path to recalled-session JSONL ({id,text}). Enables feedback-loop check (iter 11).")
+    parser.add_argument("--log-to", default="", help="Append one JSON line per scored item to this path. Used by render-dashboard.ps1 (iter 12).")
     args = parser.parse_args()
 
     _args_fixture = args.fixture
@@ -564,11 +594,21 @@ def main() -> int:
     store_claims = load_store_claims(args.store)
     recalled_claims = load_store_claims(args.recalled)
 
-    if args.parity:
-        return _parity_dump(items, store_claims, recalled_claims)
-    if args.unlabeled:
-        return _unlabeled_summary(items, args.show_worst, store_claims, recalled_claims)
-    return _labeled_summary(items, args.verbose, args.fail_under, store_claims, recalled_claims)
+    log_fh = None
+    if args.log_to:
+        log_path = Path(args.log_to)
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_fh = log_path.open("a", encoding="utf-8")
+
+    try:
+        if args.parity:
+            return _parity_dump(items, store_claims, recalled_claims)
+        if args.unlabeled:
+            return _unlabeled_summary(items, args.show_worst, store_claims, recalled_claims, log_fh)
+        return _labeled_summary(items, args.verbose, args.fail_under, store_claims, recalled_claims, log_fh)
+    finally:
+        if log_fh is not None:
+            log_fh.close()
 
 
 if __name__ == "__main__":

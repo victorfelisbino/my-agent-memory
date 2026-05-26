@@ -28,7 +28,8 @@ param(
   [switch] $Unlabeled,
   [int]    $ShowWorst  = 15,
   [string] $Store      = "",
-  [string] $Recalled   = ""
+  [string] $Recalled   = "",
+  [string] $LogTo      = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -459,6 +460,36 @@ function Score-Memory([string]$text) {
 # ---------------------------------------------------------------------------
 $lines = Get-Content $Fixture -Encoding UTF8 | Where-Object { $_.Trim() -ne '' -and -not $_.TrimStart().StartsWith('#') }
 
+# Iter 12: optional per-item JSON-line log so the dashboard renderer
+# (render-dashboard.ps1) can ingest decisions from any run. Same shape
+# emitted by both PowerShell and Python scorers so the renderer is
+# language-agnostic.
+$script:LogFs = $null
+if ($LogTo) {
+  $logDir = Split-Path -Parent $LogTo
+  if ($logDir -and -not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+  $script:LogFs = [System.IO.File]::AppendText($LogTo)
+}
+function Write-ScoreLog([string]$id, [string]$text, $s) {
+  if (-not $script:LogFs) { return }
+  $snippet = if ($text.Length -gt 240) { $text.Substring(0, 237) + '...' } else { $text }
+  $row = [ordered]@{
+    ts            = (Get-Date).ToUniversalTime().ToString('o')
+    scorer        = 'ps'
+    fixture       = $Fixture
+    id            = $id
+    decision      = $s.decision
+    total         = [math]::Round($s.total, 2)
+    reusability   = [math]::Round($s.reusability, 2)
+    atomicity     = [math]::Round($s.atomicity, 2)
+    novelty       = [math]::Round($s.novelty, 2)
+    actionability = [math]::Round($s.actionability, 2)
+    reason        = $s.reason
+    text          = $snippet
+  }
+  $script:LogFs.WriteLine((ConvertTo-Json $row -Compress))
+}
+
 if ($Unlabeled) {
   # Real-corpus mode: no ground truth, just report the distribution and
   # surface the lowest-scored items so a human can eyeball whether the
@@ -479,6 +510,7 @@ if ($Unlabeled) {
       reason   = $s.reason
       text     = $rec.text
     })
+    Write-ScoreLog $rec.id $rec.text $s
   }
 
   $n      = $scored.Count
@@ -513,6 +545,7 @@ if ($Unlabeled) {
       if ($_.reason) { Write-Host ("          reason: {0}" -f $_.reason) }
     }
   Write-Host ""
+  if ($script:LogFs) { $script:LogFs.Dispose() }
   exit 0
 }
 
@@ -549,6 +582,7 @@ foreach ($line in $lines) {
     category  = $rec.category
     reason    = $s.reason
   })
+  Write-ScoreLog $rec.id $rec.text $s
 }
 
 if ($Verbose) {
@@ -570,8 +604,10 @@ Write-Host "  confusion     : TP=$truePositive  TN=$trueNegative  FP=$falsePosit
 Write-Host ""
 
 if ($FailUnder -gt 0 -and $accuracy -lt $FailUnder) {
+  if ($script:LogFs) { $script:LogFs.Dispose() }
   [Console]::Error.WriteLine("Accuracy $accuracy% below required $FailUnder%")
   exit 3
 }
 
+if ($script:LogFs) { $script:LogFs.Dispose() }
 exit 0

@@ -32,3 +32,8 @@ site/
 # Admission-gate derived corpus (regenerated from .md files; not source of truth)
 admission-gate/fixtures/real-memory.jsonl
 admission-gate/fixtures/real-memory.ci.jsonl
+
+# Admission-gate dashboard (iter 12) -- local audit tool, regenerated on demand
+admission-gate/logs/
+admission-gate/dashboard.html
+admission-gate/dashboard.ci.html
