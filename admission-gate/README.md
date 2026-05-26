@@ -15,21 +15,24 @@ The kill switch fires if the scoring function cannot beat random (50/50) on the 
 ## What is here today
 
 - [`fixtures/memories-v1.jsonl`](fixtures/memories-v1.jsonl) — 20 labeled memories (10 keep, 10 reject). Reject categories cover the documented junk shapes: boot noise, heartbeat, transient task state, hallucinated profile, vague non-actionable, self-referential, world noise, project-private without portable lesson, tautology, contradiction-in-one-line.
-- [`score-memory.ps1`](score-memory.ps1) — baseline scorer with stub rules across the four Wave 3 dimensions: reusability, atomicity, novelty (stubbed), actionability. Emits per-memory decisions and a summary block.
+- [`score-memory.ps1`](score-memory.ps1) — baseline scorer with stub rules across the four Wave 3 dimensions: reusability, atomicity, novelty (stubbed), actionability. Emits per-memory decisions and a summary block. Supports an `-Unlabeled` mode for scoring real, unlabeled corpora and reporting score distribution + lowest-scored items for human inspection.
+- [`extract-corpus.ps1`](extract-corpus.ps1) — pulls top-level bullets from real .md files in the repo into a JSONL corpus, so the scorer can be aimed at real memory (not just the synthetic fixture). Output is gitignored — regenerate on demand.
 - [`score-memory.sh`](score-memory.sh) — parity stub that delegates to `pwsh`.
 
 ## Current baseline (v1, 20-item fixture)
 
 ```
 total       : 20
-accuracy    : 75%   (random baseline: 50.0%)
-junk recall : 50%   (Wave 3 exit: >= 80%)
+accuracy    : 80%   (random baseline: 50.0%)
+junk recall : 60%   (Wave 3 exit: >= 80%)
 good recall : 100%  (Wave 3 exit: >= 80%)
 ```
 
-Above random, below the exit bar. Five documented misses: heartbeat with no marker words, tautology with the verb "returns," contradiction-shape line where actionable verbs ("always", "never") cancel the structural penalty, vague filler offset by neutral reusability, and a transient-state line with only one matched specificity pattern.
+Above random, below the exit bar. Four documented misses on v1: heartbeat with no marker words, tautology with the verb "returns," contradiction-shape line where actionable verbs ("always", "never") cancel the structural penalty, and vague filler offset by neutral reusability. These are the next iteration backlog.
 
-These are not bugs to hide; they are the iteration backlog.
+Iteration 1 (this commit) tightened the reusability rule using feedback from running the scorer over the repo's own .md files: previously bare technical vocabulary like "branch" / "repo" / "src" triggered a specificity penalty, which dragged legitimate Salesforce/Gearset gotchas down. The rule now only penalizes concrete instances (`feature/foo-1234`, `line 42`, specific src paths, named sprints/clients). v1 accuracy moved 75% → 80%, junk recall 50% → 60%, good recall held at 100%.
+
+Unlabeled run over the current real-memory corpus (429 items extracted from this repo): 0% rejection, mean score 1.05, distribution `0..1=7, 1..2=422`. Lowest-scored items are extraction artifacts (template placeholders, heading-like bullets) rather than real memory — useful signal for where the extractor or the scorer should tighten next.
 
 ## Honesty contract
 
@@ -40,9 +43,13 @@ These are not bugs to hide; they are the iteration backlog.
 ## How to run
 
 ```powershell
-pwsh ./admission-gate/score-memory.ps1            # summary
-pwsh ./admission-gate/score-memory.ps1 -Verbose   # per-memory table
-pwsh ./admission-gate/score-memory.ps1 -FailUnder 75  # CI gate: fail if accuracy < 75%
+pwsh ./admission-gate/score-memory.ps1                              # labeled summary
+pwsh ./admission-gate/score-memory.ps1 -Verbose                     # per-memory table
+pwsh ./admission-gate/score-memory.ps1 -FailUnder 75                # CI gate: fail if accuracy < 75%
+pwsh ./admission-gate/extract-corpus.ps1                            # derive real-memory.jsonl
+pwsh ./admission-gate/score-memory.ps1 \`
+  -Fixture admission-gate/fixtures/real-memory.jsonl \`
+  -Unlabeled -ShowWorst 20                                          # unlabeled distribution
 ```
 
 Exit codes: `0` ok, `2` fixture missing or malformed, `3` accuracy below `-FailUnder`.

@@ -22,9 +22,11 @@
   Exit codes: 0 ok, 2 fixture missing/malformed, 3 accuracy below threshold.
 #>
 param(
-  [string] $Fixture   = "admission-gate/fixtures/memories-v1.jsonl",
+  [string] $Fixture    = "admission-gate/fixtures/memories-v1.jsonl",
   [switch] $Verbose,
-  [int]    $FailUnder = 0
+  [int]    $FailUnder  = 0,
+  [switch] $Unlabeled,
+  [int]    $ShowWorst  = 15
 )
 
 $ErrorActionPreference = "Stop"
@@ -44,14 +46,22 @@ if (-not (Test-Path $Fixture)) {
 # ---------------------------------------------------------------------------
 
 # Reusability: penalize project/file/person/time specifics that won't generalize.
+# Note: bare technical vocabulary like "branch" / "repo" / "src" is fine -- it
+# appears in legitimate reusable memories ("never close a defect without branch
+# diff + deploy report"). What we want to flag is *concrete instances*: a
+# specific branch name, a specific line number, a specific file path, a
+# specific sprint, a named client.
 $reusabilityNegativePatterns = @(
   '\b(today|yesterday|tomorrow|just now)\b',
   '\b(at|on)\s+\d{1,2}[:.]\d{2}\b',
   '\b20\d{2}-\d{2}-\d{2}\b',
   '\b(office-pc|workstation|laptop-\w+)\b',
-  '\b(line \d+|src/|repo|branch|feature/|sprint-?\d+)\b',
+  '\bline\s+\d+\b',                       # "line 42"
+  '\bsrc/[a-zA-Z0-9_./-]+',               # concrete src/ path
+  '\bfeature/[a-zA-Z0-9._-]+',            # named feature branch
+  '\bsprint-?\d+\b',                      # specific sprint number
   '\b(named|aged?\s+\d+|years old|lives in)\b',
-  '\bclient\b|\bacme\b|\bcustomer-\w+\b'
+  '\bacme\b|\bcustomer-\w+\b'             # named client
 )
 
 function Score-Reusability([string]$t) {
@@ -128,6 +138,64 @@ function Score-Memory([string]$text) {
 # Load fixture, score, summarize.
 # ---------------------------------------------------------------------------
 $lines = Get-Content $Fixture -Encoding UTF8 | Where-Object { $_.Trim() -ne '' -and -not $_.TrimStart().StartsWith('#') }
+
+if ($Unlabeled) {
+  # Real-corpus mode: no ground truth, just report the distribution and
+  # surface the lowest-scored items so a human can eyeball whether the
+  # scorer would falsely reject real, useful memory.
+  $scored = New-Object System.Collections.Generic.List[object]
+  foreach ($line in $lines) {
+    $rec = $null
+    try { $rec = $line | ConvertFrom-Json } catch {
+      [Console]::Error.WriteLine("Malformed JSONL line: $line")
+      exit 2
+    }
+    $s = Score-Memory $rec.text
+    $scored.Add([pscustomobject]@{
+      id       = $rec.id
+      source   = $rec.source
+      decision = $s.decision
+      total    = [math]::Round($s.total, 2)
+      reason   = $s.reason
+      text     = $rec.text
+    })
+  }
+
+  $n      = $scored.Count
+  $keep   = ($scored | Where-Object { $_.decision -eq 'keep' }).Count
+  $reject = $n - $keep
+  $totals = $scored | ForEach-Object { $_.total }
+  $mean   = if ($n -gt 0) { [math]::Round(($totals | Measure-Object -Average).Average, 2) } else { 0 }
+  $min    = if ($n -gt 0) { ($totals | Measure-Object -Minimum).Minimum } else { 0 }
+  $max    = if ($n -gt 0) { ($totals | Measure-Object -Maximum).Maximum } else { 0 }
+  $bins   = @{ 'lt -1' = 0; '-1..0' = 0; '0..1' = 0; '1..2' = 0; 'gt 2' = 0 }
+  foreach ($t in $totals) {
+    if     ($t -lt -1) { $bins['lt -1']++ }
+    elseif ($t -lt  0) { $bins['-1..0']++ }
+    elseif ($t -lt  1) { $bins['0..1']++  }
+    elseif ($t -lt  2) { $bins['1..2']++  }
+    else               { $bins['gt 2']++  }
+  }
+
+  Write-Host ""
+  Write-Host "Admission-gate UNLABELED corpus run"
+  Write-Host "  fixture     : $Fixture"
+  Write-Host "  items       : $n"
+  Write-Host "  predicted   : keep=$keep   reject=$reject   reject-rate=$([math]::Round(100.0 * $reject / [math]::Max(1,$n), 1))%"
+  Write-Host "  total score : min=$min  mean=$mean  max=$max"
+  Write-Host ("  distribution: lt -1={0}  -1..0={1}  0..1={2}  1..2={3}  gt 2={4}" -f $bins['lt -1'],$bins['-1..0'],$bins['0..1'],$bins['1..2'],$bins['gt 2'])
+  Write-Host ""
+  Write-Host "Lowest-scored $ShowWorst items (manual review -- would the gate be wrong?)"
+  $scored | Sort-Object total | Select-Object -First $ShowWorst |
+    ForEach-Object {
+      $snippet = if ($_.text.Length -gt 110) { $_.text.Substring(0,107) + '...' } else { $_.text }
+      Write-Host ("  [{0,5}] {1}  <- {2}" -f $_.total, $snippet, $_.source)
+      if ($_.reason) { Write-Host ("          reason: {0}" -f $_.reason) }
+    }
+  Write-Host ""
+  exit 0
+}
+
 $total = 0
 $correct = 0
 $truePositive  = 0  # keep predicted as keep

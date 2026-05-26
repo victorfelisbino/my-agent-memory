@@ -137,9 +137,10 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 **Done (measurement harness, v1):**
 
 - [`admission-gate/fixtures/memories-v1.jsonl`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/fixtures/memories-v1.jsonl) — 20 labeled memories (10 keep, 10 reject) covering the documented junk categories: boot noise, heartbeat, transient task state, hallucinated profile, vague non-actionable, self-referential, world noise, project-private without portable lesson, tautology, contradiction-in-one-line.
-- [`admission-gate/score-memory.ps1`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/score-memory.ps1) — baseline scorer across the four spec dimensions (reusability, atomicity, novelty stubbed, actionability). Emits per-memory decision + summary; supports `-FailUnder` for CI gating.
-- CI job `admission-gate-harness` runs the scorer with `-FailUnder 70` on every PR.
-- Current baseline: **75% accuracy, 100% good-recall, 50% junk-recall**. Above random (50%), below the exit bar (80%+ on both recalls). Five documented misses are the iteration backlog, not hidden failures.
+- [`admission-gate/score-memory.ps1`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/score-memory.ps1) — baseline scorer across the four spec dimensions (reusability, atomicity, novelty stubbed, actionability). Emits per-memory decision + summary; supports `-FailUnder` for CI gating and `-Unlabeled` for scoring real corpora.
+- [`admission-gate/extract-corpus.ps1`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/extract-corpus.ps1) — extracts atomic bullets from real .md memory files into a JSONL corpus, so the scorer can be aimed at actual memory and not just the synthetic fixture.
+- CI job `admission-gate-harness` runs the scorer on every PR with `-FailUnder 75` AND smoke-extracts + scores the live real-memory corpus.
+- Current baseline: **80% accuracy, 100% good-recall, 60% junk-recall** (iteration 1 — reusability rule tightened using feedback from running the scorer on the repo's own .md memory). Above random (50%), below the exit bar (80%+ on both recalls). Four documented misses are the iteration backlog, not hidden failures.
 
 **Still to do:**
 
