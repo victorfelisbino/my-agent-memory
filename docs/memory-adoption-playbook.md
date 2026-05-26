@@ -1,10 +1,10 @@
-# Memory Adoption Playbook (From External Projects)
+# Memory adoption playbook
 
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>Adopt what works. Skip what creates memory noise.</h1>
-			<p class="lead">This playbook distills practical patterns from major memory projects and translates them into an operating contract for this repository.</p>
+			<h1>Borrowed patterns, opinionated defaults.</h1>
+			<p class="lead">Notes on what I copied from other memory projects (mem0, OpenMemory, the cursor-memory-bank line of work) and the operating rules I settled on for this repo. Treat it as a working contract, not gospel.</p>
 			<div class="pill-row">
 				<span class="pill">Layer by scope</span>
 				<span class="pill">Evidence first</span>

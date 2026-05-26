@@ -1,5 +1,5 @@
 site_name: my-agent-memory
-site_description: Shared framework for memory-enabled execution, guardrails, and adaptive operating defaults
+site_description: A personal toolkit for keeping AI coding agents (mostly Copilot) usefully grounded across sessions.
 site_url: https://victorfelisbino.github.io/my-agent-memory/
 
 theme:
@@ -41,16 +41,13 @@ extra_javascript:
 nav:
   - Home: index.md
   - Start:
-      - Should You Use This?: should-you-use-this.md
-      - Quick Restart Routine: quick-restart-routine.md
-      - Framework Purpose and Outcomes: framework-purpose.md
-      - Framework Scope: framework-scope.md
-      - Principles and Ways of Thinking: principles-ways-of-thinking.md
-  - Guides:
-      - Memory Adoption Playbook: memory-adoption-playbook.md
-      - Copilot Auto Mode: copilot-auto-mode.md
-      - Weekly Business Scorecard: weekly-business-scorecard.md
-  - Strategy:
-      - Attention and Positioning Playbook: attention-positioning-playbook.md
-      - Memory Ecosystem Research: memory-ecosystem-research-2026-05-15.md
-      - Pilot Benchmark Week 1: pilot-benchmark-week1.md
+      - Is this for you?: should-you-use-this.md
+      - Quick restart routine: quick-restart-routine.md
+      - What it does: framework-purpose.md
+      - What stays private: framework-scope.md
+      - Principles and ways of thinking: principles-ways-of-thinking.md
+  - How it works:
+      - Memory adoption playbook: memory-adoption-playbook.md
+      - Copilot auto-mode: copilot-auto-mode.md
+  - Notes:
+      - Memory ecosystem research: memory-ecosystem-research-2026-05-15.md

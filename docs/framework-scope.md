@@ -1,10 +1,10 @@
-# Framework Scope: What This Is and Is Not
+# What stays private
 
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>Canonical boundary for shared memory.</h1>
-			<p class="lead">Use this page as the gatekeeper: what belongs in shared framework docs, what stays private, and what quality bar every addition must pass.</p>
+			<h1>What goes in the repo, what stays on disk.</h1>
+			<p class="lead">This page is the rule I check against before committing anything. Reusable patterns and generalized lessons are public; personal active state, client names, and anything project-specific stays local.</p>
 			<div class="pill-row">
 				<span class="pill">Scope discipline</span>
 				<span class="pill">Privacy boundary</span>

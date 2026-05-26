@@ -1,10 +1,10 @@
-# Framework Purpose and Outcomes
+# What it does
 
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>A repeatable system for evidence-backed execution.</h1>
-			<p class="lead">Capture lessons, enforce decision guardrails, and continuously update defaults using real verification signals.</p>
+			<h1>Capture lessons, keep them honest, feed them back in.</h1>
+			<p class="lead">The point of all this is a small loop: write down what I learned, only promote a lesson once I've hit it more than once, and surface the relevant pieces back into the next prompt. That's it &mdash; the rest of the pages just spell out the parts.</p>
 			<div class="pill-row">
 				<span class="pill">Capture</span>
 				<span class="pill">Synthesize</span>
