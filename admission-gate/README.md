@@ -78,6 +78,7 @@ Iteration history:
 - Iter 10 (**contradiction-against-store**; v4 -> v5 fixture growth 100 -> 108: +4 reject contradictions, +4 keep reinforces; new `-Store` / `--store` flag in both scorers loads an anchor JSONL; novelty dimension wired to a polarity+subject overlap check; -2.0 penalty when same subject + opposite polarity; parity extended): **108 / 108 / 108** with store on v5 in both languages; v4 baseline unchanged at **100 / 100 / 100** (no `-Store` -> novelty stays 0.0); real corpus parity: **381 / 381** with and without store.
 - Iter 11 (**feedback-loop prevention**; v5 -> v6 fixture growth 108 -> 116: +4 distinct-topic keeps, +4 feedback-loop rejects; new `-Recalled` / `--recalled` flag in both scorers loads a recalled-session JSONL; novelty dimension extended to flag candidates that mirror an already-surfaced memory; -2.0 penalty when same subject + same polarity AND >= 4 shared content tokens; parity extended): **116 / 116 / 116** with store + recalled on v6 in both languages; v4 and v5 baselines unchanged; real corpus parity: **381 / 381** with store + recalled (no real bullet collides with the recalled set)._
   Why two overlap thresholds: contradiction-against-store uses >= 2 shared tokens because opposite polarity already makes false positives unlikely; feedback-loop uses >= 4 because same polarity needs a higher bar to distinguish redundancy ("you just read this") from mere topic similarity (two distinct memories about the same area).
+- Iter 12 (**dashboard slice 1**; new `-LogTo` / `--log-to` flag in both scorers appends one JSON line per scored item to a shared log; new [`render-dashboard.ps1`](render-dashboard.ps1) reads any log produced by either scorer and emits a single self-contained `dashboard.html` (summary tiles, top rejection reasons, contradiction-against-store hits + anchor ids, feedback-loop hits + recall ids, 50 most recent decisions); log + dashboard are gitignored, local-only audit tool, no server, no JS framework; CI smoke step runs PS+Py with logging, renders the dashboard, and asserts the expected sections are present). No rules changed; all baselines and parity numbers unchanged.
 
 ## Honesty contract
 
@@ -131,6 +132,33 @@ Exit codes: `0` ok, `2` fixture missing or malformed, `3` accuracy below `-FailU
 
 ## Not in scope here
 
-- No dashboard yet (Wave 3 deliverable, separate PR).
 - No write-path integration yet (Wave 3 deliverable, separate PR).
 - Contradiction-against-store (iter 10) and feedback-loop (iter 11) both use a polarity+subject-overlap heuristic, not embeddings. Good for the obvious "always X / never X" inversion and verbatim-paraphrase shapes; would not catch a deeply rephrased contradiction or a synonym-swapped re-ingestion with no shared content tokens.
+
+## Dashboard (iter 12)
+
+Local, static HTML view of what the scorer has been deciding. No server, no JS framework, no external assets — just a single file you open in a browser. The log and the dashboard are gitignored; this is a local audit tool, not a publish target.
+
+```powershell
+# 1. Score with logging enabled (PS and/or Python; both write the same JSON shape).
+pwsh ./admission-gate/score-memory.ps1 \`
+  -Fixture  admission-gate/fixtures/memories-v6.jsonl \`
+  -Store    admission-gate/fixtures/store-anchors.jsonl \`
+  -Recalled admission-gate/fixtures/recalled-session.jsonl \`
+  -LogTo    admission-gate/logs/scoring.jsonl
+python admission-gate/score_memory.py \`
+  --fixture  admission-gate/fixtures/memories-v6.jsonl \`
+  --store    admission-gate/fixtures/store-anchors.jsonl \`
+  --recalled admission-gate/fixtures/recalled-session.jsonl \`
+  --log-to   admission-gate/logs/scoring.jsonl
+
+# 2. Render. Reads any JSONL log produced by either scorer.
+pwsh ./admission-gate/render-dashboard.ps1                          # -> admission-gate/dashboard.html
+
+# 3. Open.
+Start-Process ./admission-gate/dashboard.html
+```
+
+What the dashboard shows: summary tiles (total scored, kept, rejected, contradiction-against-store hits, feedback-loop hits), top rejection reasons (primary reason fragment, magnitude-stripped so similar reasons group), every contradiction-against-store hit with its anchor id, every feedback-loop hit with its recall id, and the 50 most recent decisions newest-first. The log is append-only; delete `admission-gate/logs/scoring.jsonl` to start fresh.
+
+Iter-12 honesty note: this is "dashboard slice 1." No live refresh, no time-series chart yet, no staleness view (memories themselves carry no timestamps yet). The point is to make the scorer's decisions reviewable, not pretty.

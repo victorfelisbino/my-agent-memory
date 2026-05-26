@@ -133,3 +133,16 @@ jobs:
         shell: pwsh
         run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/real-memory.ci.jsonl -Store admission-gate/fixtures/store-anchors.jsonl -Recalled admission-gate/fixtures/recalled-session.jsonl
 
+      - name: Dashboard smoke (iter 12)
+        shell: pwsh
+        run: |
+          $log = 'admission-gate/logs/ci.jsonl'
+          ./admission-gate/score-memory.ps1 -Fixture admission-gate/fixtures/memories-v6.jsonl -Store admission-gate/fixtures/store-anchors.jsonl -Recalled admission-gate/fixtures/recalled-session.jsonl -LogTo $log
+          python admission-gate/score_memory.py --fixture admission-gate/fixtures/memories-v6.jsonl --store admission-gate/fixtures/store-anchors.jsonl --recalled admission-gate/fixtures/recalled-session.jsonl --log-to $log
+          ./admission-gate/render-dashboard.ps1 -LogPath $log -OutPath admission-gate/dashboard.ci.html
+          $html = Get-Content admission-gate/dashboard.ci.html -Raw
+          if ($html -notmatch 'Admission gate dashboard') { Write-Error 'Dashboard missing title'; exit 1 }
+          if ($html -notmatch 'Contradiction-against-store hits') { Write-Error 'Dashboard missing contradiction section'; exit 1 }
+          if ($html -notmatch 'Feedback-loop hits') { Write-Error 'Dashboard missing feedback-loop section'; exit 1 }
+          Write-Host "Dashboard smoke OK ($(($html.Length)) chars)"
+
