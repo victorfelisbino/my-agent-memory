@@ -56,7 +56,7 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 
 ---
 
-## Wave 1 — Make one unique thing actually work (3-4 weeks, ~20h) &mdash; **IN PROGRESS**
+## Wave 1 — Make one unique thing actually work (3-4 weeks, ~20h) &mdash; **DONE**
 
 **Goal:** Pick the smallest of the three "unique ideas" and ship it end-to-end so we have one real differentiator instead of three aspirational ones.
 
@@ -68,14 +68,9 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 - Wrote the five-prompt before/after test harness in [`test-prompts.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/test-prompts.md) with binary pass/fail rules.
 - Wrote [`results-template.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/results-template.md) for recording runs.
 - Added [Anti-hallucination skill](anti-hallucination-skill.md) page to the published site.
+- Ran the harness against Copilot Chat (GPT-4.1, auto-mode): **5/5 pass.** All five baseline responses showed typical hallucination patterns; all five treatment responses refused to invent, flagged missing context, or listed verification steps. Published redacted results at [`results-examples/example-redacted.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/results-examples/example-redacted.md).
 
-**Still to do:**
-- Actually run the five-prompt harness against at least one agent (Copilot Chat) in this workspace, record results, publish a redacted version under `skills/general/anti-hallucination/results-examples/`.
-- Sharpen the skill text based on what the harness exposes.
-
-**Exit criterion:** A reproducible demo where the same prompt gets a measurably better answer with the skill loaded than without. Target: 3 of 5 prompts pass with skill loaded and fail without it.
-
-**Kill switch:** If after running the harness no measurable behavior change shows up, the protocol is vibes — go back to Wave 0 and rewrite it or remove it.
+**Exit criterion met:** 5 of 5 prompts pass with skill loaded (target was 3 of 5). The protocol is not vibes — it measurably changes agent behavior on all four hallucination shapes.
 
 ---
 
