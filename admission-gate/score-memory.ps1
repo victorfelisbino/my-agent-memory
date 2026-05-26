@@ -253,6 +253,43 @@ function Score-Actionability([string]$t) {
   # extracted from the docs would be. Allows an optional adjective between
   # "the/our" and the doc-type word ("according to the official docs").
   if ($lc -match '\baccording to (the |our )?(\w+\s+)?(docs|documentation|spec|specification|manual|readme)\b') { $score -= 1.5 }
+  # Pop-culture / inside-joke reference (iter 8): "reminds me of that one
+  # episode / movie / show / scene". The bullet is an analogy without a
+  # transferable rule.
+  if ($lc -match '\breminds me of\s+(that one |the one |a |an |that |this )?(episode|movie|show|scene|chapter|moment|time)\b') { $score -= 1.5 }
+  # Confidence-only claim (iter 8): "I am very confident", "I'm sure", "I am
+  # certain / positive". A confidence assertion is not itself a rule; the
+  # claim it modifies is what matters.
+  if ($lc -match "\bi\s+(am|'m)\s+(very|highly|super|really|quite|extremely|absolutely)?\s*(confident|sure|certain|positive)\b") { $score -= 1.5 }
+  # Pure task-restatement (iter 8): "as requested" -- echoing the request
+  # back as the memory carries no new information. None of the v4 keeps
+  # contain this phrase.
+  if ($lc -match '\bas requested\b') { $score -= 1.5 }
+  # Empty agreement (iter 8): "Yes, that <approach|plan|idea> is good" or
+  # "we should definitely". Agreement without content.
+  if ($lc -match '^\s*yes,?\s+(that|this)\s+(approach|plan|idea|sounds|works|is)\b|\bwe should definitely\b') { $score -= 1.5 }
+  # Self-praise (iter 8): "one of my best <implementations|work|code|...>"
+  # or "in my opinion". The bullet is editorial, not a rule.
+  if ($lc -match '\b(one of my|my)\s+(best|finest|cleanest|favorite|favourite)\s+(implementation|implementations|work|code|solution|solutions|design|designs)\b|\bin my opinion\b') { $score -= 1.5 }
+  # Vague urgency (iter 8): combines an urgency adverb ("urgent(ly)") with
+  # a softener ("important", "critical", "as soon as possible", "asap").
+  # Either alone could appear in legitimate memory; the stack means the
+  # bullet is alarm without action.
+  if (($lc -match '\b(urgent|urgently)\b') -and ($lc -match '\b(important|critical|as soon as possible|asap)\b')) { $score -= 1.5 }
+  # Number-only summary (iter 8): bullet starts with "Total:" / "Summary:" /
+  # "Stats:" / "Counts:" / "Metrics:". These are tallies, not rules.
+  if ($lc -match '^\s*(total|summary|stats|counts|metrics)\s*[:\-]') { $score -= 1.5 }
+  # Imperative-only short (iter 8): a short bullet that opens with a bare
+  # action verb (Run / Click / Open / Build / Deploy / ...) and contains
+  # no rule-shape qualifiers (if / when / because / unless / always /
+  # never / prefer / since / so that). The kept memories that open with
+  # "Prefer" / "Always" / "Never" / "When" / "Before" / "After" are
+  # excluded by the verb list, and any kept memory that opens with a bare
+  # imperative carries enough length or qualifier to escape this rule.
+  if (($t.Length -lt 80) -and ($t -cmatch '^(Run|Click|Open|Close|Update|Delete|Save|Build|Deploy|Push|Pull|Execute|Launch|Restart|Reload|Refresh|Type|Press)\b') -and ($lc -notmatch '\b(if|when|because|unless|always|never|prefer|since|so that)\b')) { $score -= 1.5 }
+  # Self-correction loop (iter 8): "wait, actually" / "let me think again"
+  # / "let me reconsider". The bullet is mid-thought, not a resolved rule.
+  if ($lc -match '^wait,?\s+actually\b|\blet me\s+(think|reconsider|re-?analyze)\s+(again|that|this)\b|\blet me reconsider\b') { $score -= 1.5 }
   # Cap.
   if ($score -gt  1.0) { $score =  1.0 }
   if ($score -lt -1.0) { $score = -1.0 }
