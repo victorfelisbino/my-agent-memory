@@ -1,15 +1,24 @@
-# my-agent-memory (framework)
+# my-agent-memory
 
-[![Release](https://img.shields.io/github/v/release/victorfelisbino/my-agent-memory)](https://github.com/victorfelisbino/my-agent-memory/releases)
 [![CI](https://img.shields.io/github/actions/workflow/status/victorfelisbino/my-agent-memory/ci.yml?branch=main)](https://github.com/victorfelisbino/my-agent-memory/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A git-backed memory system that solves two related problems at once:
+One person's working version of a two-repo memory pattern for AI coding agents (mostly GitHub Copilot). It is **not a framework yet** &mdash; that word is on the [roadmap](docs/roadmap.md), Wave 4 onward. Today it's a curated, shared layer of reusable rules, playbooks, and scripts, paired with a separate **private** personal repo that holds active state.
 
-1. **For humans**: when you run too many projects across too many machines, you forget what you've started, what you've promised people, and what you've actually shipped. This gives you one source of truth you can trust more than your memory.
-2. **For GitHub Copilot**: every Copilot session starts cold. Decisions you've already made, guardrails you've already learned, and work you have in flight on another machine should bias every new answer. This makes that automatic.
+The two-repo split exists so this side can be shared safely without leaking anyone's working state. The shared side is what an agent reads from; the private side is what you write to as you work.
 
-This is the **framework repo** — scripts, playbooks, principles, and shared knowledge. It contains no personal data. Each user pairs it with a **separate, private personal repo** that holds their own observations, open loops, decisions, and active threads. The two repos are intentionally split so this one can be shared with collaborators without leaking anyone's working state.
+What this repo solves, in plain language:
+
+1. **Stop relearning the same lesson.** When the same shape of bug or decision shows up twice, the principle gets distilled, promoted here, and stays for next time.
+2. **Make Copilot start warm.** Lessons, guardrails, and decisions already paid for can bias every new session through a context brief.
+
+What to read first:
+
+- [docs/roadmap.md](docs/roadmap.md) &mdash; where this is going and the kill switches for each wave.
+- [docs/status.md](docs/status.md) &mdash; what's actually working today vs documented-only vs planned.
+- [docs/framework-scope.md](docs/framework-scope.md) &mdash; what belongs in this repo and what doesn't.
+- [docs/index.md](docs/index.md) &mdash; the published site entry.
+- [CONTRIBUTING.md](CONTRIBUTING.md) &mdash; if you want to propose a change.
 
 ## Start Here
 
