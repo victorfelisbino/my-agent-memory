@@ -79,5 +79,11 @@ jobs:
 
       - name: Run scorer on v1 fixture
         shell: pwsh
-        run: ./admission-gate/score-memory.ps1 -FailUnder 70
+        run: ./admission-gate/score-memory.ps1 -FailUnder 75
+
+      - name: Re-extract real-memory corpus and score (unlabeled smoke)
+        shell: pwsh
+        run: |
+          ./admission-gate/extract-corpus.ps1 -Out admission-gate/fixtures/real-memory.ci.jsonl
+          ./admission-gate/score-memory.ps1 -Fixture admission-gate/fixtures/real-memory.ci.jsonl -Unlabeled -ShowWorst 5
 
