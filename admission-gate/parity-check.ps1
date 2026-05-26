@@ -12,8 +12,9 @@
 # Exit codes: 0 ok, 2 fixture missing, 4 decisions diverge.
 
 param(
-  [string] $Fixture = "admission-gate/fixtures/memories-v4.jsonl",
-  [string] $Store   = ""
+  [string] $Fixture  = "admission-gate/fixtures/memories-v4.jsonl",
+  [string] $Store    = "",
+  [string] $Recalled = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -39,16 +40,16 @@ if (-not (Test-Path $psParity)) {
 }
 
 Write-Host "Parity check: $Fixture"
-if ($Store) { Write-Host "             store: $Store" }
+if ($Store)    { Write-Host "             store: $Store" }
+if ($Recalled) { Write-Host "          recalled: $Recalled" }
 
 # Prefer pwsh (cross-platform, what CI uses); fall back to Windows
 # PowerShell when pwsh is not on PATH (local dev on Windows).
 $psHost = if (Get-Command pwsh -ErrorAction SilentlyContinue) { 'pwsh' } else { 'powershell' }
-if ($Store) {
-  $psOut = & $psHost -NoProfile -File $psParity -Fixture $Fixture -Store $Store
-} else {
-  $psOut = & $psHost -NoProfile -File $psParity -Fixture $Fixture
-}
+$psArgs = @('-NoProfile','-File',$psParity,'-Fixture',$Fixture)
+if ($Store)    { $psArgs += @('-Store',$Store) }
+if ($Recalled) { $psArgs += @('-Recalled',$Recalled) }
+$psOut = & $psHost @psArgs
 if ($LASTEXITCODE -ne 0) {
   [Console]::Error.WriteLine("PS parity emitter failed (exit $LASTEXITCODE)")
   exit 2
@@ -56,11 +57,10 @@ if ($LASTEXITCODE -ne 0) {
 
 # Prefer python (Linux CI); fall back to py launcher (Windows local).
 $pyHost = if (Get-Command python -ErrorAction SilentlyContinue) { 'python' } else { 'py' }
-if ($Store) {
-  $pyOut = & $pyHost admission-gate/score_memory.py --parity --fixture $Fixture --store $Store
-} else {
-  $pyOut = & $pyHost admission-gate/score_memory.py --parity --fixture $Fixture
-}
+$pyArgs = @('admission-gate/score_memory.py','--parity','--fixture',$Fixture)
+if ($Store)    { $pyArgs += @('--store',$Store) }
+if ($Recalled) { $pyArgs += @('--recalled',$Recalled) }
+$pyOut = & $pyHost @pyArgs
 if ($LASTEXITCODE -ne 0) {
   [Console]::Error.WriteLine("Python parity emitter failed (exit $LASTEXITCODE)")
   exit 2

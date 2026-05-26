@@ -27,7 +27,8 @@ param(
   [int]    $FailUnder  = 0,
   [switch] $Unlabeled,
   [int]    $ShowWorst  = 15,
-  [string] $Store      = ""
+  [string] $Store      = "",
+  [string] $Recalled   = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -195,23 +196,50 @@ function Load-StoreClaims([string]$path) {
 }
 
 $script:StoreClaims = Load-StoreClaims $Store
+$script:RecalledClaims = Load-StoreClaims $Recalled
 $script:LastContradictionAnchor = ''
+$script:LastFeedbackLoopId = ''
 
-# Novelty (iter 10): contradiction-against-store. Neutral (0.0) when no
-# store is loaded -- preserves the existing labeled-fixture baseline.
+# Novelty (iter 10 + iter 11): contradiction-against-store first, then
+# feedback-loop check. Neutral (0.0) when neither store nor recalled set
+# is loaded -- preserves the existing labeled-fixture baseline.
+#
+# Contradiction-against-store: same subject (>= 2 shared tokens) + opposite
+#   polarity vs any store anchor -> -2.0.
+# Feedback-loop (iter 11): same subject (>= 4 shared tokens) + same polarity
+#   vs any recalled-session item -> -2.0. Higher overlap bar because we want
+#   real redundancy ("you already saw this"), not topic similarity.
 function Score-Novelty([string]$t) {
   $script:LastContradictionAnchor = ''
-  if (-not $script:StoreClaims -or $script:StoreClaims.Count -eq 0) { return 0.0 }
-  $cand = Get-Claim $t
+  $script:LastFeedbackLoopId = ''
+  $cand = $null
+  if (($script:StoreClaims -and $script:StoreClaims.Count -gt 0) -or
+      ($script:RecalledClaims -and $script:RecalledClaims.Count -gt 0)) {
+    $cand = Get-Claim $t
+  }
   if (-not $cand) { return 0.0 }
-  foreach ($anchorId in $script:StoreClaims.Keys) {
-    $anc = $script:StoreClaims[$anchorId]
-    if ($anc.Polarity -eq $cand.Polarity) { continue }
-    $overlap = 0
-    foreach ($tok in $cand.Subject) { if ($anc.Subject.Contains($tok)) { $overlap++ } }
-    if ($overlap -ge 2) {
-      $script:LastContradictionAnchor = $anchorId
-      return -2.0
+  if ($script:StoreClaims) {
+    foreach ($anchorId in $script:StoreClaims.Keys) {
+      $anc = $script:StoreClaims[$anchorId]
+      if ($anc.Polarity -eq $cand.Polarity) { continue }
+      $overlap = 0
+      foreach ($tok in $cand.Subject) { if ($anc.Subject.Contains($tok)) { $overlap++ } }
+      if ($overlap -ge 2) {
+        $script:LastContradictionAnchor = $anchorId
+        return -2.0
+      }
+    }
+  }
+  if ($script:RecalledClaims) {
+    foreach ($recallId in $script:RecalledClaims.Keys) {
+      $rec = $script:RecalledClaims[$recallId]
+      if ($rec.Polarity -ne $cand.Polarity) { continue }
+      $overlap = 0
+      foreach ($tok in $cand.Subject) { if ($rec.Subject.Contains($tok)) { $overlap++ } }
+      if ($overlap -ge 4) {
+        $script:LastFeedbackLoopId = $recallId
+        return -2.0
+      }
     }
   }
   return 0.0
@@ -408,6 +436,8 @@ function Score-Memory([string]$text) {
   if ($n -lt 0) {
     if ($script:LastContradictionAnchor) {
       $reason += "novelty=$n (contradicts-store=$($script:LastContradictionAnchor))"
+    } elseif ($script:LastFeedbackLoopId) {
+      $reason += "novelty=$n (feedback-loop=$($script:LastFeedbackLoopId))"
     } else {
       $reason += "novelty=$n"
     }
