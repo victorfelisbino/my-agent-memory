@@ -142,25 +142,18 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 - CI job `admission-gate-harness` runs the scorer on every PR with `-FailUnder 90` AND smoke-extracts + scores the live real-memory corpus (~403 items, 0% rejection).
 - Current baseline: **95% accuracy, 100% good-recall, 90% junk-recall** on the v2 fixture (40 items, doubled from v1). Iteration history: v1 75/100/50 -> iter1 80/100/60 -> iter2 95/100/90 (on v1) -> iter3 100/100/100 (on v1, all v1 misses closed) -> iter4 95/100/90 (fixture v1 20 -> v2 40; +6 new rules; threshold tightened to > 0; two documented misses: named-person preference, generic world-noise). The accuracy dip from 100% on v1 to 95% on v2 is the intended signal -- a bigger fixture is exposing real blind spots that a smaller fixture hid. **The Wave 3 exit criterion is still ahead**: it requires the fixture to be >=100 items and the scorer to beat random by >=30 points on it.
 
-**Still to do:**
+**Still to do (concrete, ordered):**
 
-**Admission gate (core):**
-- Implement a scoring function that evaluates a candidate memory on: reusability (does it generalize?), atomicity (one fact, not a dump?), novelty (not already stored?), actionability (would an agent use this?).
-- Score threshold: memories below it get rejected with a reason. Above it get stored.
-- Feedback loop prevention: if a memory was recalled in the current session, it cannot be re-ingested as a "new" observation.
-- Contradiction detection: flag when a new candidate conflicts with an existing stored memory (semantic similarity above threshold + opposing sentiment/claim).
-- Ship as a standalone Python/TS module that can be used as middleware in any pipeline.
-- Test against a sample of mem0's documented junk categories (boot prompts, heartbeat noise, hallucinated profiles, transient task state).
+1. **Iter 5 -- close the two v2 misses.** `reject-15` named-person preference needs a proper-noun + preference-verb detector ("Tom from accounting prefers X", "Sarah likes Y", "Tim wants Z"). `reject-16` generic world-noise needs to generalize beyond the current weather/wifi wordlist (mood + workplace + sensory adjectives without an engineering subject). Target: 100/100/100 on v2 without breaking real-corpus 0% rejection.
+2. **Iter 6 -- grow v2 -> v3 (40 -> 60 items).** Add new shapes the real corpus already hints at: heading-only bullets (extraction artifacts), template placeholders, long-but-legit gotchas that should split into multiple atomic memories, mixed-purpose bullets (one keep + one reject in the same line). Expect another accuracy dip; close it with new rules. Repeat.
+3. **Iter 7 -- v3 -> v4 (60 -> 100 items).** Reach Wave 3 exit-criterion fixture size. Final tuning round.
+4. **Standalone port.** Lift the rules out of `score-memory.ps1` into a Python or TypeScript module so the scorer can be embedded as middleware in any pipeline (not just CI). Same labeled fixture as the contract; cross-language parity tests in CI.
+5. **Contradiction-against-store detection.** Currently we only detect single-line contradictions (`always X; never X`). Wire up a similarity check against a stored memory index so a new candidate can be flagged when it conflicts with something already kept.
+6. **Feedback-loop prevention.** Track per-session recall so a memory surfaced during a session cannot be re-ingested as a "new" observation in the same session.
+7. **Dashboard.** Local web UI showing: live scoring feed (per-dimension scores + decision + reason), contradiction warnings, feedback-loop blocks, rejection-rate over time, top rejection reasons, staleness view. Reads from the scoring log; no auth, local-only.
 
-**Dashboard (visibility layer):**
-- Local web UI (lightweight — single HTML + JS, or minimal framework) that shows:
-  - **Live scoring feed:** each candidate memory, its scores on each dimension, pass/reject decision, and rejection reason.
-  - **Contradiction warnings:** pairs of conflicting memories with similarity scores.
-  - **Feedback loop blocks:** memories that were blocked because they were recalled earlier in the session.
-  - **Memory health summary:** total stored, total rejected, rejection rate, top rejection reasons, quality score distribution.
-  - **Staleness view:** memories approaching decay threshold, sorted by days since last verification.
-- Serves from the gate process (or as a CLI command that reads the scoring log).
-- No auth required (local-only by default).
+**Done so far:**
+- Steps 0a-0d above (fixture + scorer + extractor + CI gate at 90%, real-corpus smoke at 0% rejection, four iteration loops landed with honest before/after numbers per PR).
 
 **Exit criterion:** Given a sample of 100 memories (50 good, 50 from the documented junk categories), the gate correctly rejects 80%+ of junk while keeping 80%+ of good memories. The dashboard renders the scoring decisions in real time.
 
