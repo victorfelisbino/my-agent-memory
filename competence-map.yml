@@ -121,3 +121,17 @@
   last_reviewed: 2026-05-26
   related:
     - thinking-principles
+
+- id: admission-gate
+  name: Memory admission gate (Wave 3 harness)
+  depth: explore
+  scope: shared
+  description: First measurement harness for the quality gate that decides which memories are worth storing. v1 = 20-item labeled fixture + baseline stub scorer across four dimensions (reusability, atomicity, novelty, actionability). Baseline 75% accuracy, 100% good-recall, 50% junk-recall. No write-path integration, no dashboard, no real novelty lookup yet.
+  sources:
+    - admission-gate/README.md
+    - admission-gate/score-memory.ps1
+    - admission-gate/fixtures/memories-v1.jsonl
+  last_reviewed: 2026-05-26
+  related:
+    - ai-memory-architecture
+    - thinking-principles

@@ -71,3 +71,13 @@ jobs:
         shell: pwsh
         run: ./scripts/generate-competence-map.ps1 -CheckOnly
 
+  admission-gate-harness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run scorer on v1 fixture
+        shell: pwsh
+        run: ./admission-gate/score-memory.ps1 -FailUnder 70
+
