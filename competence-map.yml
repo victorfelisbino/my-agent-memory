@@ -126,13 +126,15 @@
   name: Memory admission gate (Wave 3 harness)
   depth: explore
   scope: shared
-  description: Measurement harness for the quality gate that decides which memories are worth storing. v4 = 100-item labeled fixture (Wave 3 exit-criterion size, 50 keep + 50 reject) + corpus extractor that pulls real bullets from the repo's own .md files and skips heading-only sub-bullets at the source + baseline stub scorer across four dimensions (reusability, atomicity, novelty, actionability) with both labeled-accuracy mode and unlabeled real-corpus distribution mode. After eight iterations against real memory, baseline is 100% accuracy / 100% good-recall / 100% junk-recall on v4 -- the Wave 3 exit criterion is met with full headroom on the labeled fixture. Iter 7 cleared the criterion for the first time at 91/100/82; iter 8 closed the nine named misses (pop-culture, confidence-only, task-restatement, empty-agreement, self-praise, vague-urgency, number-only summary, imperative-only short, self-correction loop) with nine small rules and no keep regressions. CI gate enforces >= 85% on v4 (15-pt headroom). Real-corpus smoke rejects 1.0% (4 of 381 items: 1 Status snapshot + 3 personal-goal TODO bullets, all defensible). Next leverage is a standalone port (Python or TypeScript) so the scorer is reusable as middleware outside this repo's CI. No write-path integration, no dashboard, no real novelty lookup yet.
+  description: Measurement harness for the quality gate that decides which memories are worth storing. v4 = 100-item labeled fixture (Wave 3 exit-criterion size, 50 keep + 50 reject) + corpus extractor + baseline stub scorer in **both PowerShell and Python** with cross-language parity enforced in CI (same fixture in, same per-item keep/reject out). Scorer covers four dimensions (reusability, atomicity, novelty, actionability) with both labeled-accuracy mode and unlabeled real-corpus distribution mode. After nine iterations against real memory, baseline is 100% accuracy / 100% good-recall / 100% junk-recall on v4 in both languages; 381/381 decisions match on the live real-memory corpus. Iter 7 cleared the Wave 3 exit criterion for the first time at 91/100/82; iter 8 closed the nine named misses and saturated v4 at 100/100/100; iter 9 lifted the rules into a standalone Python port so the scorer can be embedded as middleware outside this repo's PowerShell-native CI. CI gate enforces >= 85% accuracy on v4 in both languages (15-pt headroom). Real-corpus smoke rejects 1.0% (4 of 381 items: 1 Status snapshot + 3 personal-goal TODO bullets, all defensible). No write-path integration, no dashboard, no real novelty lookup yet.
   sources:
     - admission-gate/README.md
     - admission-gate/score-memory.ps1
+    - admission-gate/score_memory.py
+    - admission-gate/parity-check.ps1
     - admission-gate/extract-corpus.ps1
     - admission-gate/fixtures/memories-v4.jsonl
-  last_reviewed: 2026-05-28
+  last_reviewed: 2026-05-29
   related:
     - ai-memory-architecture
     - thinking-principles
