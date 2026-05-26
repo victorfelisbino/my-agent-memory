@@ -30,21 +30,26 @@ This roadmap moves in waves. Each wave has a single goal, a cheap exit criterion
 
 ---
 
-## Wave 1 — Make one unique thing actually work (3-4 weeks, ~20h)
+## Wave 1 — Make one unique thing actually work (3-4 weeks, ~20h) &mdash; **IN PROGRESS**
 
 **Goal:** Pick the smallest of the three "unique ideas" and ship it end-to-end so we have one real differentiator instead of three aspirational ones.
 
 **Pick:** Anti-hallucination protocol injection. It's the smallest, the most defensible, and the one that maps cleanest onto an existing extension point (VS Code agent skills).
 
-**Do:**
-- Convert `anti-hallucination-protocol.md` into a reusable skill file (front-matter + body) that any agent can load on demand.
-- Add a one-command install path: drop the skill into a Copilot/Cline/Cursor agent's instructions and verify it actually changes behavior on a known test case.
-- Write 3-5 concrete test prompts that show before/after agent behavior.
-- Document the test results honestly — including any case where it didn't help.
+**Done:**
+- Packaged `anti-hallucination-protocol.md` into a reusable skill at [`skills/general/anti-hallucination/skill.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/skill.md) with front-matter and a copy-paste block.
+- Wrote per-agent install paths in [`install.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/install.md) (Copilot custom instructions, Cline `.clinerules`, Cursor `.cursorrules`, manual one-off).
+- Wrote the five-prompt before/after test harness in [`test-prompts.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/test-prompts.md) with binary pass/fail rules.
+- Wrote [`results-template.md`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/results-template.md) for recording runs.
+- Added [Anti-hallucination skill](anti-hallucination-skill.md) page to the published site.
 
-**Exit criterion:** A reproducible demo where the same prompt gets a measurably better answer with the skill loaded than without.
+**Still to do:**
+- Actually run the five-prompt harness against at least one agent (Copilot Chat) in this workspace, record results, publish a redacted version under `skills/general/anti-hallucination/results-examples/`.
+- Sharpen the skill text based on what the harness exposes.
 
-**Kill switch:** If after 20h there's no measurable behavior change, the protocol is vibes — go back to Wave 0 and rewrite it or remove it.
+**Exit criterion:** A reproducible demo where the same prompt gets a measurably better answer with the skill loaded than without. Target: 3 of 5 prompts pass with skill loaded and fail without it.
+
+**Kill switch:** If after running the harness no measurable behavior change shows up, the protocol is vibes — go back to Wave 0 and rewrite it or remove it.
 
 ---
 

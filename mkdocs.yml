@@ -49,6 +49,7 @@ nav:
   - How it works:
       - Memory adoption playbook: memory-adoption-playbook.md
       - Copilot auto-mode: copilot-auto-mode.md
+      - Anti-hallucination skill: anti-hallucination-skill.md
   - Where this is going:
       - Status (what's real today): status.md
       - Roadmap: roadmap.md
