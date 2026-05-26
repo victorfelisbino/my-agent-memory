@@ -3,8 +3,8 @@
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>No company data. No project data. Just durable ways of thinking.</h1>
-			<p class="lead">This page is the single home for the reusable reasoning patterns, decision rules, and bias checks that every page in this framework is built on. If a lesson cannot be generalized to this level, it does not belong in shared memory.</p>
+			<h1>The transferable layer.</h1>
+			<p class="lead">A senior developer is faster in a new language because the principles transfer: scope, state, idempotency, naming, debugging instincts. This page is that layer for the agent &mdash; reasoning patterns, decision rules, and bias checks that hold no matter which framework, client, or project shows up next. If a lesson cannot be stripped down to this level, it stays in the private repo.</p>
 			<div class="pill-row">
 				<span class="pill">Generalized only</span>
 				<span class="pill">Reasoning patterns</span>
