@@ -194,7 +194,7 @@ cd E:\my-agent-memory
 .\install-scheduled-task.ps1 -DailySync -Time '08:00'
 ```
 
-All commands above are Windows / PowerShell. `.sh` counterparts exist for `loop`, `sync-memory`, `capture-observation`, `learn-memory`, `summon-memory`, `synthesize-observations`, `prune-observations`, `auto-capture-observations`, `lint-memory`, and `run-weekly-memory`, but the PowerShell path is the daily-driven one. `install-scheduled-task.ps1` is Windows-only; no `cron` or `launchd` equivalent ships today. See [docs/status.md](docs/status.md) for the cross-platform parity gap.
+All commands above are Windows / PowerShell. `.sh` counterparts exist for `loop`, `sync-memory`, `capture-observation`, `learn-memory`, `summon-memory`, `synthesize-observations`, `auto-capture-observations`, `lint-memory`, and `run-weekly-memory`, but the PowerShell path is the daily-driven one. Missing `.sh` equivalents: `prune-observations`, `repair-mojibake`, `install-scheduled-task` (Windows-only; no `cron` or `launchd` installer ships). See [docs/status.md](docs/status.md) for the cross-platform parity gap.
 
 **Bootstrap the personal repo first** if you haven't already:
 
