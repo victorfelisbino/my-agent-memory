@@ -14,7 +14,11 @@ This is the **framework repo** — scripts, playbooks, principles, and shared kn
 ## Start Here
 
 - New user setup: [Quick Start (5 minutes)](#quick-start-5-minutes)
+- Published docs entry: [docs/index.md](docs/index.md)
+- Framework purpose: [docs/framework-purpose.md](docs/framework-purpose.md)
+- Quick restart routine: [docs/quick-restart-routine.md](docs/quick-restart-routine.md)
 - Architecture: [Two-repo architecture](#two-repo-architecture)
+- Scope boundary: [Framework Scope: What This Is and Is Not](docs/framework-scope.md)
 - Privacy boundary: [What Stays Private Always](#what-stays-private-always)
 - Collaboration process: [CONTRIBUTING.md](CONTRIBUTING.md)
 

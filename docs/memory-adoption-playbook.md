@@ -1,5 +1,51 @@
 # Memory Adoption Playbook (From External Projects)
 
+<div class="landing-shell">
+	<div class="landing-grid">
+		<div class="hero-copy">
+			<h1>Adopt what works. Skip what creates memory noise.</h1>
+			<p class="lead">This playbook distills practical patterns from major memory projects and translates them into an operating contract for this repository.</p>
+			<div class="pill-row">
+				<span class="pill">Layer by scope</span>
+				<span class="pill">Evidence first</span>
+				<span class="pill">Store at value boundaries</span>
+			</div>
+		</div>
+		<div class="kpi-panel">
+			<div class="kpi-item">
+				<strong>Immediate adoption</strong>
+				<span>Scope classification, ingestion controls, retrieval discipline.</span>
+			</div>
+			<div class="kpi-item">
+				<strong>Anti-pattern</strong>
+				<span>Write-only memory or high-confidence unverified claims.</span>
+			</div>
+			<div class="kpi-item">
+				<strong>Promotion rule</strong>
+				<span>Promote only with evidence, reuse, and verification date.</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="scan-grid">
+	<div class="scan-card">
+		<span class="meta">Adopt now</span>
+		<h3>Scope + ingestion controls</h3>
+		<p>Classify memory by scope and reject speculative low-signal entries.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Execution</span>
+		<h3>Retrieve at decision points</h3>
+		<p>Re-query memory before assumptions, design choices, and commits.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Promotion</span>
+		<h3>Evidence before sharing</h3>
+		<p>Promote only after repeated reuse with verification metadata.</p>
+	</div>
+</div>
+
 This file distills what is useful from:
 
 - mem0ai/mem0
@@ -63,20 +109,20 @@ After execution:
 
 ## Anti-patterns to avoid
 
-1. Retrieve once at task start and never again.
-2. Store everything (memory pollution).
-3. Keep high-confidence wording for unverified facts.
-4. Let old lessons survive without verification date.
-5. Treat memory as write-only journal rather than decision support.
+!!! danger "These will silently degrade the system"
+    1. Retrieve once at task start and never again.
+    2. Store everything (memory pollution).
+    3. Keep high-confidence wording for unverified facts.
+    4. Let old lessons survive without verification date.
+    5. Treat memory as a write-only journal rather than decision support.
 
-## Promotion rule (personal -> shared)
+## Promotion rule (personal → shared)
 
-Promote a lesson to shared/domain docs only if all are true:
-
-1. Reusable in at least two future contexts.
-2. Backed by concrete evidence (PR/deploy/incident).
-3. Contains a guardrail that changes behavior.
-4. Has owner and verification date.
+!!! abstract "All four must be true"
+    1. Reusable in at least two future contexts.
+    2. Backed by concrete evidence (PR / deploy / incident).
+    3. Contains a guardrail that changes behavior.
+    4. Has an owner and a verification date.
 
 ## Cross-language, CLI, and MCP protocol
 

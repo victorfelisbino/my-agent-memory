@@ -1,5 +1,53 @@
 # Memory Ecosystem Research (2026-05-15)
 
+<div class="landing-shell">
+  <div class="landing-grid">
+    <div class="hero-copy">
+      <h1>Ecosystem intelligence for memory-system strategy.</h1>
+      <p class="lead">This ledger tracks what the market is building and converts external signals into differentiation, governance, and execution priorities for this framework.</p>
+      <div class="pill-row">
+        <span class="pill">Category scan</span>
+        <span class="pill">Strategic synthesis</span>
+        <span class="pill">Actionable updates</span>
+      </div>
+    </div>
+    <div class="kpi-panel">
+      <div class="kpi-item">
+        <strong>Current position</strong>
+        <span>Category is crowded; differentiation is reliability and decision quality.</span>
+      </div>
+      <div class="kpi-item">
+        <strong>Main risk</strong>
+        <span>Memory noise and stale guidance outranking current reality.</span>
+      </div>
+      <div class="kpi-item">
+        <strong>Operating response</strong>
+        <span>Freshness metadata, verification commands, and benchmark loops.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scan-grid">
+  <div class="scan-card">
+    <span class="meta">Market read</span>
+    <h3>Category is established</h3>
+    <p>Competing on existence is over; compete on reliability and outcomes.</p>
+  </div>
+  <div class="scan-card">
+    <span class="meta">Differentiator</span>
+    <h3>Decision quality over raw recall</h3>
+    <p>Evidence-first governance is the edge, not memory volume.</p>
+  </div>
+  <div class="scan-card">
+    <span class="meta">Action</span>
+    <h3>Enforce freshness and verification</h3>
+    <p>Confidence, last-verified, and benchmarks keep memory trustworthy.</p>
+  </div>
+</div>
+
+<div class="prose-note">This is a living research ledger. Skim the update blocks first, then drill into sections that impact this week’s operating decisions.</div>
+
 ## Question
 
 Is anyone else building persistent memory systems for coding agents and cross-session AI workflows?
@@ -273,3 +321,251 @@ Keep our current layer progression and extend it in this order:
 3. commands + router templates (next step)
 
 This preserves simplicity while moving toward a plugin-grade execution model.
+
+## Update (2026-05-25): Business packaging model research (pattern synthesis)
+
+### Question
+
+What business-model lessons from packaged education/advisory sites should be added to our memory to improve commercial success?
+
+### Evidence basis
+
+Findings were synthesized from a multi-source scan of current business education, advisory, community, and founder-platform models. This section intentionally stores only reusable conclusions and avoids cataloging external URLs.
+
+### Evidence patterns observed
+
+1. Outcome-first positioning dominates
+- High-performing models lead with scale outcomes and revenue impact.
+- Applied outcomes consistently outperform generic content-depth messaging.
+
+2. Product ladder from free to higher-commitment is common
+- Strong models use a clear ladder from free entry value to higher-commitment offers.
+- Large free resource fronts often act as demand generation and trust builders.
+
+3. Authority flywheel is explicit
+- Authority content (books/media/founder insights) is used as an acquisition flywheel.
+- Trusted operator content tends to improve conversion quality for complex offers.
+
+4. Narrow ICP messaging increases conversion quality
+- Specific founder/operator profile targeting tends to increase conversion quality.
+- Narrow use-case messaging improves match quality and reduces wrong-fit leads.
+
+5. Implementation framing beats information framing
+- Top performers emphasize doing, applying, and getting specific results.
+
+### Different opinions (and when each wins)
+
+1. Speed-first vs reliability-first
+- Speed-first wins in early discovery and offer testing.
+- Reliability-first wins once retention and referrals drive growth.
+
+2. High-ticket/high-touch vs scalable/low-touch
+- High-touch wins when problem severity is high and trust is the bottleneck.
+- Scalable products win when the path is repeatable and support load is predictable.
+
+3. Content-led growth vs outbound-led growth
+- Content-led wins when authority and trust must be built over time.
+- Outbound wins when ICP is narrow and sales cycles are controllable.
+
+4. Niche ICP vs broad ICP
+- Niche wins for conversion rate and clear messaging.
+- Broad only wins after a niche beachhead and reusable proof exist.
+
+5. Brand-led premium vs performance-led volume
+- Brand-led premium wins when buyers pay to reduce perceived risk.
+- Performance-led volume wins when switching cost is low and comparison is easy.
+
+6. Productized service vs software-first
+- Productized service wins when workflows are still shifting quickly.
+- Software-first wins when workflow variance is low and automation is stable.
+
+### Lessons to add to memory (business success rules)
+
+1. Lead with a measurable outcome in one sentence.
+- Avoid feature-first positioning for top-level pages and intros.
+
+2. Always maintain a value ladder.
+- Free diagnostic/resource -> structured training/workflow -> application/high-touch support.
+
+3. Build proof before scale.
+- Capture specific case evidence (before/after metrics, failure recovered, time-to-value).
+
+4. Keep ICP boundaries explicit.
+- State who it is for, who it is not for, and minimum readiness assumptions.
+
+5. Productize implementation, not just advice.
+- Use checklists, commands, templates, and approval gates that reduce execution variance.
+
+6. Pair every offer with a clear verification signal.
+- Define what "success" looks like and how it is measured in the user's environment.
+
+7. Use authority content as distribution, but tie every piece to one next action.
+- Media/books/posts should flow into one concrete step (runbook, checklist, application, pilot).
+
+8. Add graceful-degradation paths.
+- If required tools/data are missing, define reduced-mode value instead of dead-end failure.
+
+9. Keep trust constraints visible.
+- Explicitly state safety/approval gates for any risky action; this improves adoption and retention.
+
+10. Review weekly on business metrics, not just activity.
+- Track conversion quality, retained usage, implementation success rate, and avoided rework.
+
+### Always-current framework loop (business never stops changing)
+
+1. Weekly (fast loop)
+- Log top 3 market signals that changed this week.
+- Mark one assumption as validated, invalidated, or unknown.
+- Update one workflow/skill/command based on real user friction.
+
+2. Monthly (decision loop)
+- Re-score ICP fit, offer clarity, and onboarding conversion.
+- Archive rules that no longer match current buyer behavior.
+- Promote only rules with fresh evidence in the last 30-60 days.
+
+3. Quarterly (strategy loop)
+- Revisit pricing model, packaging boundaries, and channel mix.
+- Run a kill list: what to stop doing because it no longer compounds.
+- Refresh success definition (what metric matters most this quarter).
+
+### Update triggers (when memory must change immediately)
+
+1. Win-rate drops for two consecutive weeks.
+2. Onboarding completion falls below target.
+3. Retention falls after adding new features/workflows.
+4. Support/clarification load rises on "repeat" tasks.
+5. A new competitor narrative changes buyer expectations.
+
+When any trigger fires, update rules first, assets second.
+
+### Recommended immediate experiments for this repo
+
+1. Add one-line ICP and one-line outcome to top-level onboarding prompts.
+2. Add a case-log section to the pilot runbook with before/after metrics.
+3. Add one "application-style" readiness checklist before advanced workflow execution.
+
+### Notes
+
+- Lessons above are synthesized from recurring patterns across multiple sources, not a single playbook.
+- This section is intentionally source-agnostic and stores only reusable business logic.
+
+## Update (2026-05-25): Lessons from high-frequency travel-stop retail networks
+
+### Question
+
+What can a large, distributed travel-stop business model teach us about building resilient growth systems?
+
+### Pattern synthesis
+
+1. Multi-profit-center model compounds better than single-line revenue
+- Fuel/traffic acquisition alone is low-margin and volatile.
+- Durable models stack adjacent profit centers (retail, food, services, financial products, maintenance).
+
+2. Network density is a moat when paired with service reliability
+- Geographic footprint alone is not enough.
+- Availability, uptime, and standardized service quality convert footprint into trust.
+
+3. Expansion cadence matters more than isolated launches
+- High-performing operators run repeatable opening/upgrade cycles year-round.
+- Predictable cadence improves planning, vendor leverage, and team execution quality.
+
+4. Adjacent capability expansion reduces customer churn
+- Adding services that match existing customer journeys (repair, wash, financing, loyalty, digital tooling) increases lifetime value.
+
+5. Workforce pipeline is core strategy, not HR admin
+- Hiring events, training academies, and education benefits function as growth infrastructure.
+- Labor reliability directly affects customer experience and throughput.
+
+6. Loyalty + fleet economics improve retention quality
+- Programs that reduce friction for repeat users and fleet operators create recurring demand and better data.
+
+7. Safety and compliance can be positioned as value products
+- Safety checks, inspections, and reliability services can be monetized while increasing trust.
+
+8. Portfolio balancing protects against market shocks
+- Mixing consumer, professional, and B2B revenue streams increases resilience.
+
+### Additions to business memory
+
+1. Always design at least one adjacent profit center per core offer.
+2. Track expansion cadence as an operating KPI (openings/upgrades per period).
+3. Treat workforce readiness as a leading indicator for customer satisfaction.
+4. Build retention loops (loyalty, account programs, recurring service touchpoints) early.
+5. Add service reliability metrics to business reviews (uptime, time-to-service, failed-service rate).
+
+### Fast experimentation prompts
+
+1. Which adjacent service would raise LTV for our current users with minimal complexity?
+2. What part of onboarding could become a retention loop in 30 days?
+3. Which operational KPI predicts revenue stability better than top-line growth?
+
+## Update (2026-05-25): Competitive strategy deep dive for travel-stop operators
+
+### Question
+
+How are major competitors keeping up with Love's, and what strategy patterns matter most?
+
+### Competitive pattern map
+
+1. Pilot: ecosystem bundling + digital route experience
+- Leans heavily on app-led engagement, rewards, and pro-driver experiences.
+- Uses fuel + factoring and billing offers to pull fleet economics into the same journey.
+- Pushes EV charging and truck care as network extensions, not stand-alone bets.
+
+2. TA/Petro: service-depth moat + professional driver loyalty
+- Positions around full-service truck care, technician depth, and on-road reliability.
+- Uses loyalty and fleet card products to lock recurring behavior.
+- Strong emphasis on professional-driver workflow (parking, services, restaurants, app support).
+
+3. Buc-ee's: destination retail differentiation
+- Competes on destination experience, cleanliness, and high-throughput consumer fueling.
+- Focuses less on long-haul truck ecosystem depth; stronger on car traveler stop quality.
+- Strategy is brand pull and basket size, not broad fleet-services stack.
+
+4. Casey's: convenience-and-food density strategy
+- Uses dense regional footprint and prepared food differentiation (especially pizza) to drive frequency.
+- Less travel-stop heavy than truck-focused operators; stronger in routine local demand loops.
+- Competes through neighborhood convenience and food economics rather than full highway service ecosystems.
+
+### How competitors are keeping up (cross-market themes)
+
+1. Loyalty arms race
+- Everyone is improving rewards mechanics and app integration to own repeat behavior.
+
+2. Fleet and financing integration
+- Billing cards, direct-bill workflows, and factoring tie fuel decisions to cash-flow operations.
+
+3. Reliability as a product
+- Maintenance depth, roadside support, and service availability are marketed as core value, not support functions.
+
+4. Digital trip operating system
+- Mobile apps increasingly combine route planning, fuel economics, amenities, and offer activation.
+
+5. Portfolio segmentation over one-size-fits-all
+- Trucking-heavy players optimize for pro drivers and fleets.
+- Retail-heavy players optimize for destination convenience and high-margin in-store spend.
+
+### Strategic read on Love's position
+
+1. Love's remains strong when it operates as a full-stack platform
+- Fuel + truck care + loyalty + financial + alternative energy + store offerings creates defensibility.
+
+2. Main risk is not single-feature competition; it is bundling speed
+- Competitors win when they ship integrated bundles faster than standalone feature upgrades.
+
+3. Winning move is execution reliability at network scale
+- The brand that delivers predictable service quality across locations keeps the trust moat.
+
+### Memory defaults to add from this competition scan
+
+1. Track competitor bundle velocity, not only competitor feature count.
+2. Measure app-to-purchase conversion and loyalty engagement by customer segment.
+3. Treat fleet-finance attachment rate as a strategic KPI.
+4. Watch service reliability gaps as leading churn signals.
+5. Keep separate strategy lanes for pro-driver and consumer traveler segments.
+
+### Counter-opinions to keep active
+
+1. Feature parity may be less important than brand trust and stop consistency.
+2. EV-led narratives may overstate near-term demand in some route segments.
+3. Aggressive bundle expansion can reduce focus if service quality degrades.

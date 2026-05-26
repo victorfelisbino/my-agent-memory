@@ -1,5 +1,51 @@
 # Copilot Auto-Mode Strategy
 
+<div class="landing-shell">
+	<div class="landing-grid">
+		<div class="hero-copy">
+			<h1>Make auto-mode route accurately, not expensively.</h1>
+			<p class="lead">This strategy improves model routing quality by injecting compact, structured task metadata so Copilot picks the cheapest viable model on the first pass.</p>
+			<div class="pill-row">
+				<span class="pill">Routing hints</span>
+				<span class="pill">Compact by default</span>
+				<span class="pill">Drift prevention</span>
+			</div>
+		</div>
+		<div class="kpi-panel">
+			<div class="kpi-item">
+				<strong>Main objective</strong>
+				<span>Reduce total session tokens by reducing retries and extra turns.</span>
+			</div>
+			<div class="kpi-item">
+				<strong>Default mode</strong>
+				<span>Compact + preflight for trivial and standard tasks.</span>
+			</div>
+			<div class="kpi-item">
+				<strong>Validation metrics</strong>
+				<span>Turns to resolution, overrides, and deep-model overuse rate.</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="scan-grid">
+	<div class="scan-card">
+		<span class="meta">Router input</span>
+		<h3>Typed task metadata</h3>
+		<p>Task type, complexity, and domain improve model selection quality.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Default behavior</span>
+		<h3>Compact for standard tasks</h3>
+		<p>Use full mode only when complexity justifies extra context.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Success test</span>
+		<h3>Fewer turns, fewer retries</h3>
+		<p>Session-level efficiency matters more than per-prompt token count.</p>
+	</div>
+</div>
+
 GitHub Copilot's **auto** model mode picks a model per request and applies roughly a 10% discount on premium usage. This memory system is designed to make auto-mode *work*, not just be cheaper.
 
 ## Why auto-mode usually drifts (and burns tokens)
@@ -12,7 +58,7 @@ Either way, you lose. The router needs **structured task metadata** in the promp
 
 ## How this repo helps
 
-[summon-memory.ps1](summon-memory.ps1) emits a **router-hints header** at the top of every brief:
+`summon-memory.ps1` emits a **router-hints header** at the top of every brief:
 
 ```
 ## Router hints (for Copilot auto-mode)
@@ -46,12 +92,15 @@ The auto-router reads this and biases its choice. Empirically the suggested-mode
 
 ## Drift prevention is the real saver
 
+!!! tip "The biggest savings come from preventing extra turns, not lowering per-prompt cost"
+    A 4-turn conversation reduced to 1–2 turns saves more tokens than any per-prompt trimming.
+
 Tokens spent on a too-cheap model that drifts dwarf the tokens saved by being cheap. The biggest cost reducers in this system are not the discount, they are:
 
 1. **Stay-scoped instruction** in the preflight prompt: *"Do not expand scope without asking."* Cuts unsolicited refactors.
 2. **One-batched-question rule**: *"If required values are org/project-specific, ask for them explicitly (one batched question, not many)."* Cuts back-and-forth round trips.
 3. **Skip-restating instruction**: *"Skip restating context back to me. Go straight to the answer."* Cuts the polite-but-expensive recap.
-4. **Anti-hallucination guardrails** from [anti-hallucination-protocol.md](anti-hallucination-protocol.md) auto-included by relevance scoring. Cuts retries caused by invented file paths, APIs, or component names.
+4. **Anti-hallucination guardrails** from `anti-hallucination-protocol.md` are auto-included by relevance scoring. Cuts retries caused by invented file paths, APIs, or component names.
 
 Even on a heavy model, these four reliably cut a 4-turn conversation to 1-2 turns.
 
@@ -59,7 +108,7 @@ Even on a heavy model, these four reliably cut a 4-turn conversation to 1-2 turn
 
 - Set the default model to **auto** in the Copilot Chat picker. Override per-conversation only when you have a specific reason.
 - Bind a keybinding to `summon-memory.ps1 -Compact -Preflight` for one-shot context injection.
-- Run the daily `MemoryDailySync` scheduled task so [`observations.jsonl`](observations.jsonl) and [`active-threads.md`](active-threads.md) stay fresh — stale observations hurt routing accuracy.
+- Run the daily `MemoryDailySync` scheduled task so `observations.jsonl` and `active-threads.md` stay fresh; stale observations hurt routing accuracy.
 
 ## Measuring whether this works
 
@@ -68,7 +117,7 @@ Track these in your own use over a week:
 - **% of sessions where auto picked a deep model when a cheap one would do** (target: <20%).
 - **% of sessions where you manually overrode auto** (target: <30% after a week of tuning).
 
-If those numbers don't improve, the router-hints aren't being read or the brief is wrong; revisit task-type classifier rules in [summon-memory.ps1](summon-memory.ps1#L75).
+If those numbers don't improve, the router-hints aren't being read or the brief is wrong; revisit task-type classifier rules in `summon-memory.ps1`.
 
 ## Token-reduction benchmark protocol
 
