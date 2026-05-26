@@ -23,28 +23,27 @@ The kill switch fires if the scoring function cannot beat random (50/50) on the 
 
 ```
 total       : 40
-accuracy    : 95%   (random baseline: 50.0%)
-junk recall : 90%   (Wave 3 exit: >= 80%)
-good recall : 100%  (Wave 3 exit: >= 80%)
+accuracy    : 100%   (random baseline: 50.0%)
+junk recall : 100%   (Wave 3 exit: >= 80%)
+good recall : 100%   (Wave 3 exit: >= 80%)
 ```
 
-Fixture grew from 20 (v1) to 40 (v2) and accuracy dropped 100% -> 95% -- as designed. The v2 fixture intentionally adds 10 new junk shapes drawn from real engineering-memory failure modes, and surfaced two scorer blind spots:
+Iter 5 closed both documented v2 misses with two tight new rules:
 
-- `reject-15` named-person-preference ("Tom from accounting prefers the old layout") -- needs proper-noun / personal-preference detection.
-- `reject-16` generic-world-noise ("Coffee was cold this morning and the office was loud") -- current world-noise pattern is keyed on a small wordlist (sunny/raining/wifi/weather) and does not generalize.
+- **Named-person preference** (two patterns): `<Name> from <department>` and `<Name> (prefers|likes|wants|hates|loves|wishes|thinks|feels|believes|said|told|emailed|complained) ...`. Pattern B requires case-sensitive matching (PowerShell `-cmatch`, not `-match` -- the default is case-insensitive, which would let `[A-Z]` match lowercase letters) and excludes a small tech allowlist (Avalonia, Salesforce, PowerShell, MuleSoft, MkDocs, etc.) so legitimate engineering memory does not trip.
+- **Environmental sensory noise**: `(coffee|tea|lunch|office|room|wifi|...)` followed by `(was|is) (cold|hot|loud|quiet|fast|slow|...)`. Requires the object anchor so memory using "hot reload is unreliable" or "quiet logging mode breaks CI" does not match.
 
-These two are the **next iteration's only targets** and are documented as known misses rather than hidden behind a percentage.
+As with iter 3, **100% on a 40-item fixture is not the Wave 3 exit criterion.** The exit criterion requires the fixture to be >=100 items. The honest read is: the scorer now correctly handles every shape we have labeled, including all twenty real-world junk shapes drawn from observed failure modes. The next loop is fixture growth (v2 -> v3, target 60 items), which will expose more blind spots.
 
 Iteration history:
 - v1 (20-item fixture, stub rules): 75 / 100 / 50.
-- Iter 1 (real-corpus extractor; reusability rule stopped penalizing bare technical vocabulary like "branch"/"repo"/"src"): 80 / 100 / 60.
-- Iter 2 (lower baseline rewards so vague items can dip negative; tautology penalty -0.5 -> -1.0; new heartbeat / still-alive / sync-interval pattern): 95 / 100 / 90.
+- Iter 1 (real-corpus extractor; reusability rule stopped penalizing bare technical vocabulary): 80 / 100 / 60.
+- Iter 2 (lower baseline rewards; stronger tautology penalty; heartbeat / sync-interval pattern): 95 / 100 / 90.
 - Iter 3 (contradiction-shape with phrase-overlap detection): 100 / 100 / 100 on v1.
-- Iter 4 (v1 -> v2 fixture growth +20 items; new rules for placeholder/TODO, boot-completion, UI-event, non-content hedge, stale-status, anecdotal-singleton; threshold tightened from `>= 0` to `> 0`): **95 / 100 / 90** on v2 (two documented misses).
+- Iter 4 (v1 -> v2 fixture growth 20 -> 40; +6 rules for placeholder/boot/UI-event/hedge/stale-status/anecdotal-singleton; threshold tightened `>= 0` -> `> 0`): 95 / 100 / 90 on v2.
+- Iter 5 (named-person Pattern A `<Name> from <dept>` + Pattern B case-sensitive `<Name> + preference verb` with tech allowlist; generic environmental-noise rule): **100 / 100 / 100** on v2.
 
-Unlabeled run over the current real-memory corpus (~403 items extracted from this repo): 0% rejection, min 0.1, mean 0.65. The new rules did not produce any false rejections on real memory.
-
-The **honest next milestones** are: close the two v2 misses (iter 5), then continue growing the fixture toward the Wave 3 exit criterion (>=100 items). 95% on 40 items is a stronger signal than 100% on 20 items was, but neither is the finish line.
+Unlabeled run over the current real-memory corpus (~403 items extracted from this repo): 0% rejection, min 0.1, mean 0.65. New rules produce no false rejections on real memory.
 
 ## Honesty contract
 

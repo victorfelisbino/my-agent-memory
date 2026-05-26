@@ -126,6 +126,22 @@ function Score-Novelty([string]$t) {
 $actionableVerbs = @('always','never','prefer','use','check','run','add','set','avoid','verify','ensure','promote','request','require')
 $vagueFillers    = @('matters','should care','is important','quality','best practice','various','generally','sometimes')
 
+# Tech/control-flow allowlist for the named-person rule (iter 5). A capitalized
+# token followed by a preference verb is usually a personal-preference memory
+# ("Tom prefers the old layout") UNLESS the token is a known framework /
+# language / tool / control-flow word. Keep this list conservative; missing
+# entries cause false-positives on legitimate engineering memory.
+$techProperNouns = @(
+  'Always','Never','Prefer','Use','Check','Run','Set','Avoid','Verify','Ensure',
+  'When','If','Before','After','For','In','On','A','An','The','This','These',
+  'Avalonia','Salesforce','MuleSoft','DataWeave','Apex','PowerShell','Pwsh','Python',
+  'MkDocs','GitHub','GitLab','Linux','Windows','MacOS','Docker','Kubernetes',
+  'React','Vue','Angular','Node','TypeScript','JavaScript','Rust','Java','Kotlin',
+  'Swift','Ruby','Bash','VS','Visual','Code','Studio','Microsoft','Google','Amazon',
+  'AWS','Azure','OpenAI','Claude','Copilot','Cursor','Windsurf','Cline','Gearset',
+  'Mocha','Jest','Pytest','Jupyter','Git','Mercurial','Jenkins','CircleCI'
+)
+
 function Score-Actionability([string]$t) {
   $score = 0.0
   $lc = $t.ToLowerInvariant()
@@ -161,6 +177,27 @@ function Score-Actionability([string]$t) {
   # Anecdotal singleton (iter 4): "worked when I", "broke when we", "happened
   # when I". A one-time anecdote is not a reusable lesson.
   if ($lc -match '\b(worked|broke|crashed|failed|happened)\s+when\s+(i|we)\b') { $score -= 1.5 }
+  # Named-person preference (iter 5, Pattern A): "<Name> from <department>".
+  # Tight pattern with low false-positive risk; catches the common
+  # workplace-anecdote shape "Tom from accounting prefers ...". Uses -cmatch
+  # (case-sensitive) because PowerShell's default -match is case-insensitive,
+  # which would make [A-Z] match lowercase letters too.
+  if ($t -cmatch '\b[A-Z][a-z]+\s+from\s+(accounting|marketing|sales|finance|hr|support|ops|engineering|product|legal|it|the\s+\w+\s+team)\b') { $score -= 1.5 }
+  # Named-person preference (iter 5, Pattern B): capitalized token followed by
+  # a personal-preference / opinion / hearsay verb. Excluded if the token is a
+  # known framework / language / tool / control-flow word ($techProperNouns).
+  # Catches "Sarah likes the dark theme", "John wants weekly emails", etc.
+  # Uses -cmatch so [A-Z] really means uppercase (otherwise "you wants" matches).
+  if ($t -cmatch '\b([A-Z][a-z]{1,15})\s+(prefers?|likes?|hates?|loves?|wants?|wishes|thinks|feels|believes|said|told|emailed|complained|asked\s+for)\b') {
+    if ($techProperNouns -notcontains $Matches[1]) { $score -= 1.5 }
+  }
+  # Environmental sensory noise (iter 5): object word (coffee/tea/lunch/office/
+  # room/weather/wifi/...) followed by "(was|is) <sensory adjective>". Catches
+  # "Coffee was cold this morning and the office was loud" and generalizes the
+  # narrower (sunny|raining|wifi|weather) wordlist above. Requires the object
+  # anchor so legitimate engineering memory using "hot reload is unreliable"
+  # or "quiet logging mode breaks CI" does not trip.
+  if ($lc -match '\b(coffee|tea|lunch|breakfast|dinner|office|room|building|hallway|weather|wifi|internet|aircon|heater)\b.*\b(was|is)\s+(cold|hot|loud|quiet|warm|noisy|busy|calm|fast|slow|broken|down)\b') { $score -= 1.5 }
   # Cap.
   if ($score -gt  1.0) { $score =  1.0 }
   if ($score -lt -1.0) { $score = -1.0 }
