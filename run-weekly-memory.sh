@@ -49,6 +49,17 @@ if [[ -x "./lint-memory.sh" && -d "./team-memory" ]]; then
   ./lint-memory.sh --include-canonical
 fi
 
+if [[ -x "./scripts/generate-competence-map.sh" || -f "./scripts/generate-competence-map.ps1" ]]; then
+  echo "[3a/6] Regenerate competence map..."
+  if command -v pwsh >/dev/null 2>&1; then
+    pwsh -NoProfile -File ./scripts/generate-competence-map.ps1
+  elif [[ -x "./scripts/generate-competence-map.sh" ]]; then
+    ./scripts/generate-competence-map.sh
+  else
+    echo "  skipped: pwsh not available and .sh stub not executable"
+  fi
+fi
+
 echo "[4/6] Stage weekly memory files..."
 files_to_stage=(
   memory-scoreboard.md
@@ -69,6 +80,10 @@ files_to_stage=(
   lesson-template.md
   docs/memory-adoption-playbook.md
   docs/memory-ecosystem-research-2026-05-15.md
+  docs/competence-map.md
+  competence-map.yml
+  scripts/generate-competence-map.ps1
+  scripts/generate-competence-map.sh
   lint-memory.ps1
   lint-memory.sh
 )
