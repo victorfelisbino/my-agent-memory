@@ -189,3 +189,51 @@ jobs:
           Remove-Item Env:\AGENT_MEMORY_PERSONAL
           Write-Host "Write-path smoke OK (2 kept, 1 rejected, 1 bypassed)"
 
+      - name: Auto-capture-path smoke (iter 14)
+        shell: pwsh
+        run: |
+          # auto-capture-observations.ps1 is the volume path (weekly + sync). Iter 14 wires the
+          # same admission gate; same divert-to-rejected behavior; MEMORY_GATE=off / -NoGate bypass.
+          $tmp = Join-Path $env:RUNNER_TEMP "auto-gate-ci-$([guid]::NewGuid())"
+          $td = Join-Path $tmp 'tr'
+          New-Item -ItemType Directory -Path $td -Force | Out-Null
+          $env:AGENT_MEMORY_PERSONAL = $tmp
+          $ts = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+          $keep   = (@{type='user.message';timestamp=$ts;data=@{content='Always run mkdocs --strict before pushing docs changes; otherwise warnings ship.'}} | ConvertTo-Json -Compress)
+          $reject = (@{type='user.message';timestamp=$ts;data=@{content='today I fixed the bug at line 42 in src/foo.py and it works now.'}} | ConvertTo-Json -Compress)
+          Set-Content -Path (Join-Path $td 'a.jsonl') -Value ($keep + "`n" + $reject) -Encoding UTF8
+
+          pwsh -NoProfile -File ./auto-capture-observations.ps1 -TranscriptDir $td -SinceDays 1 -MaxPerRun 25
+          if ($LASTEXITCODE -ne 0) { Write-Error "auto-capture gated run wrong exit: $LASTEXITCODE"; exit 1 }
+
+          $obs = @(Get-Content (Join-Path $tmp 'observations.jsonl') -ErrorAction Stop)
+          $rej = @(Get-Content (Join-Path $tmp 'observations.rejected.jsonl') -ErrorAction Stop)
+          if ($obs.Count -lt 1) { Write-Error "auto-capture: expected >=1 kept; got $($obs.Count)"; exit 1 }
+          if ($rej.Count -lt 1) { Write-Error "auto-capture: expected >=1 rejected; got $($rej.Count)"; exit 1 }
+
+          # Bypass path: MEMORY_GATE=off should keep everything (after dedup).
+          $tmp2 = Join-Path $env:RUNNER_TEMP "auto-bypass-ci-$([guid]::NewGuid())"
+          New-Item -ItemType Directory -Path $tmp2 | Out-Null
+          $env:AGENT_MEMORY_PERSONAL = $tmp2
+          $env:MEMORY_GATE = 'off'
+          pwsh -NoProfile -File ./auto-capture-observations.ps1 -TranscriptDir $td -SinceDays 1 -MaxPerRun 25
+          if ($LASTEXITCODE -ne 0) { Write-Error "auto-capture bypass wrong exit: $LASTEXITCODE"; exit 1 }
+          Remove-Item Env:\MEMORY_GATE
+          $obsBypass = @(Get-Content (Join-Path $tmp2 'observations.jsonl') -ErrorAction Stop)
+          if ($obsBypass.Count -lt 2) { Write-Error "auto-capture bypass: expected >=2 kept; got $($obsBypass.Count)"; exit 1 }
+          if (Test-Path (Join-Path $tmp2 'observations.rejected.jsonl')) { Write-Error "auto-capture bypass: rejected file should not exist"; exit 1 }
+
+          # Shell parity: same fixture through auto-capture-observations.sh.
+          $tmp3 = Join-Path $env:RUNNER_TEMP "auto-sh-ci-$([guid]::NewGuid())"
+          New-Item -ItemType Directory -Path $tmp3 | Out-Null
+          $env:AGENT_MEMORY_PERSONAL = $tmp3
+          bash ./auto-capture-observations.sh --transcript-dir $td --since-days 1 --max-per-run 25
+          if ($LASTEXITCODE -ne 0) { Write-Error "auto-capture.sh gated wrong exit: $LASTEXITCODE"; exit 1 }
+          $obsSh = @(Get-Content (Join-Path $tmp3 'observations.jsonl') -ErrorAction Stop)
+          $rejSh = @(Get-Content (Join-Path $tmp3 'observations.rejected.jsonl') -ErrorAction Stop)
+          if ($obsSh.Count -lt 1) { Write-Error "auto-capture.sh: expected >=1 kept; got $($obsSh.Count)"; exit 1 }
+          if ($rejSh.Count -lt 1) { Write-Error "auto-capture.sh: expected >=1 rejected; got $($rejSh.Count)"; exit 1 }
+
+          Remove-Item Env:\AGENT_MEMORY_PERSONAL
+          Write-Host "Auto-capture-path smoke OK (ps gated, ps bypass, sh gated)"
+

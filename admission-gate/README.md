@@ -80,6 +80,7 @@ Iteration history:
   Why two overlap thresholds: contradiction-against-store uses >= 2 shared tokens because opposite polarity already makes false positives unlikely; feedback-loop uses >= 4 because same polarity needs a higher bar to distinguish redundancy ("you just read this") from mere topic similarity (two distinct memories about the same area).
 - Iter 12 (**dashboard slice 1**; new `-LogTo` / `--log-to` flag in both scorers appends one JSON line per scored item to a shared log; new [`render-dashboard.ps1`](render-dashboard.ps1) reads any log produced by either scorer and emits a single self-contained `dashboard.html` (summary tiles, top rejection reasons, contradiction-against-store hits + anchor ids, feedback-loop hits + recall ids, 50 most recent decisions); log + dashboard are gitignored, local-only audit tool, no server, no JS framework; CI smoke step runs PS+Py with logging, renders the dashboard, and asserts the expected sections are present). No rules changed; all baselines and parity numbers unchanged.
 - Iter 13 (**write-path integration**; new `-ScoreOne` / `--score-one` flag in both scorers reads one JSON record from stdin, prints a decision JSON to stdout, and exits 0 (keep) or 3 (reject); [`capture-observation.ps1`](../capture-observation.ps1) and [`capture-observation.sh`](../capture-observation.sh) now route every candidate through the gate before appending -- rejected items divert to `observations.rejected.jsonl` (gitignored) with the rejection reason, so nothing is silently lost; bypass with `-NoGate` / `--no-gate` or `MEMORY_GATE=off`; CI smoke step exercises the keep / reject / bypass paths end-to-end and asserts the resulting files contain exactly the expected lines). No rules changed; all baselines and parity numbers unchanged. **This is the first iter where the scorer actually filters real writes** -- the dashboard will now start showing decisions from real captures, not just fixture runs.
+- Iter 14 (**close the auto-capture bypass**; the iter-13 gate only covered the manual `capture-observation.*` path, but [`auto-capture-observations.ps1`](../auto-capture-observations.ps1) / [`auto-capture-observations.sh`](../auto-capture-observations.sh) -- the volume path that runs weekly via [`run-weekly-memory.ps1`](../run-weekly-memory.ps1) and on every sync via [`sync-memory.ps1`](../sync-memory.ps1) -- still appended directly. Iter 14 wires the same `--score-one` gate per candidate in both auto-capture scripts; same divert-to-`observations.rejected.jsonl` with reason + `source: auto-capture`; same `MEMORY_GATE=off` / `-NoGate` / `--no-gate` bypass for backfills; CI smoke step exercises the PS gated path, the PS bypass path, and the shell gated path with a synthetic transcript). No rules changed; all baselines and parity numbers unchanged. **The whole write path is now gated**, not just the manual one. This iter was scheduled as a drift correction after a roadmap audit caught the iter-13 narrative overclaiming coverage.
 
 ## Honesty contract
 
@@ -136,9 +137,14 @@ Exit codes: `0` ok, `2` fixture missing or malformed, `3` accuracy below `-FailU
 - Contradiction-against-store (iter 10) and feedback-loop (iter 11) both use a polarity+subject-overlap heuristic, not embeddings. Good for the obvious "always X / never X" inversion and verbatim-paraphrase shapes; would not catch a deeply rephrased contradiction or a synonym-swapped re-ingestion with no shared content tokens.
 - Dashboard is local-only (slice 1) -- no time-series chart, no staleness view, no live refresh.
 
-## Write-path integration (iter 13)
+## Write-path integration (iter 13 + iter 14)
 
-The scorer now actually filters writes. `capture-observation.ps1` / `capture-observation.sh` pipe every candidate through `score_memory.py --score-one` before appending to `observations.jsonl`. Rejected items divert to `observations.rejected.jsonl` (gitignored) along with the rejection reason -- nothing is silently lost. Bypass via `-NoGate` / `--no-gate` or `MEMORY_GATE=off` when the gate misfires.
+The scorer now actually filters writes on **every** path that writes to `observations.jsonl`:
+
+- `capture-observation.ps1` / `capture-observation.sh` (manual `-Type ... -Note ...` captures) -- gated in iter 13.
+- `auto-capture-observations.ps1` / `auto-capture-observations.sh` (automated scraper that runs weekly via `run-weekly-memory.ps1` and on every sync via `sync-memory.ps1`) -- gated in iter 14.
+
+All four pipe each candidate through `score_memory.py --score-one` before appending. Rejected items divert to `observations.rejected.jsonl` (gitignored) along with the rejection reason -- nothing is silently lost. Bypass via `-NoGate` / `--no-gate` or `MEMORY_GATE=off` when the gate misfires or you're running a backfill.
 
 ```powershell
 # Normal use -- gate runs by default.
