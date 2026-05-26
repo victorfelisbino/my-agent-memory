@@ -4,7 +4,7 @@
 	<div class="landing-grid">
 		<div class="hero-copy">
 			<h1>Borrowed patterns, opinionated defaults.</h1>
-			<p class="lead">Notes on what I copied from other memory projects (mem0, OpenMemory, the cursor-memory-bank line of work) and the operating rules I settled on for this repo. Treat it as a working contract, not gospel.</p>
+			<p class="lead">Notes on what I copied from other memory projects (mem0, OpenMemory, the cursor-memory-bank line of work) and the operating rules I settled on for this repo. Treat it as a working contract, not gospel &mdash; some of what's below I run today, some of it is still aspirational. See <a href="status.md">Status</a> for the precise line.</p>
 			<div class="pill-row">
 				<span class="pill">Layer by scope</span>
 				<span class="pill">Evidence first</span>
@@ -13,16 +13,16 @@
 		</div>
 		<div class="kpi-panel">
 			<div class="kpi-item">
-				<strong>Immediate adoption</strong>
-				<span>Scope classification, ingestion controls, retrieval discipline.</span>
+				<strong>Adopted today</strong>
+				<span>Scope classification (private vs shared), ingestion rule (one-verb capture), weekly synthesis cadence.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Anti-pattern</strong>
-				<span>Write-only memory or high-confidence unverified claims.</span>
+				<strong>On paper only</strong>
+				<span>Confidence + last-verified metadata on every entry; retrieval at every decision point.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Promotion rule</strong>
-				<span>Promote only with evidence, reuse, and verification date.</span>
+				<span>Promote only with evidence, reuse, and a transfer test — manual judgement today, no harness yet.</span>
 			</div>
 		</div>
 	</div>
@@ -66,30 +66,19 @@ Use it as an implementation guide for this repository.
 
 ## What we should adopt immediately
 
-1. Layer memory by scope
-- General rule: classify each lesson as one of `session`, `user`, or `org/domain` scope.
-- Why: avoids over-retrieval and irrelevant context.
+What I actually adopted (and what's still on paper):
 
-2. Add ingestion quality controls
-- Store only reusable, evidence-backed facts.
-- Mark confidence (`low|medium|high`) and `last_verified` date.
-- Reject speculative statements unless explicitly marked as hypothesis.
+1. Layer memory by scope &mdash; **adopted.** Private state lives in a separate repo; shared patterns live here. The split is enforced by `.gitignore` and the resolution order in `_personal-root.ps1`.
 
-3. Enforce retrieval at decision points
-- Retrieve memory before assumptions, option selection, or implementation.
-- Retrieval query should be hypothesis-driven (specific question), not generic.
+2. Add ingestion quality controls &mdash; **partly adopted.** The promotion rule (reusable + evidence + falsifiable + fresh) is documented in [framework-scope.md](framework-scope.md). Confidence and `last_verified` are not yet stamped on every entry; that's a Wave 5 cleanup.
 
-4. Store at value boundaries
-- Store after non-trivial progress, decisions, dead ends, and discovered constraints.
-- Do not store chat filler, trivial acknowledgments, or duplicate notes.
+3. Enforce retrieval at decision points &mdash; **manual only.** Today retrieval means running `summon-memory` and pasting the brief. There is no agent integration that retrieves before every assumption / option / commit. Auto-retrieval is roadmap Wave 4-A.
 
-5. Add no-memory fallback behavior
-- If memory tooling fails, explicitly switch to no-memory mode.
-- Record decisions in working docs with extra detail, then backfill memory later.
+4. Store at value boundaries &mdash; **partly adopted.** `loop.ps1` makes one-verb capture cheap. Discipline about what *not* to capture is still mostly judgement, not enforced.
 
-6. Keep token efficiency intentional
-- Use short summaries first, detail-on-demand second.
-- Preserve only critical handoff context across phases.
+5. Add no-memory fallback behavior &mdash; **documented.** If `summon-memory` fails, working in plain mode and back-filling later is the policy. No formal fallback path is wired into any agent.
+
+6. Keep token efficiency intentional &mdash; **adopted.** `summon-memory -Compact` exists; the [Copilot auto-mode](copilot-auto-mode.md) page lays out the rule for when to use which mode.
 
 ## Suggested operating contract for this repo
 

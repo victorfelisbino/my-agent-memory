@@ -1,6 +1,10 @@
 # Team Memory Approval Gates
 
-A lesson can move from `team-memory/inbox/` to `team-memory/canonical/` only if all gates pass.
+**Status (May 2026):** Aspirational. This file documents the *intended* flow for promoting a lesson from `team-memory/inbox/` to `team-memory/canonical/`. No lesson has ever actually flowed through these gates; both folders are empty. The repo has a single contributor today.
+
+It exists so the shape is documented and so the roadmap has a concrete contract to either operationalize, repurpose, or delete. See the [roadmap](../docs/roadmap.md) (Waves 4 and 6).
+
+A lesson should only move from `team-memory/inbox/` to `team-memory/canonical/` if all gates pass.
 
 ## Gate 1: Reusability
 
@@ -41,7 +45,7 @@ Required fields:
 - Last verified date is within 180 days.
 - If older, either re-verify or downgrade confidence before promotion.
 
-## Promotion checklist
+## Promotion checklist (if/when this flow is ever used)
 
 1. Draft exists in `team-memory/inbox/`.
 2. Lint passes.

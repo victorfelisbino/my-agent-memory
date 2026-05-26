@@ -22,18 +22,19 @@ What to read first:
 
 ## Start Here
 
+- Reality check first: [docs/status.md](docs/status.md) &mdash; what's real today vs documented-only vs planned.
+- Where this is going: [docs/roadmap.md](docs/roadmap.md) &mdash; 6 waves, each with a kill switch.
 - New user setup: [Quick Start (5 minutes)](#quick-start-5-minutes)
 - Published docs entry: [docs/index.md](docs/index.md)
-- Framework purpose: [docs/framework-purpose.md](docs/framework-purpose.md)
+- Purpose, in one paragraph: [docs/framework-purpose.md](docs/framework-purpose.md)
 - Quick restart routine: [docs/quick-restart-routine.md](docs/quick-restart-routine.md)
-- Architecture: [Two-repo architecture](#two-repo-architecture)
-- Scope boundary: [Framework Scope: What This Is and Is Not](docs/framework-scope.md)
-- Privacy boundary: [What Stays Private Always](#what-stays-private-always)
+- Architecture: [Two-repo split](#two-repo-split)
+- Scope and privacy boundary: [docs/framework-scope.md](docs/framework-scope.md)
 - Collaboration process: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## What Stays Private Always
 
-This repository must never contain personal working-state files. Each collaborator keeps these in their own private personal repo:
+This repository must never contain personal working-state files. They live in a separate, private `my-agent-memory-personal` repo:
 
 - `observations.jsonl`
 - `active-threads.md`
@@ -46,16 +47,16 @@ This repository must never contain personal working-state files. Each collaborat
 - `memory-scoreboard.md`
 - `memory-top-patterns.md`
 
-The framework `.gitignore` already protects these paths, but privacy is also a contributor rule.
+The `.gitignore` here already protects these paths.
 
-## What we're trying to accomplish
+## What this repo is trying to do
 
-- **Never lose a thread.** Across N machines and M workspaces, you should be able to open one file and see every project you have going, what state it's in, who you owe what, and when you last touched it.
-- **Make every Copilot session start smart.** Patterns, guardrails, decisions, and lessons already paid for should automatically bias new Copilot answers.
-- **Verifiable progress over time.** Decisions, observations, and outcomes captured automatically and scored, so weekly review surfaces the few patterns that actually matter — not vibes.
-- **Zero-friction capture, hard-bounded review.** If recording something takes more than one shell command, it won't happen. If lists can sprawl, they will. So: capture is one verb, review is a 60-second daily ritual, lists have caps.
+- **Stop losing threads.** One file (`open-loops.md` in the personal repo) holds every project you have going, what state it's in, who you owe what, and when you last touched it. Bounded lists, capped sections.
+- **Help Copilot start warmer than zero.** Run `summon-memory` before a complex task; it ranks the relevant principles, gotchas, and recent observations into a context brief you paste into the prompt. *Manual today &mdash; auto-injection is on the [roadmap](docs/roadmap.md), not shipped.*
+- **Make weekly review measurable.** Decisions, observations, and outcomes get captured automatically; the weekly run synthesizes them so review is about the few patterns that actually matter, not vibes.
+- **Keep capture cheaper than review.** Recording something is one shell command. Pruning is a fixed 20-30 minute slot per week. If either side grows past those constraints, the system has failed and needs trimming.
 
-## Two-repo architecture
+## Two-repo split
 
 ```
 my-agent-memory  (this repo, shareable)               my-agent-memory-personal  (private, per user)
@@ -64,17 +65,21 @@ my-agent-memory  (this repo, shareable)               my-agent-memory-personal  
 - principles & protocols                              - active-memory-brief.md
   (anti-hallucination, thinking, decision,            - open-loops.md
    cognitive-bias, exploration)                       - goals.md
-- verified-knowledge docs                             - decision-journal.md
+- curated reference docs                              - decision-journal.md
   (gotchas, salesforce-debugging,                     - status-update.md
    project-commands)                                  - performance-map.md
 - domains/  (Salesforce, MuleSoft, general            - memory-scoreboard.md
    playbooks)                                         - memory-top-patterns.md
-- team-memory/  (canonical lessons,                   - team-memory/inbox/  (your pending lessons)
-   templates, approval gates)
+- skills/  (one shipped: anti-hallucination;          - team-memory/inbox/  (reserved; unused)
+   others are templates and a couple of
+   domain examples)
+- team-memory/  (reserved structure for a
+   future multi-contributor flow; currently
+   empty — see team-memory/README.md)
 - README + playbooks
 ```
 
-The framework scripts find the personal repo via this resolution order:
+The scripts find the personal repo via this resolution order:
 
 1. `$env:AGENT_MEMORY_PERSONAL` (or `$AGENT_MEMORY_PERSONAL` on bash) if set
 2. Sibling directory of the framework repo named `my-agent-memory-personal`
@@ -106,13 +111,13 @@ If you are creating your personal repo for the first time, use the full setup in
 
 ## The three layers
 
-### 1. Knowledge layer (lives here, shared) — *what we've learned*
-Curated markdown files Copilot pulls into context to bias its answers:
+### 1. Knowledge layer (lives here, shared) — *what I've curated*
+Markdown files `summon-memory` ranks and pulls into a brief you paste into Copilot:
 
 - [anti-hallucination-protocol.md](anti-hallucination-protocol.md), [thinking-principles.md](thinking-principles.md), [decision-framework.md](decision-framework.md), [cognitive-bias-checks.md](cognitive-bias-checks.md), [exploration-modes.md](exploration-modes.md) — how to reason.
-- [gotchas.md](gotchas.md), [salesforce-debugging.md](salesforce-debugging.md), [project-commands.md](project-commands.md) — verified, evidence-backed practices.
+- [gotchas.md](gotchas.md), [salesforce-debugging.md](salesforce-debugging.md), [project-commands.md](project-commands.md) — curated practices and commands.
 - [domains/](domains/) — domain-specific playbooks.
-- [team-memory/](team-memory/) — lessons promoted from personal use into shared practice through [approval gates](team-memory/approval-gates.md).
+- [team-memory/](team-memory/) — reserved structure for a future multi-contributor promotion flow. Today the folders are empty; no lesson has actually flowed through `approval-gates.md`.
 
 ### 2. Activity layer (lives in the personal repo) — *what you've been doing*
 Auto-captured from your local Copilot transcripts on every machine:
@@ -128,20 +133,15 @@ Manual but one-command, with hard caps:
 - [loop.ps1](loop.ps1) / [loop.sh](loop.sh) — one command, six verbs: `idea`, `start`, `promise`, `wait`, `done`, `show`. Every capture also writes to `observations.jsonl`.
 - `goals.md`, `decision-journal.md`, `performance-map.md` — longer-arc tracking.
 
-## Skills and connectors layer
+## Skills and connectors layer (mostly templates today)
 
-For repeatable outcomes, use skills and connector contracts:
+The `skills/` and `connectors/` directories scaffold a more structured execution layer. Today:
 
-- [skills/](skills/) — outcome-focused execution packs (steps, verification, failure modes)
-- [connectors/](connectors/) — integration setup contracts (auth, verification, fallback)
+- [`skills/general/anti-hallucination/`](skills/general/anti-hallucination/) is the one fully-shipped skill (Wave 1 of the [roadmap](docs/roadmap.md)) with install paths and a 5-prompt before/after harness.
+- [`skills/general/pr-review/`](skills/general/pr-review/), [`skills/salesforce/`](skills/salesforce/), [`skills/mulesoft/`](skills/mulesoft/) hold one example each. They're useful as references; they are not consumed by any agent integration in a one-command, reproducible way.
+- [`connectors/`](connectors/) contains only a README and a template. No connector contracts have been written yet.
 
-Use this rule:
-
-1. Use `skills/` when the job is known and repeatable.
-2. Use `domains/` when you need broad domain guidance and decision context.
-3. Use lessons/templates for incident capture and future promotion.
-
-## How the layers connect
+If you want a structured skill, copy `skills/templates/skill-template.md` and follow the shape of the anti-hallucination skill. Don't expect a runtime to pick it up automatically &mdash; that's a planned wave, not a current feature.
 
 ```
 Copilot transcripts (per workspace, per machine)
@@ -155,19 +155,21 @@ $PERSONAL/active-threads.md         $PERSONAL/open-loops.md
 (what you're doing,                 (what's open,
  across all your machines)           bounded + reviewed)
     |
-    v  summon-memory.ps1  (scans this framework repo for relevant knowledge)
-$PERSONAL/active-memory-brief.md  -->  paste into next Copilot prompt
-(ranked knowledge from framework +
+    v  summon-memory.ps1  (scans this repo for relevant knowledge)
+$PERSONAL/active-memory-brief.md  -->  YOU paste it into the next Copilot prompt
+(ranked knowledge from this repo +
  your recent observations +
  your active threads)
 ```
+
+That last step is manual today &mdash; the brief is generated, but no integration injects it into Copilot automatically. The roadmap's Wave 4-A is where auto-injection ships, if it ships.
 
 Cross-machine sync for the **personal repo** uses git union-merge: [.gitattributes](.gitattributes) in the personal repo marks `observations.jsonl merge=union` so parallel pushes from N machines never conflict.
 
 ## Setup on a new machine
 
 ```powershell
-# 1. Clone this framework repo (shareable)
+# 1. Clone this repo (shareable)
 git clone https://github.com/victorfelisbino/my-agent-memory.git E:\my-agent-memory
 
 # 2. Clone (or init) your private personal repo as a SIBLING directory
@@ -186,10 +188,12 @@ cd E:\my-agent-memory
 .\install-scheduled-task.ps1 -DailySync -Time '08:00'
 ```
 
-### Bootstrapping a personal repo (first machine only)
+All commands above are Windows / PowerShell. `.sh` counterparts exist for `loop`, `sync-memory`, `capture-observation`, `learn-memory`, `summon-memory`, `synthesize-observations`, `prune-observations`, `auto-capture-observations`, `lint-memory`, and `run-weekly-memory`, but the PowerShell path is the daily-driven one. `install-scheduled-task.ps1` is Windows-only; no `cron` or `launchd` equivalent ships today. See [docs/status.md](docs/status.md) for the cross-platform parity gap.
+
+**Bootstrap the personal repo first** if you haven't already:
 
 1. Create an empty **private** GitHub repo (e.g. `my-agent-memory-personal`).
-2. Make a sibling directory next to the framework repo:
+2. Make a sibling directory next to this one:
    ```powershell
    New-Item -ItemType Directory E:\my-agent-memory-personal
    cd E:\my-agent-memory-personal
@@ -225,17 +229,17 @@ cd E:\my-agent-memory
 ```
 See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + token-saving strategy.
 
-**Automatic** (no action required): the scheduled task runs `sync-memory.ps1 -Commit -Push` daily — pulls everyone else's activity (from your other machines), captures from local Copilot transcripts with machine + workspace attribution, regenerates `active-threads.md`, and pushes. Only the personal repo gets pushed by this task; framework updates are a separate, manual `git pull` here.
+**Automatic** (no action required): the scheduled task runs `sync-memory.ps1 -Commit -Push` daily — pulls activity from your other machines, captures from local Copilot transcripts with machine + workspace attribution, regenerates `active-threads.md`, and pushes the **personal** repo. This repo doesn't get auto-updated by the task; `git pull` here is manual.
 
-**Weekly**: `.\run-weekly-memory.ps1 -Commit -Push` runs the learner, captures, synthesizes, lints team memory, and commits **both** repos (framework knowledge updates + personal data).
+**Weekly**: `.\run-weekly-memory.ps1 -Commit -Push` runs the learner, captures, synthesizes, lints `team-memory/`, and commits **both** repos (curated updates here + personal data there).
 
 ## Operating principles
 
 - **Evidence over claim.** Never accept "done" without independent verification — see [anti-hallucination-protocol.md](anti-hallucination-protocol.md).
 - **Caps over completeness.** Bounded lists force pruning; unbounded lists become wikis nobody reads.
 - **One verb, one file.** If a workflow needs more than one command or one place to look, it will be skipped.
-- **Capture costs nothing, review costs everything.** Auto-capture is cheap and lossless; human attention is the scarce resource and goes only to bounded sections.
-- **Personal first, team second.** Lessons earn their way into shared framework knowledge through [team-memory/approval-gates.md](team-memory/approval-gates.md), not by default.
+- **Capture costs nothing, review costs everything.** Auto-capture is cheap and lossless; attention is the scarce resource and goes only to bounded sections.
+- **Personal first, shared second.** Lessons should earn their way out of the private repo by reuse and a transfer test. The `team-memory/approval-gates.md` flow is reserved for when there's more than one contributor; today promotion is a manual judgement call.
 - **Private data stays private.** The personal repo is always a separate, private repo — never push it to a shared remote.
 
 ## Community
@@ -256,6 +260,6 @@ See [docs/copilot-auto-mode.md](docs/copilot-auto-mode.md) for the auto-mode + t
 
 ## Why this exists
 
-Manual second-brains fail because they require discipline nobody actually has. This system requires one disciplined behavior: type one shell command when something happens. Everything downstream — cross-machine sync, scoring, weekly synthesis, Copilot context injection — happens automatically from that one input.
+Manual second-brains fail because they require discipline nobody actually has. The bet here is that one disciplined behavior — typing one shell command when something happens — is achievable, and everything downstream (cross-machine sync, scoring, weekly synthesis, brief generation) can be automated from that one input.
 
-If it works, you stop dropping threads, you stop relearning the same lessons, and Copilot gets measurably more useful every week. If it stops working, the failure shows up in the daily ritual within 24 hours, not weeks later.
+That's the bet, not a proven outcome. Whether it works for anyone besides me is what the [roadmap](docs/roadmap.md) waves 2-4 are designed to test. Status today: [docs/status.md](docs/status.md).
