@@ -22,7 +22,7 @@
   Exit codes: 0 ok, 2 fixture missing/malformed, 3 accuracy below threshold.
 #>
 param(
-  [string] $Fixture    = "admission-gate/fixtures/memories-v2.jsonl",
+  [string] $Fixture    = "admission-gate/fixtures/memories-v3.jsonl",
   [switch] $Verbose,
   [int]    $FailUnder  = 0,
   [switch] $Unlabeled,
@@ -156,10 +156,12 @@ function Score-Actionability([string]$t) {
   # Heartbeat / liveness noise: "still alive", "no new observations", "sync interval",
   # "keep-alive", "heartbeat". These are runtime telemetry, not memory.
   if ($lc -match '\b(heartbeat|still alive|no new observations?|sync interval|keep[- ]?alive)\b') { $score -= 1.5 }
-  # Placeholder / WIP comments (iter 4): TODO / TBD / FIXME / XXX / WIP followed
-  # by colon or whitespace are notes-to-self, not durable memory. Catches
-  # "TODO: figure this out later" and "FIXME: throws on null input".
-  if ($lc -match '\b(todo|tbd|fixme|wip|xxx)\b\s*[:\-]') { $score -= 1.5 }
+  # Placeholder / WIP comments (iter 4, relaxed iter 6): TODO / TBD / FIXME / XXX / WIP
+  # as a bare word. Iter 4 required a trailing : or - but that missed bullets
+  # like "Required inputs: TBD. Mitigation: TODO." where the word ends with a
+  # period. None of the legitimate keep examples use these words at all, so
+  # the bare-word match is safe.
+  if ($lc -match '\b(todo|tbd|fixme|wip|xxx)\b') { $score -= 1.5 }
   # Boot / liveness completion (iter 4): "loading complete", "system ready",
   # "ready for input", "all systems go", "startup complete". Distinct from the
   # heartbeat pattern in that these fire at a single moment.
@@ -198,6 +200,27 @@ function Score-Actionability([string]$t) {
   # anchor so legitimate engineering memory using "hot reload is unreliable"
   # or "quiet logging mode breaks CI" does not trip.
   if ($lc -match '\b(coffee|tea|lunch|breakfast|dinner|office|room|building|hallway|weather|wifi|internet|aircon|heater)\b.*\b(was|is)\s+(cold|hot|loud|quiet|warm|noisy|busy|calm|fast|slow|broken|down)\b') { $score -= 1.5 }
+  # Heading-only extraction artifact (iter 6): a short bullet that ends in a
+  # colon with no content after. Catches "How to confirm routing quality:"
+  # which is a section header, not a memory. Length cap (80 chars) keeps the
+  # rule from matching long sentences that happen to end with a colon.
+  if ($t -match '^.{1,80}:\s*$') { $score -= 1.5 }
+  # Aspirational vague (iter 6): "we should be better / able / careful / ..."
+  # or "we should do / try / make / consider". States a wish without a rule.
+  # Catches "We should be better at writing tests".
+  if ($lc -match '\bwe should\s+(be\s+(better|able|good|careful|nicer|more|less)|do|try|make|consider)\b') { $score -= 1.5 }
+  # Vague comparison (iter 6): "(generally|usually|mostly|often) (faster|
+  # slower|better|...) than" -- combines two soft signals into one strong
+  # reject signal without false-positiving on either alone. Catches
+  # "X is generally faster than Y in most cases".
+  if ($lc -match '\b(generally|usually|mostly|often)\s+(faster|slower|better|worse|easier|harder|simpler|cheaper|nicer)\s+than\b') { $score -= 1.5 }
+  # Apology / meta-conversation (iter 6): "sorry, I missed your message" and
+  # variants. These are chat-thread artifacts, not engineering memory.
+  if ($lc -match "^sorry,?\s|\bi\s+(missed|forgot to see|didn'?t see)\s+your\b") { $score -= 1.5 }
+  # Open-question shape (iter 6): "wondering whether|wondering if|not sure
+  # whether|not sure if|should I|do we need|can we use". A memory that is
+  # itself a question hasn't been resolved into a rule yet.
+  if ($lc -match '^(wondering|not sure)\s+(whether|if)\b|\b(should i|do we need|can we use|what is the best way to)\b') { $score -= 1.5 }
   # Cap.
   if ($score -gt  1.0) { $score =  1.0 }
   if ($score -lt -1.0) { $score = -1.0 }

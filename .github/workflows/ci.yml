@@ -77,7 +77,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run scorer on v2 fixture
+      - name: Run scorer on v3 fixture
         shell: pwsh
         run: ./admission-gate/score-memory.ps1 -FailUnder 95
 
