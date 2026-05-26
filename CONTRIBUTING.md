@@ -1,12 +1,19 @@
 # Contributing
 
-Thanks for helping improve this framework.
+Thanks for looking. Before opening anything, read [docs/status.md](docs/status.md) and [docs/roadmap.md](docs/roadmap.md) &mdash; this repo is one person's working version of a two-repo memory pattern, not a framework with users yet. Contribution shape that's actually useful depends on which roadmap wave we're in.
+
+## Reality check
+
+- Single contributor today. No published release cadence. CI runs only syntax-level checks (`bash -n`, PowerShell parse), not functional tests.
+- The `team-memory/` approval-gates flow has never run end-to-end. Don't treat it as a working review process; treat it as a draft policy.
+- The most useful contributions right now are: (a) running the [anti-hallucination test harness](skills/general/anti-hallucination/test-prompts.md) and reporting honest results, (b) flagging where the docs still claim something that isn't true.
 
 ## Scope
 
-This repository is the shared framework only. Do not add personal memory state here.
+This repository holds shared, reusable patterns only. Personal memory state belongs in a separate, private `my-agent-memory-personal` repo.
 
 Never commit these personal files:
+
 - observations.jsonl
 - active-threads.md
 - active-memory-brief.md
@@ -30,8 +37,9 @@ Never commit these personal files:
 1. Keep changes small and focused.
 2. Explain the user problem and why the change is needed.
 3. Include before-after behavior or sample output when changing scripts.
-4. Update README if command behavior changes.
+4. Update README and [docs/status.md](docs/status.md) if a behavior moves between "documented only" and "real today."
 5. Do not include secrets, local machine paths, or personal memory content.
+6. If you're changing a public claim about what works, link to evidence in the PR description.
 
 ## Validation
 

@@ -4,7 +4,7 @@
 	<div class="landing-grid">
 		<div class="hero-copy">
 			<h1>Capture lessons, keep them honest, feed them back in.</h1>
-			<p class="lead">The point of all this is a small loop: write down what I learned, only promote a lesson once I've hit it more than once, and surface the relevant pieces back into the next prompt. That's it &mdash; the rest of the pages just spell out the parts.</p>
+			<p class="lead">The point is a small loop: write down what I learned, only promote a lesson once I've hit it more than once, and surface the relevant pieces back into the next prompt. The rest of the pages just spell out the parts.</p>
 			<div class="pill-row">
 				<span class="pill">Capture</span>
 				<span class="pill">Synthesize</span>
@@ -14,19 +14,22 @@
 		<div class="kpi-panel">
 			<div class="kpi-item">
 				<strong>Primary output</strong>
-				<span>Reusable rules with confidence and freshness metadata.</span>
+				<span>A ranked brief I paste into Copilot before complex tasks &mdash; not auto-injected.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Primary risk reduced</strong>
-				<span>Repeated failures caused by hidden or stale assumptions.</span>
+				<span>Repeating the same mistake because the agent has no memory of the last one.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Success signal</strong>
-				<span>Faster state recovery and cleaner decision follow-through.</span>
+				<span>Fewer back-and-forth turns to land on the right answer; fewer invented file paths and APIs.</span>
 			</div>
 		</div>
 	</div>
 </div>
+
+!!! note "What's actually automated vs. manual"
+    **Automated:** capture from local Copilot transcripts, cross-machine sync of the personal repo, brief generation, weekly synthesis, lint checks. **Manual:** pasting the brief into the Copilot prompt, deciding what to promote from the personal repo into this one, running the weekly review. See [Status](status.md) for the precise line between the two.
 
 <div class="scan-grid">
 	<div class="scan-card">
@@ -54,39 +57,40 @@
 
 ## When to use
 
-- When you need consistent execution across changing projects.
-- When recurring mistakes indicate missing guardrails.
-- When team knowledge must stay current and reusable.
+- When you want a coding agent to remember a generalized lesson the next time the same shape of problem shows up.
+- When recurring mistakes signal a missing guardrail.
+- When you already keep two kinds of notes (private and shareable) and want a clean split between them.
 
 ## Inputs
 
-- Captured activity and decisions.
+- Captured activity and decisions (auto from Copilot transcripts; one-verb manual via `loop.ps1`).
 - Weekly synthesis outputs.
-- Verification signals from real execution.
+- Lessons promoted from the personal repo into this one.
 
 ## Outputs
 
-- Updated rules and playbooks with confidence and freshness.
-- Clear guardrails that reduce repeat failures.
-- Higher-quality Copilot context briefs.
+- A ranked context brief on demand (`summon-memory`).
+- Curated principles, gotchas, and domain playbooks here.
+- Weekly synthesis files in the personal repo.
 
 ## Operating cycle
 
 1. Capture activity and decisions continuously.
 2. Synthesize patterns on a weekly cadence.
-3. Promote only reusable and testable lessons.
+3. Promote only what passes the transfer test (still applies in a language you haven't used yet).
 4. Retire or downgrade stale rules.
 
 ## Guardrails
 
-!!! abstract "Hard rules for shared memory"
+!!! abstract "Hard rules for what lands here"
     - Add shared rules only if they are reusable, measurable, and falsifiable.
     - Record confidence and last-verified date for strategic rules.
     - Archive stale guidance when freshness thresholds are missed.
+    - These rules are aspirational metadata standards. Today not every page in this repo carries confidence + last-verified — see [Status](status.md). Closing that gap is part of Wave 5.
 
 ## Success signals
 
 - Faster state recovery when resuming work.
 - Fewer repeated failure patterns.
-- Higher quality decision logs with follow-up verification.
+- Decision logs with follow-up verification.
 - Weekly updates that keep guidance current.
