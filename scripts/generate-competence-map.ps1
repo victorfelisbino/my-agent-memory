@@ -304,7 +304,33 @@ foreach ($t in $tierOrder) {
 [void]$sb.AppendLine('')
 
 if ($CheckOnly) {
-  Write-Trace "CheckOnly: would write $($sb.Length) chars to $OutPath"
+  $new = $sb.ToString()
+  if (-not (Test-Path $OutPath)) {
+    [Console]::Error.WriteLine("CheckOnly: $OutPath does not exist. Run the generator and commit the result.")
+    exit 4
+  }
+  $current = Get-Content $OutPath -Raw -Encoding UTF8
+
+  # Normalize time-dependent bits before comparing so the check is stable
+  # across days and across CI vs local clocks.
+  #   - "**Generated:** ..." header line varies per run.
+  #   - "(Nd ago)" elapsed-time stamps tick over each day.
+  function Normalize-Map([string]$s) {
+    $s = [regex]::Replace($s, '(?m)^\*\*Generated:\*\*.*$', '**Generated:** _normalized_')
+    $s = [regex]::Replace($s, '\(\d+d ago\)', '(Nd ago)')
+    # Collapse CRLF/LF differences so check works on both Windows and Linux.
+    $s = $s -replace "`r`n", "`n"
+    return $s.TrimEnd()
+  }
+
+  $nNew     = Normalize-Map $new
+  $nCurrent = Normalize-Map $current
+
+  if ($nNew -ne $nCurrent) {
+    [Console]::Error.WriteLine("CheckOnly: $OutPath is out of date. Run scripts/generate-competence-map.ps1 and commit the result.")
+    exit 4
+  }
+  Write-Trace "CheckOnly: $OutPath is up to date ($($sb.Length) chars)"
   exit 0
 }
 
