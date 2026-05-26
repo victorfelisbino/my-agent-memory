@@ -155,7 +155,7 @@ function Get-LastGitTouchIso([string]$path) {
 }
 
 $violations = New-Object System.Collections.Generic.List[string]
-$now = Get-Date
+$now = [DateTime]::UtcNow
 
 foreach ($e in $entries) {
   $sources = $e.sources
@@ -186,7 +186,10 @@ foreach ($e in $entries) {
 
     $iso = Get-LastGitTouchIso $src
     if ($iso) {
-      $dt = [DateTime]::Parse($iso)
+      # Parse as UTC so the displayed date is stable across platforms.
+      # Without this, Windows local time and CI (UTC) disagree on commits
+      # made near midnight UTC, which shows up as a 1-day drift in the page.
+      $dt = [DateTimeOffset]::Parse($iso).UtcDateTime
       if (-not $lastTouch -or $dt -gt $lastTouch) { $lastTouch = $dt }
     }
   }
