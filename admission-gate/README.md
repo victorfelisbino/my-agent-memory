@@ -23,16 +23,19 @@ The kill switch fires if the scoring function cannot beat random (50/50) on the 
 
 ```
 total       : 20
-accuracy    : 80%   (random baseline: 50.0%)
-junk recall : 60%   (Wave 3 exit: >= 80%)
+accuracy    : 95%   (random baseline: 50.0%)
+junk recall : 90%   (Wave 3 exit: >= 80%)
 good recall : 100%  (Wave 3 exit: >= 80%)
 ```
 
-Above random, below the exit bar. Four documented misses on v1: heartbeat with no marker words, tautology with the verb "returns," contradiction-shape line where actionable verbs ("always", "never") cancel the structural penalty, and vague filler offset by neutral reusability. These are the next iteration backlog.
+Clears the 80% percentage threshold on accuracy, good recall, and junk recall. **This is not the Wave 3 exit criterion** — the exit criterion also requires the fixture to be ≥100 items (today: 20). One documented miss remains on v1: contradiction-shape (`always X; never X` on a single line) gets +0.75 of actionability credit from the verbs "always" and "never" themselves, partially cancelling the structural penalty. Closing this safely requires distinguishing `always X; never X` (contradiction) from `always X; never Y` (legitimate dual-rule guidance) and is the next iteration.
 
-Iteration 1 (this commit) tightened the reusability rule using feedback from running the scorer over the repo's own .md files: previously bare technical vocabulary like "branch" / "repo" / "src" triggered a specificity penalty, which dragged legitimate Salesforce/Gearset gotchas down. The rule now only penalizes concrete instances (`feature/foo-1234`, `line 42`, specific src paths, named sprints/clients). v1 accuracy moved 75% → 80%, junk recall 50% → 60%, good recall held at 100%.
+Iteration history:
+- v1 (20-item fixture, stub rules): 75 / 100 / 50.
+- Iter 1 (real-corpus extractor; reusability rule stopped penalizing bare technical vocabulary like "branch"/"repo"/"src"): 80 / 100 / 60.
+- Iter 2 (lower baseline rewards so vague items can dip negative; tautology penalty -0.5 → -1.0; new heartbeat / still-alive / sync-interval pattern): **95 / 100 / 90**.
 
-Unlabeled run over the current real-memory corpus (429 items extracted from this repo): 0% rejection, mean score 1.05, distribution `0..1=7, 1..2=422`. Lowest-scored items are extraction artifacts (template placeholders, heading-like bullets) rather than real memory — useful signal for where the extractor or the scorer should tighten next.
+Unlabeled run over the current real-memory corpus (~429 items extracted from this repo): 0% rejection, mean ~0.65, all items above the keep threshold. Lowest-scored items are extraction artifacts (heading-only bullets, template placeholders) rather than real memory — useful signal for where to tighten the extractor next, not evidence the scorer is rejecting real value.
 
 ## Honesty contract
 
