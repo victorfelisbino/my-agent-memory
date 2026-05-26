@@ -19,11 +19,12 @@ Three columns:
 - **Weekly synthesis loop.** `run-weekly-memory.ps1` runs the learner, captures, synthesizes, lints team-memory, and commits.
 - **Daily scheduled task install (Windows).** `install-scheduled-task.ps1` registers the daily sync.
 - **Documented principles, gotchas, and domain playbooks** &mdash; `thinking-principles.md`, `decision-framework.md`, `cognitive-bias-checks.md`, `gotchas.md`, `salesforce-debugging.md`, `domains/`. These are the things `summon-memory` ranks and pulls from.
+- **Anti-hallucination skill (load-it-yourself).** Packaged from `anti-hallucination-protocol.md` into [`skills/general/anti-hallucination/`](https://github.com/victorfelisbino/my-agent-memory/blob/main/skills/general/anti-hallucination/) with copy-paste block, per-agent install paths (Copilot / Cline / Cursor), a five-prompt before/after test harness, and a results template. See [Anti-hallucination skill](anti-hallucination-skill.md). Effectiveness in any specific setup still requires running the harness; results across agents not yet aggregated.
 - **mkdocs site.** Builds clean with `--strict`, deploys via GitHub Pages workflow.
 
 ## Documented only (NOT yet shipped end-to-end)
 
-- **Anti-hallucination protocol injection.** `anti-hallucination-protocol.md` exists and is loadable as agent context manually. It is *not* auto-injected by `summon-memory`, despite earlier doc copy that implied it was. Making this a one-line opt-in is [roadmap](roadmap.md) Wave 1.
+- **Auto-injected anti-hallucination protocol.** The skill itself now ships as load-it-yourself (see Real today). Auto-injection by `summon-memory` is still not implemented; that's [roadmap](roadmap.md) Wave 4-A territory (MCP server).
 - **Transfer-test promotion gate.** The rule ("only promote if it would still apply in a language you haven't met yet") is written into [framework-scope.md](framework-scope.md) and the [memory adoption playbook](memory-adoption-playbook.md). There is no test harness that automates or verifies the gate &mdash; promotion is a manual judgement call today.
 - **Router-hints loop.** `summon-memory` emits the header. There is no measurement loop that confirms Copilot's auto-router actually changes its model choice because of it. The numbers in [copilot-auto-mode.md](copilot-auto-mode.md) are observations, not benchmarks.
 - **Team-memory workflow.** `team-memory/inbox/` and `team-memory/canonical/` are empty. Approval gates are written down but no lesson has ever flowed through them. Single contributor today.
@@ -32,8 +33,8 @@ Three columns:
 
 ## Planned (see [roadmap](roadmap.md))
 
-- Anti-hallucination as a working reusable skill with before/after test prompts (Wave 1).
-- Public probe: PR that skill into [`groupzer0/vs-code-agents`](https://github.com/groupzer0/vs-code-agents) (Wave 2).
+- Run the anti-hallucination test harness on real workflows and publish first-party results (Wave 1 exit criterion).
+- Public probe: PR the anti-hallucination skill into [`groupzer0/vs-code-agents`](https://github.com/groupzer0/vs-code-agents) (Wave 2).
 - Decision gate: pivot, contribute & integrate, or archive (Wave 3).
 - "Copilot Guardrail Layer" on top of mem0 / OpenMemory as MCP server, if signal is good (Wave 4-A).
 - Upstream PRs to `memory-bank-mcp` and OpenMemory if signal is mixed (Wave 4-B).
