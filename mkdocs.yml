@@ -1,0 +1,56 @@
+site_name: my-agent-memory
+site_description: Shared framework for memory-enabled execution, guardrails, and adaptive operating defaults
+site_url: https://victorfelisbino.github.io/my-agent-memory/
+
+theme:
+  name: material
+  language: en
+  font:
+    text: Outfit
+    code: JetBrains Mono
+  palette:
+    - scheme: slate
+      primary: custom
+      accent: custom
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.instant
+    - header.autohide
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/link-normalize.js
+
+nav:
+  - Home: index.md
+  - Start:
+      - Should You Use This?: should-you-use-this.md
+      - Quick Restart Routine: quick-restart-routine.md
+      - Framework Purpose and Outcomes: framework-purpose.md
+      - Framework Scope: framework-scope.md
+      - Principles and Ways of Thinking: principles-ways-of-thinking.md
+  - Guides:
+      - Memory Adoption Playbook: memory-adoption-playbook.md
+      - Copilot Auto Mode: copilot-auto-mode.md
+      - Weekly Business Scorecard: weekly-business-scorecard.md
+  - Strategy:
+      - Attention and Positioning Playbook: attention-positioning-playbook.md
+      - Memory Ecosystem Research: memory-ecosystem-research-2026-05-15.md
+      - Pilot Benchmark Week 1: pilot-benchmark-week1.md

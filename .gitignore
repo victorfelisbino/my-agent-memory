@@ -25,3 +25,6 @@ team-memory/inbox/*
 Thumbs.db
 .launchd-capture.log
 .launchd-capture.err
+
+# MkDocs build output
+site/

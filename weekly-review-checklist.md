@@ -17,6 +17,14 @@ Run this once per week to keep memory fresh and useful.
 13. Verify new lessons include scope, confidence, and last verified date.
 14. Revalidate at least one high-impact guardrail with fresh evidence.
 15. Rehearse no-memory fallback: document how to continue safely if memory tools fail.
+16. Run docs/weekly-business-scorecard.md and record two interventions for next week.
+17. Run the memory admission gate for each new or changed strategic rule before merge.
+
+Memory admission gate (pass all 4):
+- Reusable: applies beyond one company, incident, or tool.
+- Measurable: has at least one KPI or verification signal.
+- Falsifiable: includes one counter-opinion or failure mode.
+- Freshness: has last-verified date and confidence level.
 
 Definition of done:
 - memory-scoreboard.md updated this week
@@ -28,3 +36,5 @@ Definition of done:
 - one debiasing check applied and documented
 - one memory retrieval quality check completed
 - one stale lesson refreshed or downgraded in confidence
+- weekly business scorecard completed with two named interventions
+- every new strategic rule passed the memory admission gate

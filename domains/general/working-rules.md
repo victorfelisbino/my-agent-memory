@@ -20,3 +20,15 @@
 - Keep at least one documented counter-opinion for major strategy decisions.
 - Invalidate one stale assumption every week (do not keep legacy rules by default).
 - Update business rules from live signals first; update assets and messaging second.
+- Prefer multi-profit-center design over single-revenue-line dependency.
+- Measure service reliability (uptime, response speed, failure rate) as a growth KPI.
+- Add at least one retention loop for repeat users before expanding acquisition spend.
+- Treat workforce capability and training as operating infrastructure, not overhead.
+- Balance revenue across customer types to reduce concentration risk.
+
+# Rule Freshness and Sunset Defaults
+
+- Every strategic rule must include a confidence level and last-verified date.
+- If a rule is not revalidated for 4 weeks, downgrade confidence by one level.
+- If a rule is not revalidated for 8 weeks, archive it from active defaults until fresh evidence is added.
+- During weekly review, revalidate at least one high-impact rule before adding any new strategic rule.

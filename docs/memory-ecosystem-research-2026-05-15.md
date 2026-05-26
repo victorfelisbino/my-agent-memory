@@ -1,5 +1,53 @@
 # Memory Ecosystem Research (2026-05-15)
 
+<div class="landing-shell">
+  <div class="landing-grid">
+    <div class="hero-copy">
+      <h1>Ecosystem intelligence for memory-system strategy.</h1>
+      <p class="lead">This ledger tracks what the market is building and converts external signals into differentiation, governance, and execution priorities for this framework.</p>
+      <div class="pill-row">
+        <span class="pill">Category scan</span>
+        <span class="pill">Strategic synthesis</span>
+        <span class="pill">Actionable updates</span>
+      </div>
+    </div>
+    <div class="kpi-panel">
+      <div class="kpi-item">
+        <strong>Current position</strong>
+        <span>Category is crowded; differentiation is reliability and decision quality.</span>
+      </div>
+      <div class="kpi-item">
+        <strong>Main risk</strong>
+        <span>Memory noise and stale guidance outranking current reality.</span>
+      </div>
+      <div class="kpi-item">
+        <strong>Operating response</strong>
+        <span>Freshness metadata, verification commands, and benchmark loops.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scan-grid">
+  <div class="scan-card">
+    <span class="meta">Market read</span>
+    <h3>Category is established</h3>
+    <p>Competing on existence is over; compete on reliability and outcomes.</p>
+  </div>
+  <div class="scan-card">
+    <span class="meta">Differentiator</span>
+    <h3>Decision quality over raw recall</h3>
+    <p>Evidence-first governance is the edge, not memory volume.</p>
+  </div>
+  <div class="scan-card">
+    <span class="meta">Action</span>
+    <h3>Enforce freshness and verification</h3>
+    <p>Confidence, last-verified, and benchmarks keep memory trustworthy.</p>
+  </div>
+</div>
+
+<div class="prose-note">This is a living research ledger. Skim the update blocks first, then drill into sections that impact this week’s operating decisions.</div>
+
 ## Question
 
 Is anyone else building persistent memory systems for coding agents and cross-session AI workflows?
@@ -400,3 +448,124 @@ When any trigger fires, update rules first, assets second.
 
 - Lessons above are synthesized from recurring patterns across multiple sources, not a single playbook.
 - This section is intentionally source-agnostic and stores only reusable business logic.
+
+## Update (2026-05-25): Lessons from high-frequency travel-stop retail networks
+
+### Question
+
+What can a large, distributed travel-stop business model teach us about building resilient growth systems?
+
+### Pattern synthesis
+
+1. Multi-profit-center model compounds better than single-line revenue
+- Fuel/traffic acquisition alone is low-margin and volatile.
+- Durable models stack adjacent profit centers (retail, food, services, financial products, maintenance).
+
+2. Network density is a moat when paired with service reliability
+- Geographic footprint alone is not enough.
+- Availability, uptime, and standardized service quality convert footprint into trust.
+
+3. Expansion cadence matters more than isolated launches
+- High-performing operators run repeatable opening/upgrade cycles year-round.
+- Predictable cadence improves planning, vendor leverage, and team execution quality.
+
+4. Adjacent capability expansion reduces customer churn
+- Adding services that match existing customer journeys (repair, wash, financing, loyalty, digital tooling) increases lifetime value.
+
+5. Workforce pipeline is core strategy, not HR admin
+- Hiring events, training academies, and education benefits function as growth infrastructure.
+- Labor reliability directly affects customer experience and throughput.
+
+6. Loyalty + fleet economics improve retention quality
+- Programs that reduce friction for repeat users and fleet operators create recurring demand and better data.
+
+7. Safety and compliance can be positioned as value products
+- Safety checks, inspections, and reliability services can be monetized while increasing trust.
+
+8. Portfolio balancing protects against market shocks
+- Mixing consumer, professional, and B2B revenue streams increases resilience.
+
+### Additions to business memory
+
+1. Always design at least one adjacent profit center per core offer.
+2. Track expansion cadence as an operating KPI (openings/upgrades per period).
+3. Treat workforce readiness as a leading indicator for customer satisfaction.
+4. Build retention loops (loyalty, account programs, recurring service touchpoints) early.
+5. Add service reliability metrics to business reviews (uptime, time-to-service, failed-service rate).
+
+### Fast experimentation prompts
+
+1. Which adjacent service would raise LTV for our current users with minimal complexity?
+2. What part of onboarding could become a retention loop in 30 days?
+3. Which operational KPI predicts revenue stability better than top-line growth?
+
+## Update (2026-05-25): Competitive strategy deep dive for travel-stop operators
+
+### Question
+
+How are major competitors keeping up with Love's, and what strategy patterns matter most?
+
+### Competitive pattern map
+
+1. Pilot: ecosystem bundling + digital route experience
+- Leans heavily on app-led engagement, rewards, and pro-driver experiences.
+- Uses fuel + factoring and billing offers to pull fleet economics into the same journey.
+- Pushes EV charging and truck care as network extensions, not stand-alone bets.
+
+2. TA/Petro: service-depth moat + professional driver loyalty
+- Positions around full-service truck care, technician depth, and on-road reliability.
+- Uses loyalty and fleet card products to lock recurring behavior.
+- Strong emphasis on professional-driver workflow (parking, services, restaurants, app support).
+
+3. Buc-ee's: destination retail differentiation
+- Competes on destination experience, cleanliness, and high-throughput consumer fueling.
+- Focuses less on long-haul truck ecosystem depth; stronger on car traveler stop quality.
+- Strategy is brand pull and basket size, not broad fleet-services stack.
+
+4. Casey's: convenience-and-food density strategy
+- Uses dense regional footprint and prepared food differentiation (especially pizza) to drive frequency.
+- Less travel-stop heavy than truck-focused operators; stronger in routine local demand loops.
+- Competes through neighborhood convenience and food economics rather than full highway service ecosystems.
+
+### How competitors are keeping up (cross-market themes)
+
+1. Loyalty arms race
+- Everyone is improving rewards mechanics and app integration to own repeat behavior.
+
+2. Fleet and financing integration
+- Billing cards, direct-bill workflows, and factoring tie fuel decisions to cash-flow operations.
+
+3. Reliability as a product
+- Maintenance depth, roadside support, and service availability are marketed as core value, not support functions.
+
+4. Digital trip operating system
+- Mobile apps increasingly combine route planning, fuel economics, amenities, and offer activation.
+
+5. Portfolio segmentation over one-size-fits-all
+- Trucking-heavy players optimize for pro drivers and fleets.
+- Retail-heavy players optimize for destination convenience and high-margin in-store spend.
+
+### Strategic read on Love's position
+
+1. Love's remains strong when it operates as a full-stack platform
+- Fuel + truck care + loyalty + financial + alternative energy + store offerings creates defensibility.
+
+2. Main risk is not single-feature competition; it is bundling speed
+- Competitors win when they ship integrated bundles faster than standalone feature upgrades.
+
+3. Winning move is execution reliability at network scale
+- The brand that delivers predictable service quality across locations keeps the trust moat.
+
+### Memory defaults to add from this competition scan
+
+1. Track competitor bundle velocity, not only competitor feature count.
+2. Measure app-to-purchase conversion and loyalty engagement by customer segment.
+3. Treat fleet-finance attachment rate as a strategic KPI.
+4. Watch service reliability gaps as leading churn signals.
+5. Keep separate strategy lanes for pro-driver and consumer traveler segments.
+
+### Counter-opinions to keep active
+
+1. Feature parity may be less important than brand trust and stop consistency.
+2. EV-led narratives may overstate near-term demand in some route segments.
+3. Aggressive bundle expansion can reduce focus if service quality degrades.

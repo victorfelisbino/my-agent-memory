@@ -1,5 +1,51 @@
 # Pilot + Benchmark Runbook (Week 1)
 
+<div class="landing-shell">
+	<div class="landing-grid">
+		<div class="hero-copy">
+			<h1>One-week validation for adoption and token efficiency.</h1>
+			<p class="lead">Run real workflows across no-brief, full-brief, and compact-brief modes to prove whether this framework improves continuity and lowers total token cost.</p>
+			<div class="pill-row">
+				<span class="pill">5-day pilot</span>
+				<span class="pill">10 recurring tasks</span>
+				<span class="pill">Evidence-based decision rule</span>
+			</div>
+		</div>
+		<div class="kpi-panel">
+			<div class="kpi-item">
+				<strong>Quality gate</strong>
+				<span>No increase in median turns or retries across standard tasks.</span>
+			</div>
+			<div class="kpi-item">
+				<strong>Token gate</strong>
+				<span>Compact mode must reduce total tokens by at least 25%.</span>
+			</div>
+			<div class="kpi-item">
+				<strong>Adoption output</strong>
+				<span>Promote only verified lessons and open follow-up for unresolved friction.</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="scan-grid">
+	<div class="scan-card">
+		<span class="meta">Pilot objective</span>
+		<h3>Continuity + efficiency</h3>
+		<p>Prove better day-to-day flow and lower total token spend.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Benchmark design</span>
+		<h3>10 tasks x 3 modes</h3>
+		<p>Run no-brief, full, and compact under the same task set.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Decision gate</span>
+		<h3>25% token drop minimum</h3>
+		<p>Adopt compact-by-default only if quality and retries stay stable.</p>
+	</div>
+</div>
+
 This runbook is used for:
 - Issue #6: Pilot Week 1
 - Issue #7: Token benchmark (10 repeat tasks)
@@ -91,10 +137,10 @@ Run each task in all modes:
 
 ## Decision
 
-Adopt compact-by-default only if all are true:
-1. Median turns do not increase.
-2. Retry count does not increase.
-3. Total tokens drop by at least 25% on standard tasks.
+!!! abstract "Adopt compact-by-default only if all three are true"
+    1. Median turns do not increase.
+    2. Retry count does not increase.
+    3. Total tokens drop by at least 25% on standard tasks.
 
 ## Follow-up actions
 
