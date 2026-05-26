@@ -54,6 +54,36 @@ CONTRADICTION_STOPWORDS = {
     "get", "give", "call",
 }
 
+# Iter-10: claim-extraction stopwords for contradiction-against-store.
+# Broader than CONTRADICTION_STOPWORDS so subject sets compare cleanly.
+CLAIM_STOPWORDS = {
+    "the", "a", "an", "some", "any", "to", "for", "on", "in", "of", "and",
+    "or", "but", "with", "that", "it", "its", "this", "these", "those",
+    "your", "their", "my", "our", "do", "be", "have", "make", "take",
+    "get", "give", "call", "as", "at", "by",
+    "is", "are", "was", "were", "when", "if", "before", "after", "from",
+    "into", "instead", "over", "under", "about", "because", "since", "so",
+    "then", "than", "too", "very", "not", "no", "only", "also", "both",
+    "either", "neither",
+    "can", "will", "would", "should", "must", "may", "might", "could",
+    "you", "we", "they", "he", "she", "i", "them", "us", "here", "there",
+}
+
+# Polarity markers, ordered: multi-word first.
+_CLAIM_MARKERS: list[tuple[str, str]] = [
+    ("do not", "-"),
+    ("don't", "-"),
+    ("never", "-"),
+    ("avoid", "-"),
+    ("always", "+"),
+    ("prefer", "+"),
+    ("ensure", "+"),
+    ("require", "+"),
+]
+_CLAIM_TAIL_PATTERNS = [(re.compile(rf"\b{re.escape(m)}\b\s+(.+)", re.IGNORECASE), p) for m, p in _CLAIM_MARKERS]
+_CLAIM_TOKEN_RE = re.compile(r"[a-z0-9_-]+")
+
+
 ACTIONABLE_VERBS = [
     "always", "never", "prefer", "use", "check", "run", "add", "set",
     "avoid", "verify", "ensure", "promote", "request", "require",
@@ -183,8 +213,62 @@ def score_atomicity(text: str) -> float:
     return score
 
 
-def score_novelty(_text: str) -> float:
-    return 0.0
+def score_novelty(text: str, store_claims: dict | None = None) -> tuple[float, str]:
+    """Iter-10: contradiction-against-store.
+
+    Returns (score, contradiction_anchor_id). Neutral (0.0, "") when no
+    store is provided -- preserves the existing labeled-fixture baseline.
+    """
+    if not store_claims:
+        return 0.0, ""
+    cand = extract_claim(text)
+    if cand is None:
+        return 0.0, ""
+    cand_pol, cand_subj = cand
+    for anchor_id, (a_pol, a_subj) in store_claims.items():
+        if a_pol == cand_pol:
+            continue
+        if len(cand_subj & a_subj) >= 2:
+            return -2.0, anchor_id
+    return 0.0, ""
+
+
+def extract_claim(text: str) -> tuple[str, set[str]] | None:
+    lc = text.lower()
+    for pattern, polarity in _CLAIM_TAIL_PATTERNS:
+        m = pattern.search(lc)
+        if not m:
+            continue
+        tail = m.group(1)
+        tokens = _CLAIM_TOKEN_RE.findall(tail)
+        subject = {t for t in tokens if len(t) > 1 and t not in CLAIM_STOPWORDS}
+        if not subject:
+            return None
+        return polarity, subject
+    return None
+
+
+def load_store_claims(path: str) -> dict[str, tuple[str, set[str]]]:
+    claims: dict[str, tuple[str, set[str]]] = {}
+    if not path:
+        return claims
+    p = Path(path)
+    if not p.exists():
+        print(f"Store fixture not found: {path}", file=sys.stderr)
+        sys.exit(2)
+    for raw in p.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            print(f"Malformed store JSONL line: {line}", file=sys.stderr)
+            sys.exit(2)
+        c = extract_claim(rec.get("text", ""))
+        if c is not None:
+            claims[rec.get("id", "")] = c
+    return claims
 
 
 def score_actionability(text: str) -> float:
@@ -243,10 +327,10 @@ class ItemScore:
     reason: str
 
 
-def score_memory(text: str) -> ItemScore:
+def score_memory(text: str, store_claims: dict | None = None) -> ItemScore:
     r = score_reusability(text)
     a = score_atomicity(text)
-    n = score_novelty(text)
+    n, anchor = score_novelty(text, store_claims)
     c = score_actionability(text)
     total = r + a + n + c
     decision = "keep" if total > 0 else "reject"
@@ -255,6 +339,11 @@ def score_memory(text: str) -> ItemScore:
         reasons.append(f"reusability={_fmt(r)}")
     if a < 0:
         reasons.append(f"atomicity={_fmt(a)}")
+    if n < 0:
+        if anchor:
+            reasons.append(f"novelty={_fmt(n)} (contradicts-store={anchor})")
+        else:
+            reasons.append(f"novelty={_fmt(n)}")
     if c < 0:
         reasons.append(f"actionability={_fmt(c)}")
     return ItemScore(r, a, n, c, total, decision, "; ".join(reasons))
@@ -291,12 +380,12 @@ def _read_fixture(path: Path) -> list[dict]:
 # Modes.
 # ---------------------------------------------------------------------------
 
-def _labeled_summary(items: list[dict], verbose: bool, fail_under: int) -> int:
+def _labeled_summary(items: list[dict], verbose: bool, fail_under: int, store_claims: dict | None = None) -> int:
     tp = fp = tn = fn = 0
     detailed: list[tuple[str, str, str, str, float, str, str]] = []
 
     for rec in items:
-        s = score_memory(rec["text"])
+        s = score_memory(rec["text"], store_claims)
         label = rec.get("label", "")
         matched = s.decision == label
         if label == "keep" and s.decision == "keep":
@@ -351,10 +440,10 @@ def _pct(v: float) -> str:
     return f"{v:g}"
 
 
-def _unlabeled_summary(items: list[dict], show_worst: int) -> int:
+def _unlabeled_summary(items: list[dict], show_worst: int, store_claims: dict | None = None) -> int:
     scored = []
     for rec in items:
-        s = score_memory(rec["text"])
+        s = score_memory(rec["text"], store_claims)
         scored.append({
             "id": rec.get("id", ""),
             "source": rec.get("source", ""),
@@ -410,9 +499,9 @@ def _unlabeled_summary(items: list[dict], show_worst: int) -> int:
 # cross-language parity test in CI.
 # ---------------------------------------------------------------------------
 
-def _parity_dump(items: list[dict]) -> int:
+def _parity_dump(items: list[dict], store_claims: dict | None = None) -> int:
     for rec in items:
-        s = score_memory(rec["text"])
+        s = score_memory(rec["text"], store_claims)
         print(json.dumps({
             "id": rec.get("id", ""),
             "decision": s.decision,
@@ -445,16 +534,18 @@ def main() -> int:
     parser.add_argument("--unlabeled", action="store_true", help="Unlabeled real-corpus mode.")
     parser.add_argument("--show-worst", type=int, default=15, help="Unlabeled: how many low-scored items to show.")
     parser.add_argument("--parity", action="store_true", help="Emit per-item JSON {id,decision,total} for cross-language parity tests.")
+    parser.add_argument("--store", default="", help="Path to anchor JSONL ({id,text}). Enables contradiction-against-store check.")
     args = parser.parse_args()
 
     _args_fixture = args.fixture
     items = _read_fixture(Path(args.fixture))
+    store_claims = load_store_claims(args.store)
 
     if args.parity:
-        return _parity_dump(items)
+        return _parity_dump(items, store_claims)
     if args.unlabeled:
-        return _unlabeled_summary(items, args.show_worst)
-    return _labeled_summary(items, args.verbose, args.fail_under)
+        return _unlabeled_summary(items, args.show_worst, store_claims)
+    return _labeled_summary(items, args.verbose, args.fail_under, store_claims)
 
 
 if __name__ == "__main__":

@@ -14,9 +14,11 @@ The kill switch fires if the scoring function cannot beat random (50/50) on the 
 
 ## What is here today
 
-- [`fixtures/memories-v1.jsonl`](fixtures/memories-v1.jsonl) — 20 labeled memories (10 keep, 10 reject). Reject categories cover the documented junk shapes: boot noise, heartbeat, transient task state, hallucinated profile, vague non-actionable, self-referential, world noise, project-private without portable lesson, tautology, contradiction-in-one-line.
-- [`score-memory.ps1`](score-memory.ps1) — baseline scorer (PowerShell) with stub rules across the four Wave 3 dimensions: reusability, atomicity, novelty (stubbed), actionability. Emits per-memory decisions and a summary block. Supports an `-Unlabeled` mode for scoring real, unlabeled corpora and reporting score distribution + lowest-scored items for human inspection.
-- [`score_memory.py`](score_memory.py) — **Python port** of the same scorer, iter 9. Faithful re-implementation of every rule (same regex set, same weights, same threshold). Cross-language parity is enforced by [`parity-check.ps1`](parity-check.ps1) + [`parity-emit.ps1`](parity-emit.ps1) in CI: same fixture in, same per-item keep/reject out. The Python port exists so the same rules can be embedded as middleware in pipelines that are not PowerShell-native (mem0, langchain, custom MCP servers, etc.).
+- [`fixtures/memories-v1.jsonl`](fixtures/memories-v1.jsonl) -- 20 labeled memories (10 keep, 10 reject). Reject categories cover the documented junk shapes: boot noise, heartbeat, transient task state, hallucinated profile, vague non-actionable, self-referential, world noise, project-private without portable lesson, tautology, contradiction-in-one-line.
+- [`fixtures/memories-v5.jsonl`](fixtures/memories-v5.jsonl) -- iter-10 fixture. v4 + 8 contradiction-against-store items (4 contradicts, 4 reinforces). Only meaningful when run with `-Store fixtures/store-anchors.jsonl`.
+- [`fixtures/store-anchors.jsonl`](fixtures/store-anchors.jsonl) -- 6 anchor memories representing what the store "already believes." Used by the iter-10 contradiction-against-store check.
+- [`score-memory.ps1`](score-memory.ps1) -- baseline scorer (PowerShell) with stub rules across the four Wave 3 dimensions: reusability, atomicity, novelty (now wired to contradiction-against-store when `-Store` is provided), actionability. Emits per-memory decisions and a summary block. Supports an `-Unlabeled` mode for scoring real, unlabeled corpora and reporting score distribution + lowest-scored items for human inspection.
+- [`score_memory.py`](score_memory.py) -- **Python port** of the same scorer (iter 9), with iter-10 `--store` parity. Faithful re-implementation of every rule (same regex set, same weights, same threshold, same contradiction-against-store logic). Cross-language parity is enforced by [`parity-check.ps1`](parity-check.ps1) + [`parity-emit.ps1`](parity-emit.ps1) in CI: same fixture in, same per-item keep/reject out, with or without `--store`. The Python port exists so the same rules can be embedded as middleware in pipelines that are not PowerShell-native (mem0, langchain, custom MCP servers, etc.).
 - [`extract-corpus.ps1`](extract-corpus.ps1) — pulls top-level bullets from real .md files in the repo into a JSONL corpus, so the scorer can be aimed at real memory (not just the synthetic fixture). Output is gitignored — regenerate on demand.
 - [`score-memory.sh`](score-memory.sh) — parity stub that delegates to `pwsh`.
 
@@ -71,6 +73,7 @@ Iteration history:
 - Iter 7 (v3 -> v4 fixture growth 60 -> 100 -- exit-criterion size; +8 rules for status-update-ping / self-reminder / hedge-stacking / personal-scheduling / greeting-signoff / side-note / user-speculation / restated-docs; extractor now drops heading-only sub-bullets): 91 / 100 / 82 on v4; real corpus 0.3% rejection.
 - Iter 8 (+9 rules for pop-culture / confidence-only / task-restatement / empty-agreement / self-praise / vague-urgency / number-only-summary / imperative-only-short / self-correction-loop; no keep regressions): 100 / 100 / 100 on v4; real corpus 1.0% rejection (3 of 4 new rejects are personal-goal TODO bullets correctly flagged as imperative-only-short).
 - Iter 9 (**standalone Python port** of the scorer at `score_memory.py`; cross-language parity test `parity-check.ps1` + `parity-emit.ps1`; CI now runs both scorers AND a per-item decision diff on v4 and on the live real-memory corpus): 100 / 100 / 100 on v4 in both languages; 381 / 381 decisions match on the real corpus. No rules changed; the contract is now "PS and Python must agree on every item."
+- Iter 10 (**contradiction-against-store**; v4 -> v5 fixture growth 100 -> 108: +4 reject contradictions, +4 keep reinforces; new `-Store` / `--store` flag in both scorers loads an anchor JSONL; novelty dimension wired to a polarity+subject overlap check; -2.0 penalty when same subject + opposite polarity; parity extended): **108 / 108 / 108** with store on v5 in both languages; v4 baseline unchanged at **100 / 100 / 100** (no `-Store` -> novelty stays 0.0); real corpus parity: **381 / 381** with and without store.
 
 ## Honesty contract
 
@@ -84,9 +87,18 @@ Iteration history:
 pwsh ./admission-gate/score-memory.ps1                              # labeled summary (PowerShell)
 pwsh ./admission-gate/score-memory.ps1 -Verbose                     # per-memory table
 pwsh ./admission-gate/score-memory.ps1 -FailUnder 75                # CI gate: fail if accuracy < 75%
+pwsh ./admission-gate/score-memory.ps1 \`
+  -Fixture admission-gate/fixtures/memories-v5.jsonl \`
+  -Store   admission-gate/fixtures/store-anchors.jsonl              # contradiction-against-store (iter 10)
 python admission-gate/score_memory.py                               # labeled summary (Python port)
 python admission-gate/score_memory.py --fail-under 85               # Python CI gate
+python admission-gate/score_memory.py \`
+  --fixture admission-gate/fixtures/memories-v5.jsonl \`
+  --store   admission-gate/fixtures/store-anchors.jsonl             # Python contradiction-against-store
 pwsh ./admission-gate/parity-check.ps1                              # PS vs Python per-item decision diff
+pwsh ./admission-gate/parity-check.ps1 \`
+  -Fixture admission-gate/fixtures/memories-v5.jsonl \`
+  -Store   admission-gate/fixtures/store-anchors.jsonl              # parity with store
 pwsh ./admission-gate/extract-corpus.ps1                            # derive real-memory.jsonl
 pwsh ./admission-gate/score-memory.ps1 \`
   -Fixture admission-gate/fixtures/real-memory.jsonl \`
@@ -105,4 +117,5 @@ Exit codes: `0` ok, `2` fixture missing or malformed, `3` accuracy below `-FailU
 
 - No dashboard yet (Wave 3 deliverable, separate PR).
 - No write-path integration yet (Wave 3 deliverable, separate PR).
-- No store / novelty lookup yet (depends on choosing the upstream MCP Memory wrap — Wave 5-A).
+- No feedback-loop prevention yet (per-session recall tracking; next iter).
+- Contradiction-against-store (iter 10) uses a polarity+subject-overlap heuristic, not embeddings. Good for the obvious "always X / never X" inversion shapes; would not catch a paraphrased contradiction with no shared content tokens.
