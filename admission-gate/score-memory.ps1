@@ -78,13 +78,41 @@ function Score-Reusability([string]$t) {
 }
 
 # Atomicity: penalize very long memories and contradictory-shape claims.
+#
+# Contradiction detection (iter 3): the bare regex `\balways\b.*\bnever\b` was
+# too aggressive because "Always use Permission Sets; never use Profiles" is a
+# legitimate dual-rule memory, not a contradiction. We now extract the first
+# 1-2 content words after each marker (skipping stopwords + the common verb
+# "use") and only flag when the resulting phrases overlap. "Always use tabs ...
+# never use tabs" -> ("tabs") vs ("tabs") -> contradiction. "Always use
+# Permission Sets ... never use Profiles" -> ("permission","sets") vs
+# ("profiles") -> not a contradiction.
+$contradictionStopwords = @(
+  'the','a','an','some','any','to','for','on','in','of','and','or','but',
+  'with','that','it','its','this','these','those','your','their','my','our',
+  'use','do','be','have','make','take','get','give','call'
+)
+
+function Get-ContradictionPhrase([string]$lcText, [string]$marker) {
+  if ($lcText -notmatch "\b$marker\b\s+([a-z0-9_/'-]+(?:\s+[a-z0-9_/'-]+){0,5})") { return '' }
+  $words = $Matches[1] -split '\s+' |
+    Where-Object { $_.Length -gt 1 -and ($contradictionStopwords -notcontains $_) } |
+    Select-Object -First 2
+  return (($words -join ' ').Trim())
+}
+
+function Test-Contradiction([string]$t) {
+  $lc = $t.ToLowerInvariant()
+  if (-not ($lc -match '\balways\b' -and $lc -match '\bnever\b')) { return $false }
+  $a = Get-ContradictionPhrase $lc 'always'
+  $n = Get-ContradictionPhrase $lc 'never'
+  return ($a -ne '' -and $a -eq $n)
+}
+
 function Score-Atomicity([string]$t) {
   $score = 0.3
   if ($t.Length -gt 240) { $score -= 0.5 }
-  # Contradiction shape: "always X ... never X" / "do X ... don't X" in one line.
-  if ($t -match '\balways\b.*\bnever\b' -or $t -match '\bnever\b.*\balways\b') {
-    $score -= 1.0
-  }
+  if (Test-Contradiction $t) { $score -= 1.5 }
   return $score
 }
 
