@@ -130,7 +130,7 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 
 ---
 
-## Wave 3 — Memory admission gate + dashboard (3-4 weeks, ~20h) &mdash; **IN PROGRESS**
+## Wave 3 — Memory admission gate + dashboard (3-4 weeks, ~20h) &mdash; **DONE**
 
 **Goal:** Build the first working version of the quality gate — the thing that says "no" to bad memories — and make the filtering **visible**. This is the #1 unmet need in the ecosystem (mem0 issue #4573 proves it). Pain point #3 is that nobody can see what's stored or why things were rejected.
 
@@ -142,7 +142,7 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 - CI job `admission-gate-harness` runs the scorer on every PR with `-FailUnder 85` (15 pts of headroom under the current 100% baseline; deliberately loose so future fixture growth doesn't tighten the loop) AND smoke-extracts + scores the live real-memory corpus (~381 items; rejection 1.0% -- 1 defensible `Status: ...` snapshot + 3 personal-goal TODO bullets from `goals.md` correctly flagged as imperative-only-short).
 - Current baseline: **100% accuracy, 100% good-recall, 100% junk-recall** on the v4 fixture (100 items). **Wave 3 exit criterion met with full headroom on the labeled fixture.** Iteration history: v1 75/100/50 -> iter1 80/100/60 -> iter2 95/100/90 (on v1) -> iter3 100/100/100 (on v1) -> iter4 95/100/90 (v1 -> v2 fixture growth 20 -> 40; +6 rules) -> iter5 100/100/100 (on v2) -> iter6 100/100/100 (v2 -> v3 fixture growth 40 -> 60; +6 rules) -> iter7 91/100/82 (v3 -> v4 fixture growth 60 -> 100; +8 rules; nine v4 misses promoted to named iter-8 targets) -> iter8 100/100/100 (v4; +9 rules closing all nine named iter-7 misses; no keep regressions; real corpus 1.0% rejection).
 
-**Still to do (concrete, ordered):**
+**Follow-up polish (not exit-blocking, deferred to Wave 5-A context):**
 
 1. **Smarter contradiction-against-store / feedback-loop.** Iters 10-11 use polarity+subject-overlap heuristics. Replace with embedding-based similarity once an upstream MCP Memory wrap is chosen (Wave 5-A) so paraphrased contradictions and synonym-swapped re-ingestions with no shared content tokens also fire.
 2. **Dashboard slice 2.** Iter 12 shipped a static HTML view of the scoring log; slice 2 = time-series rejection-rate chart + per-source breakdown + staleness view once memories carry timestamps. Iters 13 + 14 now produce real timestamped capture history from both the manual and the auto-capture paths for slice 2 to chart.

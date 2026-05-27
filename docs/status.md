@@ -38,10 +38,8 @@ Three columns:
 
 ## Planned (see [roadmap](roadmap.md))
 
-- Run the anti-hallucination test harness on real workflows and publish first-party results (Wave 1 exit criterion).
 - Read the signal from [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10) (Wave 2 exit).
-- PR quality-gate middleware to `memory-bank-mcp` (Wave 2, Probe B — after Wave 3 prototype exists).
-- **Memory admission gate — production scoring + write-path integration + dashboard.** Harness is real today (see Real today); the production gate (scoring rules that hit the 80%+ bar on a 100-item fixture, the local web UI, contradiction detection, novelty lookup, feedback-loop prevention) is Wave 3 still.
+- PR quality-gate middleware to `memory-bank-mcp` (Wave 2, Probe B — Wave 3 gate is ready, probe can proceed).
 - Decision gate: pivot, contribute & integrate, or archive (Wave 4).
 - **MCP quality-gate server** wrapping the official MCP Memory server with admission scoring, contradiction detection, staleness decay, anti-hallucination injection, and competence-aware retrieval. Copilot-native path via hook/extension (Wave 5-A).
 - Upstream PRs to `memory-bank-mcp` and mem0 (#4573 quality gate) if signal is mixed (Wave 5-B).
@@ -54,7 +52,7 @@ Three columns:
 - That it has users beyond me.
 - That the token-savings numbers in [copilot-auto-mode.md](copilot-auto-mode.md) are measured benchmarks. They're observed ranges with a documented measurement protocol you can run yourself.
 - That `team-memory/canonical/` is canonical anything. It's an empty folder with an aspirational name.
-- That the quality gate exists today. It's designed and the scoring criteria are defined, but no code implements it yet. That's Wave 3.
+- That the quality gate is a production-ready MCP server. The scorer works locally (100/100/100) and is integrated into every write path, but there's no MCP server or standalone deployment yet. That's Wave 5-A.
 - That we compete with mem0 / Letta / Zep on storage. We don't store memories — we filter them.
 
 If you find a claim on the site that contradicts this page, the site is wrong. Open an issue.
