@@ -165,6 +165,8 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 
 **Goal:** Read the Wave 2 + Wave 3 signals and pick exactly one of three paths. No drift, no "both."
 
+**Decision checkpoint date:** **June 23, 2026** (4 weeks from probe-open date 2026-05-26).
+
 **Read the signal:**
 
 | Signal | Path |
