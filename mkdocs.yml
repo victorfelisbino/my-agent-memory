@@ -1,5 +1,5 @@
 site_name: my-agent-memory
-site_description: One person's working set of patterns for keeping AI coding agents grounded across sessions. The shared half of a two-repo memory split. Not a framework yet — see the roadmap.
+site_description: The quality gate for AI agent memory. Scores candidates on reusability, atomicity, novelty, and actionability — rejects the garbage before it reaches storage.
 site_url: https://victorfelisbino.github.io/my-agent-memory/
 
 theme:
@@ -40,21 +40,21 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Start:
-      - Is this for you?: should-you-use-this.md
-      - Quick restart routine: quick-restart-routine.md
-      - What it does: framework-purpose.md
-      - What stays private: framework-scope.md
-      - Principles and ways of thinking: principles-ways-of-thinking.md
-  - How it works:
+  - The Gate:
+      - How it works: the-gate.md
+      - Evidence: evidence.md
+  - Try It: try-it.md
+  - Background:
+      - Origin story: framework-purpose.md
+      - Two-repo pattern: framework-scope.md
       - Memory adoption playbook: memory-adoption-playbook.md
+      - Principles: principles-ways-of-thinking.md
       - Copilot auto-mode: copilot-auto-mode.md
+      - Quick restart routine: quick-restart-routine.md
       - Anti-hallucination skill: anti-hallucination-skill.md
-  - Where this is going:
+  - Status & Direction:
       - Status (what's real today): status.md
       - Roadmap: roadmap.md
-  - What this brain knows:
       - Competence map: competence-map.md
-  - Notes:
       - Competitive landscape (May 2026): competitive-landscape-2026-05.md
       - Memory ecosystem research: memory-ecosystem-research-2026-05-15.md

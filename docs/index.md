@@ -3,109 +3,151 @@
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>A brain that learns once and carries it forward.</h1>
-			<p class="lead">A senior developer picks up a new language faster than a beginner not because they remember more syntax, but because the <em>principles</em> transfer: scope, state, error boundaries, naming, debugging instincts. This repo is that for an AI coding agent. Project-specific facts stay in a private repo and get forgotten. Generalized principles graduate into this shared brain and stay forever, so every new session starts with years of compounded expertise instead of from scratch.</p>
+			<h1>Stop your agent's memory from becoming 97% garbage.</h1>
+			<p class="lead">mem0 has a <a href="https://github.com/mem0ai/mem0/issues/4573">documented 97.8% junk rate</a> in production. The official MCP Memory server stores everything with no filter. Claude Code's auto-memory relies on LLM judgment alone. Every memory system stores indiscriminately. This project builds the part that says <strong>no</strong>.</p>
 			<div class="pill-row">
-				<span class="pill">Transferable principles</span>
-				<span class="pill">Promotion-gated</span>
-				<span class="pill">Compounds over time</span>
+				<span class="pill">100/100/100 accuracy</span>
+				<span class="pill">4-dimension scoring</span>
+				<span class="pill">PowerShell & Python</span>
 			</div>
 			<div class="cta-row">
-				<a class="md-button md-button--primary" href="should-you-use-this/">Is this for you?</a>
-				<a class="md-button" href="principles-ways-of-thinking/">See the principles</a>
+				<a class="md-button md-button--primary" href="try-it/">Try the scorer</a>
+				<a class="md-button" href="evidence/">See the evidence</a>
 			</div>
 		</div>
 		<div class="kpi-panel">
 			<div class="kpi-item">
-				<strong>Principles, not facts</strong>
-				<span>Only patterns that transfer across languages, frameworks, and projects earn a place here. Facts stay private and get forgotten on purpose.</span>
+				<strong>The problem</strong>
+				<span>Every memory system stores indiscriminately. Result: noise drowns signal and agents get dumber over time, not smarter.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Pattern recognition compounds</strong>
-				<span>The 50th gotcha promoted is more valuable than the 1st &mdash; because by then the agent recognizes the <em>shape</em> of the problem before it asks.</span>
+				<strong>The solution</strong>
+				<span>A scoring layer that evaluates reusability, atomicity, novelty, and actionability. Below threshold = rejected with a reason.</span>
 			</div>
 			<div class="kpi-item">
-				<strong>Every session starts senior</strong>
-				<span><code>summon-memory</code> injects the relevant principles, gotchas, and guardrails into the prompt &mdash; so a new project never starts at zero.</span>
+				<strong>The proof</strong>
+				<span>100% accuracy on a 100-item labeled fixture. 1.0% rejection on a 381-item real corpus. Zero false positives.</span>
 			</div>
 		</div>
 	</div>
 </div>
 
-## How human expertise works — and how this mirrors it
+## Before / after
 
 <div class="bento-grid">
 	<div class="bento-card wide">
-		<span class="meta">01 / Episodic (private repo)</span>
-		<h3>What happened, with names attached</h3>
-		<p>Raw observations as you work, client and project names, the specific bug on the specific Tuesday. Like episodic memory: vivid but local, mostly forgotten within months. Lives only in the private repo.</p>
+		<span class="meta">Rejected / garbage</span>
+		<h3>"Session started 2026-05-26 at 09:00 on office-pc."</h3>
+		<p>Score: <strong>-0.7</strong> &mdash; Timestamp + machine name = transient state. Never useful in a future session. This is what 97% of stored memories look like.</p>
 	</div>
 	<div class="bento-card wide">
-		<span class="meta">02 / Semantic (this repo)</span>
-		<h3>The pattern, stripped of the story</h3>
-		<p>Once the same shape shows up more than once, it gets distilled to a principle and graduates here. Like semantic memory: "async state in any UI framework leaks if you don't cancel on unmount" survives long after you forget which project taught you that.</p>
+		<span class="meta">Kept / valuable</span>
+		<h3>"Avalonia DataGrid is a separate NuGet package; must dotnet add package Avalonia.Controls.DataGrid before using it."</h3>
+		<p>Score: <strong>0.85</strong> &mdash; Specific gotcha, reusable across sessions, atomic, actionable. This is what memory should look like.</p>
+	</div>
+</div>
+
+## What it does
+
+<div class="scan-grid">
+	<div class="scan-card">
+		<span class="meta">Filter</span>
+		<h3>Scores every candidate on 4 dimensions</h3>
+		<p>Reusability, atomicity, novelty, actionability. 40+ rules catch the junk categories that plague production memory systems.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Detect</span>
+		<h3>Catches contradictions against existing store</h3>
+		<p>Polarity + subject overlap analysis. Flags when a new memory conflicts with what's already stored instead of silently creating duplicates.</p>
+	</div>
+	<div class="scan-card">
+		<span class="meta">Prevent</span>
+		<h3>Blocks feedback loops</h3>
+		<p>Stops recalled memories from being re-extracted as "new" observations. Prevents the failure mode that created 668 copies of a single hallucination in mem0.</p>
+	</div>
+</div>
+
+## The landscape
+
+| Project | Stars | Quality Gate |
+|---------|-------|-------------|
+| mem0 | 56.8k | Hash dedup only — [97.8% junk documented](https://github.com/mem0ai/mem0/issues/4573) |
+| MCP Memory (official) | — | None (9 tools, no filtering) |
+| Claude Code auto-memory | — | LLM judgment only (200-line cap) |
+| memory-bank-mcp | 905 | None (raw read/write) |
+| Tensory | 4 | Salience scoring (alpha, tiny) |
+| **This project** | — | **4-dimension scoring + contradiction + feedback-loop prevention** |
+
+## How the scoring works
+
+<div class="bento-grid">
+	<div class="bento-card tall">
+		<span class="meta">Dimension 1</span>
+		<h3>Reusability</h3>
+		<p>Would this help in a future session on a different project? Penalizes timestamps, machine names, file paths, sprint references.</p>
 	</div>
 	<div class="bento-card tall">
-		<span class="meta">03 / The promotion gate</span>
-		<h3>Transfer test before promotion</h3>
-		<p>A lesson only lands here if it would still apply in a language or framework you haven't used yet. Reusable, measurable, falsifiable, fresh. If it fails the transfer test, it stays private.</p>
+		<span class="meta">Dimension 2</span>
+		<h3>Atomicity</h3>
+		<p>One discrete fact, not a compound paragraph? Multi-concern blobs get penalized.</p>
 	</div>
 	<div class="bento-card tall">
-		<span class="meta">04 / Compounding intuition</span>
-		<h3>Year 1 vs year 10</h3>
-		<p>A junior with 50 facts loses to a senior with 50 principles every time. The shared brain is built so the agent ages like a senior dev: fewer surprises, faster pattern matches, better defaults &mdash; even on stacks it has never touched.</p>
+		<span class="meta">Dimension 3</span>
+		<h3>Novelty</h3>
+		<p>Does the store already know this? Contradiction detection and feedback-loop prevention live here.</p>
 	</div>
+	<div class="bento-card tall">
+		<span class="meta">Dimension 4</span>
+		<h3>Actionability</h3>
+		<p>Does it change behavior? Vague truisms, self-praise, and empty agreements score zero or negative.</p>
+	</div>
+</div>
+
+## Try it in 60 seconds
+
+```bash
+git clone https://github.com/victorfelisbino/my-agent-memory.git
+cd my-agent-memory/admission-gate
+echo '{"text":"Always use try-catch in JavaScript"}' | python3 score_memory.py --score-one
+```
+
+```json
+{"decision":"keep","total":1.1,"reusability":0.3,"atomicity":0.3,"novelty":0.0,"actionability":0.5}
+```
+
+Exit code 0 = keep. Exit code 3 = reject. Pipe into any pipeline.
+
+<div class="cta-row">
+	<a class="md-button md-button--primary" href="try-it/">Full quickstart guide</a>
+	<a class="md-button" href="the-gate/">How the gate works</a>
 </div>
 
 ## Honest scope
 
-!!! note "What this is and isn't"
-    This is one person's working version of that idea: the shared, semantic layer of a two-repo memory pattern. There are no customers, no production metrics, no team consuming it &mdash; just me running it daily and tightening it weekly so my own agents age into seniority instead of resetting every session. The memory category is crowded (mem0, OpenMemory, cursor-memory-bank, memory-bank-mcp); if you want a polished product or hosted service, use one of those. The specific thing on offer here is the **transfer-test pattern**: keep episodic signal private, promote only what survives the "would this still apply in a language you haven't met yet?" test, and let agents read from the result.
-
-!!! warning "Status, in one paragraph"
-    Today this repo is a curated set of patterns and scripts, not a framework. Several of the most interesting ideas &mdash; auto-injected anti-hallucination, transfer-test promotion, router-hints loop &mdash; are documented but not yet shipped end-to-end. See [Status](status.md) for the real/documented/planned breakdown and the [Roadmap](roadmap.md) for the waves that turn the documented things into shipped things.
+!!! note "What this is today"
+    A working admission gate (PowerShell + Python) with 100% accuracy on its test set, integrated into a real daily-use memory system. It is **not** an MCP server yet — that's [Wave 5](roadmap/) on the roadmap. Today you use it by cloning the repo and running the scorer locally or embedding it in your pipeline. The [roadmap](roadmap/) shows what's next.
 
 ## Pages worth reading
 
 <div class="bento-grid">
-	<a class="bento-card tall" href="framework-purpose/">
-		<span class="meta">Foundation</span>
-		<h3>What it does</h3>
-		<p>The actual purpose, in plain language, and how I tell whether it is working.</p>
+	<a class="bento-card tall" href="the-gate/">
+		<span class="meta">Technical</span>
+		<h3>How the gate works</h3>
+		<p>The four dimensions, contradiction detection, feedback-loop prevention, and the full rule catalog.</p>
 	</a>
-	<a class="bento-card tall" href="framework-scope/">
-		<span class="meta">Boundary</span>
-		<h3>What stays private</h3>
-		<p>What I commit to this repo and what stays on my disk only.</p>
+	<a class="bento-card tall" href="evidence/">
+		<span class="meta">Proof</span>
+		<h3>Evidence</h3>
+		<p>Fixture methodology, iteration history, real-corpus results, before/after examples, and honest limitations.</p>
 	</a>
-	<a class="bento-card tall" href="memory-adoption-playbook/">
-		<span class="meta">Mechanics</span>
-		<h3>Memory adoption playbook</h3>
-		<p>How lessons get promoted, when they get retired, and the rules that keep the file set from rotting.</p>
-	</a>
-	<a class="bento-card full" href="principles-ways-of-thinking/">
-		<span class="meta">Reasoning</span>
-		<h3>Principles and ways of thinking</h3>
-		<p>The reusable reasoning patterns, decision rules, and bias checks underneath the rest. No company or project data &mdash; just the thinking.</p>
-	</a>
-	<a class="bento-card tall" href="copilot-auto-mode/">
-		<span class="meta">Copilot</span>
-		<h3>Copilot auto-mode</h3>
-		<p>The router-hints trick and the two brief sizes I use to keep auto-mode from drifting.</p>
-	</a>
-	<a class="bento-card tall" href="memory-ecosystem-research-2026-05-15/">
-		<span class="meta">Notes</span>
-		<h3>Memory ecosystem research</h3>
-		<p>Patterns I borrowed from existing memory frameworks and what I deliberately chose not to copy.</p>
-	</a>
-	<a class="bento-card tall" href="status/">
-		<span class="meta">Reality check</span>
-		<h3>Status</h3>
-		<p>What's real today, what's documented-only, what's planned. The single source of truth for what actually works.</p>
+	<a class="bento-card tall" href="try-it/">
+		<span class="meta">Action</span>
+		<h3>Try it</h3>
+		<p>Clone, run, score your own corpus. 60 seconds to first result, zero dependencies.</p>
 	</a>
 	<a class="bento-card tall" href="roadmap/">
 		<span class="meta">Direction</span>
 		<h3>Roadmap</h3>
-		<p>Six waves from honest baseline to a real guardrail layer for coding agents. Each wave has a kill switch.</p>
+		<p>Six waves from working scorer to MCP server. Each wave has a kill switch.</p>
 	</a>
 </div>

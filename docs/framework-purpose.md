@@ -3,8 +3,8 @@
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
-			<h1>Capture lessons, keep them honest, feed them back in.</h1>
-			<p class="lead">The point is a small loop: write down what I learned, only promote a lesson once I've hit it more than once, and surface the relevant pieces back into the next prompt. The rest of the pages just spell out the parts.</p>
+			<h1>Why this exists: the origin story.</h1>
+			<p class="lead">This started as one person's daily loop: write down what I learned, only promote a lesson once I've hit it more than once, and surface the relevant pieces back into the next prompt. The quality gate grew out of the same frustration everyone has &mdash; most of what gets "remembered" is noise. The admission gate is the answer to that.</p>
 			<div class="pill-row">
 				<span class="pill">Capture</span>
 				<span class="pill">Synthesize</span>
@@ -14,15 +14,15 @@
 		<div class="kpi-panel">
 			<div class="kpi-item">
 				<strong>Primary output</strong>
-				<span>A ranked brief I paste into Copilot before complex tasks &mdash; not auto-injected.</span>
+				<span>A ranked brief pasted into Copilot before complex tasks, plus a quality gate that filters every write.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Primary risk reduced</strong>
-				<span>Repeating the same mistake because the agent has no memory of the last one.</span>
+				<span>Repeating the same mistake because the agent has no memory of the last one &mdash; or having too much noise to find the signal.</span>
 			</div>
 			<div class="kpi-item">
 				<strong>Success signal</strong>
-				<span>Fewer back-and-forth turns to land on the right answer; fewer invented file paths and APIs.</span>
+				<span>Fewer back-and-forth turns to land on the right answer; fewer invented file paths and APIs; cleaner memory over time.</span>
 			</div>
 		</div>
 	</div>
