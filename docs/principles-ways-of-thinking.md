@@ -11,8 +11,8 @@
 				<span class="pill">Decision hygiene</span>
 			</div>
 			<div class="cta-row">
-				<a class="md-button md-button--primary" href="../framework-scope/">See the scope boundary</a>
-				<a class="md-button" href="../framework-purpose/">Why this framework exists</a>
+				<a class="md-button md-button--primary" href="framework-scope.md">See the scope boundary</a>
+				<a class="md-button" href="framework-purpose.md">Why this framework exists</a>
 			</div>
 		</div>
 		<div class="kpi-panel">

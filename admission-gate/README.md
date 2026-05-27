@@ -1,6 +1,6 @@
 # Admission gate
 
-The quality gate for memory writes. Today this directory contains the **measurement harness** for Wave 3 — a labeled fixture and a baseline scorer. It is not yet wired into any agent's write path.
+The quality gate for memory writes. Today this directory contains the **measurement harness** for Wave 3 — a labeled fixture and a baseline scorer. The same scorer is also wired into this repo's manual and auto-capture write paths (`capture-observation.*` and `auto-capture-observations.*`).
 
 ## Why this exists
 

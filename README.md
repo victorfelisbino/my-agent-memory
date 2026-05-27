@@ -31,6 +31,7 @@ What to read first:
 - What this brain knows: [docs/competence-map.md](docs/competence-map.md) &mdash; depth, evidence, and last-touch per domain. Generated, not hand-typed.
 - Where this is going: [docs/roadmap.md](docs/roadmap.md) &mdash; 6 waves, each with a kill switch.
 - New user setup: [Quick Start (5 minutes)](#quick-start-5-minutes)
+- Fast product check: [Admission-gate smoke test (60 seconds)](#admission-gate-smoke-test-60-seconds)
 - Published docs entry: [docs/index.md](docs/index.md)
 - Purpose, in one paragraph: [docs/framework-purpose.md](docs/framework-purpose.md)
 - Quick restart routine: [docs/quick-restart-routine.md](docs/quick-restart-routine.md)
@@ -114,6 +115,35 @@ cd E:\my-agent-memory
 ```
 
 If you are creating your personal repo for the first time, use the full setup in [Bootstrapping a personal repo](#bootstrapping-a-personal-repo-first-machine-only).
+
+## Admission-gate smoke test (60 seconds)
+
+This is the fastest way to test the core product behavior (keep vs reject with a machine-readable exit code) without setting up a personal repo.
+
+```bash
+git clone https://github.com/victorfelisbino/my-agent-memory.git
+cd my-agent-memory/admission-gate
+
+# Expect: keep, exit code 0
+echo '{"text":"Always validate input at system boundaries."}' | python3 score_memory.py --score-one
+
+# Expect: reject, exit code 3
+echo '{"text":"Session started 2026-05-26 at 09:00 on office-pc."}' | python3 score_memory.py --score-one
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+git clone https://github.com/victorfelisbino/my-agent-memory.git
+cd my-agent-memory\admission-gate
+
+# Expect: keep, exit code 0
+echo '{"text":"Always validate input at system boundaries."}' | python score_memory.py --score-one
+
+# Expect: reject, exit code 3
+echo '{"text":"Session started 2026-05-26 at 09:00 on office-pc."}' | python score_memory.py --score-one
+Write-Output "exit=$LASTEXITCODE"
+```
 
 ## The three layers
 

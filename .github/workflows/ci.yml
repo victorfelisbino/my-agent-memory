@@ -89,6 +89,22 @@ jobs:
       - name: Run Python scorer on v4 fixture
         run: python admission-gate/score_memory.py --fail-under 85
 
+      - name: Quick smoke contract (README 60-second path)
+        shell: pwsh
+        run: |
+          # Keep path: must return decision=keep and exit code 0.
+          $keep = '{"text":"Always validate input at system boundaries."}' | python admission-gate/score_memory.py --score-one
+          if ($LASTEXITCODE -ne 0) { Write-Error "quick smoke keep wrong exit: $LASTEXITCODE"; exit 1 }
+          $keepDecision = ($keep | ConvertFrom-Json).decision
+          if ($keepDecision -ne 'keep') { Write-Error "quick smoke keep wrong decision: $keepDecision"; exit 1 }
+
+          # Reject path: must return decision=reject and exit code 3.
+          $reject = '{"text":"Session started 2026-05-26 at 09:00 on office-pc."}' | python admission-gate/score_memory.py --score-one
+          if ($LASTEXITCODE -ne 3) { Write-Error "quick smoke reject wrong exit: $LASTEXITCODE"; exit 1 }
+          $rejectDecision = ($reject | ConvertFrom-Json).decision
+          if ($rejectDecision -ne 'reject') { Write-Error "quick smoke reject wrong decision: $rejectDecision"; exit 1 }
+          Write-Host 'Quick smoke contract OK (keep=0, reject=3)'
+
       - name: Cross-language parity (v4 fixture)
         shell: pwsh
         run: ./admission-gate/parity-check.ps1 -Fixture admission-gate/fixtures/memories-v4.jsonl

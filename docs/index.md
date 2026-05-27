@@ -125,7 +125,7 @@ Exit code 0 = keep. Exit code 3 = reject. Pipe into any pipeline.
 ## Honest scope
 
 !!! note "What this is today"
-    A working admission gate (PowerShell + Python) with 100% accuracy on its test set, integrated into a real daily-use memory system. It is **not** an MCP server yet — that's [Wave 5](roadmap/) on the roadmap. Today you use it by cloning the repo and running the scorer locally or embedding it in your pipeline. The [roadmap](roadmap/) shows what's next.
+	A working admission gate (PowerShell + Python) with 100% accuracy on its test set, integrated into a real daily-use memory system. It is **not** an MCP server yet — that's [Wave 5](roadmap.md) on the roadmap. Today you use it by cloning the repo and running the scorer locally or embedding it in your pipeline. The [roadmap](roadmap.md) shows what's next.
 
 ## Pages worth reading
 
@@ -145,7 +145,7 @@ Exit code 0 = keep. Exit code 3 = reject. Pipe into any pipeline.
 		<h3>Try it</h3>
 		<p>Clone, run, score your own corpus. 60 seconds to first result, zero dependencies.</p>
 	</a>
-	<a class="bento-card tall" href="roadmap/">
+	<a class="bento-card tall" href="roadmap.md">
 		<span class="meta">Direction</span>
 		<h3>Roadmap</h3>
 		<p>Six waves from working scorer to MCP server. Each wave has a kill switch.</p>

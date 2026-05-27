@@ -38,6 +38,16 @@ cd my-agent-memory/admission-gate
 echo '{"text":"Always use try-catch in JavaScript"}' | python3 score_memory.py --score-one
 ```
 
+Windows PowerShell equivalent:
+
+```powershell
+git clone https://github.com/victorfelisbino/my-agent-memory.git
+cd my-agent-memory\admission-gate
+
+# Score a single memory
+echo '{"text":"Always use try-catch in JavaScript"}' | python score_memory.py --score-one
+```
+
 **Output:**
 ```json
 {"scorer":"py","decision":"keep","total":1.1,"reusability":0.3,"atomicity":0.3,"novelty":0.0,"actionability":0.5,"reason":""}
@@ -47,6 +57,12 @@ Now try a garbage memory:
 
 ```bash
 echo '{"text":"Session started 2026-05-26 at 09:00 on office-pc."}' | python3 score_memory.py --score-one
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+echo '{"text":"Session started 2026-05-26 at 09:00 on office-pc."}' | python score_memory.py --score-one
 ```
 
 **Output:**
@@ -68,10 +84,26 @@ pwsh extract-corpus.ps1 -Path /path/to/your/memory-files -OutFile my-corpus.json
 python3 score_memory.py --fixture my-corpus.jsonl --unlabeled
 ```
 
+Windows PowerShell equivalent:
+
+```powershell
+# Extract atomic bullets from .md files into JSONL
+.\extract-corpus.ps1 -Path C:\path\to\your\memory-files -OutFile my-corpus.jsonl
+
+# Score the full corpus
+python score_memory.py --fixture my-corpus.jsonl --unlabeled
+```
+
 If your memories are already in JSONL (one `{"text":"..."}` per line):
 
 ```bash
 python3 score_memory.py --fixture your-memories.jsonl --unlabeled
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+python score_memory.py --fixture your-memories.jsonl --unlabeled
 ```
 
 The `--unlabeled` flag means items don't need `label` fields — the scorer just reports its decision for each.
@@ -85,6 +117,12 @@ Use `--fail-under` to gate your pipeline:
 python3 score_memory.py --fixture test-set.jsonl --fail-under 85
 ```
 
+Windows PowerShell equivalent:
+
+```powershell
+python score_memory.py --fixture test-set.jsonl --fail-under 85
+```
+
 ## Add contradiction detection
 
 Pass your existing memory store so the scorer can detect conflicts:
@@ -92,6 +130,13 @@ Pass your existing memory store so the scorer can detect conflicts:
 ```bash
 echo '{"text":"Never use strict mode in production."}' \
   | python3 score_memory.py --score-one --store existing-memories.jsonl
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+echo '{"text":"Never use strict mode in production."}' |
+	python score_memory.py --score-one --store existing-memories.jsonl
 ```
 
 If your store contains "Always use strict mode" — contradiction detected, candidate rejected.
@@ -105,6 +150,13 @@ echo '{"text":"Always validate input at system boundaries."}' \
   | python3 score_memory.py --score-one --recalled session.jsonl
 ```
 
+Windows PowerShell equivalent:
+
+```powershell
+echo '{"text":"Always validate input at system boundaries."}' |
+	python score_memory.py --score-one --recalled session.jsonl
+```
+
 If this principle was already recalled and is now being re-ingested — feedback loop detected, candidate rejected.
 
 ## Audit trail
@@ -115,10 +167,16 @@ Log every decision for review:
 echo '{"text":"..."}' | python3 score_memory.py --score-one --log-to scoring-log.jsonl
 ```
 
+Windows PowerShell equivalent:
+
+```powershell
+echo '{"text":"..."}' | python score_memory.py --score-one --log-to scoring-log.jsonl
+```
+
 Then render a local dashboard:
 
 ```powershell
-pwsh render-dashboard.ps1
+.\render-dashboard.ps1
 # → opens dashboard.html (self-contained, no server needed)
 ```
 

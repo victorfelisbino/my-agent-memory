@@ -67,7 +67,7 @@
 
 ## What this repo is not (today)
 
-- Not a framework. The word is aspirational until the [roadmap](../roadmap/) Wave 4+ ships. Today it's one person's working version of the pattern.
+- Not a framework. The word is aspirational until the [roadmap](roadmap.md) Wave 4+ ships. Today it's one person's working version of the pattern.
 - Not a personal memory vault. Active state lives in a separate private repo.
 - Not a transcript dump or raw research scrapbook.
 - Not a hosted product, SaaS, or replacement for source systems.

@@ -49,10 +49,10 @@
 
 ## If you want to try it
 
-1. Skim the [Quick restart routine](../quick-restart-routine/) to see the daily shape.
-2. Read [What stays private](../framework-scope/) &mdash; this is the rule that keeps the two repos cleanly separated.
-3. Look at [Memory adoption playbook](../memory-adoption-playbook/) for the promotion gate.
+1. Skim the [Quick restart routine](quick-restart-routine.md) to see the daily shape.
+2. Read [What stays private](framework-scope.md) &mdash; this is the rule that keeps the two repos cleanly separated.
+3. Look at [Memory adoption playbook](memory-adoption-playbook.md) for the promotion gate.
 4. Either fork this repo as your shared layer, or just steal the parts of the pattern that fit.
 
 !!! tip "What to take first if you're cherry-picking"
-    The three pieces I haven't seen packaged elsewhere are: (1) the **admission gate** scorer ([`admission-gate/score_memory.py`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/score_memory.py)) — embed it as middleware to filter junk before storage; (2) the **anti-hallucination protocol** (load-it-yourself skill — see [Anti-hallucination skill](../anti-hallucination-skill/)); (3) the Copilot **router-hints header** (see [Copilot auto-mode](../copilot-auto-mode/)). Everything else &mdash; markdown KB, weekly review, decision journal &mdash; is well-trodden territory you can lift from anywhere.
+	The three pieces I haven't seen packaged elsewhere are: (1) the **admission gate** scorer ([`admission-gate/score_memory.py`](https://github.com/victorfelisbino/my-agent-memory/blob/main/admission-gate/score_memory.py)) — embed it as middleware to filter junk before storage; (2) the **anti-hallucination protocol** (load-it-yourself skill — see [Anti-hallucination skill](anti-hallucination-skill.md)); (3) the Copilot **router-hints header** (see [Copilot auto-mode](copilot-auto-mode.md)). Everything else &mdash; markdown KB, weekly review, decision journal &mdash; is well-trodden territory you can lift from anywhere.
