@@ -30,6 +30,9 @@ Thumbs.db
 # MkDocs build output
 site/
 
+# Upstream forks (cloned locally for PR work)
+memory-bank-mcp/
+
 # Admission-gate derived corpus (regenerated from .md files; not source of truth)
 admission-gate/fixtures/real-memory.jsonl
 admission-gate/fixtures/real-memory.ci.jsonl

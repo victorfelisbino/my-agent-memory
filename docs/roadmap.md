@@ -83,12 +83,15 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 **Done:**
 - PR opened: [groupzer0/vs-code-agents#10](https://github.com/groupzer0/vs-code-agents/pull/10) — adds `vs-code-agents/skills/anti-hallucination/SKILL.md` matching their existing skill convention, with a per-agent usage table.
 
-**Probe B (planned):** PR adding quality-gate middleware to [`alioshr/memory-bank-mcp`](https://github.com/alioshr/memory-bank-mcp) (905 stars, TypeScript, MIT, actively maintained). This is a better audience for the admission-gate concept and has a larger, more active community.
+**Probe B (live):** PR contributing the Wave 3 admission gate as opt-in quality-gate middleware to [`alioshr/memory-bank-mcp`](https://github.com/alioshr/memory-bank-mcp) (905 stars, TypeScript, MIT, actively maintained). Full native TypeScript port of the 40+ scoring rules, decorator pattern around WriteFile/UpdateFile, zero new deps, 37 tests.
+
+**Done:**
+- PR opened: [alioshr/memory-bank-mcp#35](https://github.com/alioshr/memory-bank-mcp/pull/35) — adds opt-in quality gate via `MEMORY_GATE_ENABLED=true`. Scores on 4 dimensions, rejects with reason. References mem0 #4573.
 
 **Still to do:**
-- Watch for Probe A review / reaction. Clock starts on PR-open date.
-- Ship Probe B once the admission gate from Wave 3 has a working prototype.
-- Optionally post a recorded harness run in the PR thread if maintainers ask for evidence.
+- Watch for Probe A review / reaction. Clock starts on PR-open date (2026-05-26).
+- Watch for Probe B review / reaction. Clock starts on PR-open date (2026-05-26).
+- Optionally post a recorded harness run in either PR thread if maintainers ask for evidence.
 
 **Track (both):**
 - Was the PR reviewed within 2 weeks?
