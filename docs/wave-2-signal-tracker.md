@@ -32,6 +32,68 @@ Signal means one or more of:
 | 2026-06-14 | TBD | TBD | TBD | - | - | vf |
 | 2026-06-21 | TBD | TBD | TBD | - | Final pre-decision check. | vf |
 
+## First checkpoint runbook (week ending 2026-05-31)
+
+Use this exact sequence so every weekly update stays comparable:
+
+1. Open both probe PRs and capture any new maintainer comments, review requests, labels, commits, or merge state.
+2. Record outside engagement (comments/reactions from non-maintainers, related cross-links, star/fork bumps if visible).
+3. Classify each probe status in one line: no movement, engagement, or directional signal.
+4. Set weekly `Signal quality (0-2)` using the rubric below.
+5. Append evidence links in the weekly note (direct PR comment/review links).
+
+### 2026-05-31 checkpoint entry template
+
+Copy/paste this block into the tracker note for that week:
+
+```md
+Week ending: 2026-05-31
+
+Probe A update:
+- State: <open / reviewed / changes requested / merged / rejected>
+- Evidence: <PR link(s)>
+- Directional signal: <none / weak / clear>
+
+Probe B update:
+- State: <open / reviewed / changes requested / merged / rejected>
+- Evidence: <PR link(s)>
+- Directional signal: <none / weak / clear>
+
+Outside engagement:
+- <none or bullet list with links>
+
+Signal quality (0-2): <0|1|2>
+
+Operator note:
+- <what changed this week, and what must happen before next checkpoint>
+```
+
+## Reusable weekly template
+
+Use this for every week after 2026-05-31:
+
+```md
+Week ending: <YYYY-MM-DD>
+
+Probe A update:
+- State:
+- Evidence:
+- Directional signal:
+
+Probe B update:
+- State:
+- Evidence:
+- Directional signal:
+
+Outside engagement:
+-
+
+Signal quality (0-2):
+
+Operator note:
+-
+```
+
 ## Scoring rubric
 
 - 0 = no meaningful response beyond passive state
