@@ -42,6 +42,7 @@ Three columns:
 ## Planned (see [roadmap](roadmap.md))
 
 - Read the signal from both probes: [`groupzer0/vs-code-agents` PR #10](https://github.com/groupzer0/vs-code-agents/pull/10) and [`alioshr/memory-bank-mcp` PR #35](https://github.com/alioshr/memory-bank-mcp/pull/35) (Wave 2 exit).
+- Track weekly probe movement in [Wave 2 signal tracker](wave-2-signal-tracker.md).
 - Decision gate: pivot, contribute & integrate, or archive (Wave 4).
 - Wave 4 decision checkpoint is fixed at **June 23, 2026** (4 weeks from probe-open date 2026-05-26).
 - **MCP quality-gate server** wrapping the official MCP Memory server with admission scoring, contradiction detection, staleness decay, anti-hallucination injection, and competence-aware retrieval. Copilot-native path via hook/extension (Wave 5-A).

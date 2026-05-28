@@ -92,6 +92,7 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 - Watch for Probe A review / reaction. Clock starts on PR-open date (2026-05-26).
 - Watch for Probe B review / reaction. Clock starts on PR-open date (2026-05-26).
 - Optionally post a recorded harness run in either PR thread if maintainers ask for evidence.
+- Update [Wave 2 signal tracker](wave-2-signal-tracker.md) weekly through the 2026-06-23 checkpoint.
 
 **Track (both):**
 - Was the PR reviewed within 2 weeks?
