@@ -104,6 +104,9 @@ jobs:
           $rejectDecision = ($reject | ConvertFrom-Json).decision
           if ($rejectDecision -ne 'reject') { Write-Error "quick smoke reject wrong decision: $rejectDecision"; exit 1 }
           Write-Host 'Quick smoke contract OK (keep=0, reject=3)'
+          # The reject path legitimately leaves $LASTEXITCODE=3, which Actions' pwsh
+          # wrapper propagates as the step exit code. Reset it explicitly.
+          exit 0
 
       - name: Cross-language parity (v4 fixture)
         shell: pwsh
@@ -187,4 +190,6 @@ jobs:
           if ($psKeepDecision -ne $pyKeepDecision) { Write-Error "score-one parity mismatch on keep: ps=$psKeepDecision py=$pyKeepDecision"; exit 1 }
           if ($psRejectDecision -ne $pyRejectDecision) { Write-Error "score-one parity mismatch on reject: ps=$psRejectDecision py=$pyRejectDecision"; exit 1 }
           Write-Host 'Score-one smoke OK (keep=0, reject=3, cross-language parity)'
+          # Reset the leftover exit code 3 from the reject-path scorer call.
+          exit 0
 
