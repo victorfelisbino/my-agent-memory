@@ -123,46 +123,30 @@ Toggle Terminal: Ctrl+`
 
 ## Memory Automation
 
-Refresh learned patterns from Copilot history:
+> The capture/sync/summon/weekly script pipeline was retired in June 2026 (editor-native agent memory covers those jobs). The admission gate below is the maintained tooling; retired commands live in git history.
+
+Score a candidate memory through the admission gate (keep = exit 0, reject = exit 3):
 
 ```powershell
-cd "$env:APPDATA\Code\User\memories"
-.\learn-memory.ps1
+echo '{"text":"Always validate input at system boundaries."}' | python admission-gate/score_memory.py --score-one
 ```
 
 macOS/Linux equivalent:
 
 ```bash
-cd "$HOME/Library/Application Support/Code/User/memories"
-./learn-memory.sh
+echo '{"text":"Always validate input at system boundaries."}' | python3 admission-gate/score_memory.py --score-one
 ```
 
-Run full weekly memory workflow (pull + learn + stage):
+Run the full labeled-fixture harness (CI-equivalent):
 
 ```powershell
-cd "$env:APPDATA\Code\User\memories"
-.\run-weekly-memory.ps1
+.dmission-gate\score-memory.ps1 -FailUnder 85
 ```
 
 macOS/Linux equivalent:
 
 ```bash
-cd "$HOME/Library/Application Support/Code/User/memories"
-./run-weekly-memory.sh
-```
-
-Run and finish automatically (commit + push):
-
-```powershell
-cd "$env:APPDATA\Code\User\memories"
-.\run-weekly-memory.ps1 -Commit -Push
-```
-
-macOS/Linux equivalent:
-
-```bash
-cd "$HOME/Library/Application Support/Code/User/memories"
-./run-weekly-memory.sh --commit --push
+python3 admission-gate/score_memory.py --fail-under 85
 ```
 
 Domain switch prompt (use at start of a new project/chat):
@@ -174,101 +158,7 @@ Domain: MuleSoft. Use domains/mulesoft and domains/general rules. Ignore Salesfo
 Push memory updates:
 
 ```powershell
-cd "$env:APPDATA\Code\User\memories"
 git add .
-git commit -m "memory: weekly refresh"
+git commit -m "memory: curated update"
 git push
-```
-
-Generate task-specific memory brief (magic mode):
-
-```powershell
-cd "$env:APPDATA\Code\User\memories"
-.\summon-memory.ps1 -Task "Create API integration with OAuth and refresh token handling"
-```
-
-macOS/Linux equivalent:
-
-```bash
-cd "$HOME/Library/Application Support/Code/User/memories"
-./summon-memory.sh --task "Create API integration with OAuth and refresh token handling"
-```
-
-Print one-command preflight prompt block:
-
-```powershell
-.\summon-memory.ps1 -Task "Create API integration with OAuth and refresh token handling" -Preflight
-```
-
-macOS/Linux equivalent:
-
-```bash
-./summon-memory.sh --task "Create API integration with OAuth and refresh token handling" --preflight
-```
-
-Run memory lint before promoting shared lessons:
-
-```powershell
-.\lint-memory.ps1 -IncludeCanonical
-```
-
-macOS/Linux equivalent:
-
-```bash
-./lint-memory.sh --include-canonical
-```
-
-Capture an in-flight observation (decision, blocker, progress, dead-end, insight):
-
-```powershell
-.\capture-observation.ps1 -Type decision -Domain Salesforce -Tags "deploy,qa" -Note "Promote via Gearset, not direct deploy, due to profile drift."
-```
-
-macOS/Linux equivalent:
-
-```bash
-./capture-observation.sh --type decision --domain Salesforce --tags "deploy,qa" --note "Promote via Gearset, not direct deploy, due to profile drift."
-```
-
-Synthesize the last 7 days of observations into `status-update.md`:
-
-```powershell
-.\synthesize-observations.ps1 -Days 7
-```
-
-macOS/Linux equivalent:
-
-```bash
-./synthesize-observations.sh --days 7
-```
-
-Auto-capture observations from Copilot Chat transcripts (decisions, blockers, dead-ends, insights, progress):
-
-```powershell
-.\auto-capture-observations.ps1 -SinceDays 7 -DryRun       # preview
-.\auto-capture-observations.ps1 -SinceDays 7 -MaxPerRun 25 # write to log
-```
-
-macOS/Linux equivalent:
-
-```bash
-./auto-capture-observations.sh --since-days 7 --dry-run
-./auto-capture-observations.sh --since-days 7 --max-per-run 25
-```
-
-Notes are redacted for common secrets (Bearer tokens, JWTs, Salesforce session IDs, Stripe/Slack/GitHub/AWS keys, password=value patterns, emails) before being written.
-
-Prune old observations into monthly archive files (keeps active log lean):
-
-```powershell
-.\prune-observations.ps1 -Days 90 -DryRun
-.\prune-observations.ps1 -Days 90
-```
-
-Install fully automated weekly refresh (Windows Task Scheduler):
-
-```powershell
-.\install-scheduled-task.ps1 -Push                # weekly Monday 9am, auto-commit + push
-.\install-scheduled-task.ps1 -Frequency Daily     # or daily refresh
-.\install-scheduled-task.ps1 -Uninstall           # remove
 ```

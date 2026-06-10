@@ -50,7 +50,6 @@ nav:
       - Memory adoption playbook: memory-adoption-playbook.md
       - Principles: principles-ways-of-thinking.md
       - Copilot auto-mode: copilot-auto-mode.md
-      - Quick restart routine: quick-restart-routine.md
       - Anti-hallucination skill: anti-hallucination-skill.md
   - Status & Direction:
       - Status (what's real today): status.md

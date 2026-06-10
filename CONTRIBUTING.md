@@ -4,9 +4,8 @@ Thanks for looking. Before opening anything, read [docs/status.md](docs/status.m
 
 ## Reality check
 
-- Single contributor today. No published release cadence. CI runs only syntax-level checks (`bash -n`, PowerShell parse), not functional tests.
-- The `team-memory/` approval-gates flow has never run end-to-end. Don't treat it as a working review process; treat it as a draft policy.
-- The most useful contributions right now are: (a) running the [anti-hallucination test harness](skills/general/anti-hallucination/test-prompts.md) and reporting honest results, (b) flagging where the docs still claim something that isn't true.
+- Single contributor today. No published release cadence.
+- The most useful contributions right now are: (a) running the [anti-hallucination test harness](skills/general/anti-hallucination/test-prompts.md) and reporting honest results, (b) flagging where the docs still claim something that isn't true, (c) adding labeled fixture rows or scoring rules to the [admission gate](admission-gate/README.md) (cross-language parity is enforced in CI).
 
 ## Scope
 
@@ -46,7 +45,7 @@ Never commit these personal files:
 Before opening a PR, run:
 
 ```powershell
-pwsh -NoProfile -File .\lint-memory.ps1
+pwsh -NoProfile -File .\admission-gate\score-memory.ps1 -FailUnder 85
 ```
 
 If your environment does not have pwsh, run at minimum:

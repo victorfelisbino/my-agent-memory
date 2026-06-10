@@ -137,27 +137,13 @@ Exit codes: `0` ok, `2` fixture missing or malformed, `3` accuracy below `-FailU
 - Contradiction-against-store (iter 10) and feedback-loop (iter 11) both use a polarity+subject-overlap heuristic, not embeddings. Good for the obvious "always X / never X" inversion and verbatim-paraphrase shapes; would not catch a deeply rephrased contradiction or a synonym-swapped re-ingestion with no shared content tokens.
 - Dashboard is local-only (slice 1) -- no time-series chart, no staleness view, no live refresh.
 
-## Write-path integration (iter 13 + iter 14)
+## Write-path integration (iter 13 + iter 14, capture scripts since retired)
 
-The scorer now actually filters writes on **every** path that writes to `observations.jsonl`:
+Iters 13-14 wired the gate into the repo's own capture scripts (`capture-observation.*`, `auto-capture-observations.*`) so every write to `observations.jsonl` was filtered. Those scripts were retired in the June 2026 restructure (editor-native agent memory does the capture job now), but the integration contract they consumed is still the supported way to embed the gate in any pipeline:
 
-- `capture-observation.ps1` / `capture-observation.sh` (manual `-Type ... -Note ...` captures) -- gated in iter 13.
-- `auto-capture-observations.ps1` / `auto-capture-observations.sh` (automated scraper that runs weekly via `run-weekly-memory.ps1` and on every sync via `sync-memory.ps1`) -- gated in iter 14.
-
-All four pipe each candidate through `score_memory.py --score-one` before appending. Rejected items divert to `observations.rejected.jsonl` (gitignored) along with the rejection reason -- nothing is silently lost. Bypass via `-NoGate` / `--no-gate` or `MEMORY_GATE=off` when the gate misfires or you're running a backfill.
-
-```powershell
-# Normal use -- gate runs by default.
-pwsh ./capture-observation.ps1 -Type insight -Note "Always run mkdocs --strict before pushing docs changes."
-# -> [insight] General :: ...  (appended to observations.jsonl, exit 0)
-
-pwsh ./capture-observation.ps1 -Type progress -Note "today I fixed the bug at line 42 in src/foo.py"
-# -> [gate-reject] General :: ...  reason: reusability=-1  (logged to observations.rejected.jsonl, exit 3)
-
-# Bypass when you disagree with the gate.
-pwsh ./capture-observation.ps1 -Type progress -Note "..." -NoGate
-$env:MEMORY_GATE = 'off'   # session-wide bypass
-```
+- Pipe each candidate through `score_memory.py --score-one` (or `score-memory.ps1 -ScoreOne`) before appending to storage: stdin JSON in, decision JSON out, exit `0` keep / `3` reject.
+- Divert rejects to a `*.rejected.jsonl` log along with the rejection reason -- nothing is silently lost.
+- Offer a bypass (the retired scripts used `-NoGate` / `--no-gate` / `MEMORY_GATE=off`) for misfires and backfills.
 
 The same JSON shape is emitted by `score-memory.ps1 -ScoreOne` and `score_memory.py --score-one`, so callers in either language get identical decisions (cross-language parity is enforced in CI). Combine with `-LogTo` / `--log-to` (iter 12) to feed real capture decisions into the dashboard.
 

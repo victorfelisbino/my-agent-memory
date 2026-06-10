@@ -68,22 +68,22 @@ Use it as an implementation guide for this repository.
 
 What I actually adopted (and what's still on paper):
 
-1. Layer memory by scope &mdash; **adopted.** Private state lives in a separate repo; shared patterns live here. The split is enforced by `.gitignore` and the resolution order in `_personal-root.ps1`.
+1. Layer memory by scope &mdash; **adopted.** Private state lives in a separate repo; shared patterns live here. The split is enforced by `.gitignore` and documented in the framework-scope page.
 
 2. Add ingestion quality controls &mdash; **partly adopted.** The promotion rule (reusable + evidence + falsifiable + fresh) is documented in [framework-scope.md](framework-scope.md). Confidence and `last_verified` are not yet stamped on every entry; that's a Wave 5 cleanup.
 
-3. Enforce retrieval at decision points &mdash; **manual only.** Today retrieval means running `summon-memory` and pasting the brief. There is no agent integration that retrieves before every assumption / option / commit. Auto-retrieval is roadmap Wave 4-A.
+3. Enforce retrieval at decision points &mdash; **delegated to native memory.** The `summon-memory` brief workflow was retired in June 2026; editor-native memory (Copilot memory scopes, CLAUDE.md, Cursor rules) now injects context. There is still no integration that retrieves before every assumption / option / commit. Auto-retrieval is roadmap Wave 4-A.
 
-4. Store at value boundaries &mdash; **partly adopted.** `loop.ps1` makes one-verb capture cheap. Discipline about what *not* to capture is still mostly judgement, not enforced.
+4. Store at value boundaries &mdash; **partly adopted.** The admission gate enforces what *not* to store at write time; what to capture remains judgement.
 
-5. Add no-memory fallback behavior &mdash; **documented.** If `summon-memory` fails, working in plain mode and back-filling later is the policy. No formal fallback path is wired into any agent.
+5. Add no-memory fallback behavior &mdash; **documented.** If memory context is unavailable, working in plain mode and back-filling later is the policy. No formal fallback path is wired into any agent.
 
-6. Keep token efficiency intentional &mdash; **adopted.** `summon-memory -Compact` exists; the [Copilot auto-mode](copilot-auto-mode.md) page lays out the rule for when to use which mode.
+6. Keep token efficiency intentional &mdash; **documented.** The [Copilot auto-mode](copilot-auto-mode.md) page lays out the compact-brief rule and router-hints format (tooling retired; format remains).
 
 ## Suggested operating contract for this repo
 
 Before task execution:
-1. Run `summon-memory` for the active task.
+1. Load the relevant playbooks/gotchas into context (native agent memory, or point instructions at the files here).
 2. Read top snippets.
 3. If uncertainty remains, run one more targeted retrieval query.
 

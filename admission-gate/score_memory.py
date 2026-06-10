@@ -563,7 +563,7 @@ def _parity_dump(items: list[dict], store_claims: dict | None = None, recalled_c
 # ---------------------------------------------------------------------------
 # Single-item write-path mode (iter 13). Reads one JSON record from stdin,
 # scores it, prints a decision JSON to stdout, and exits 0 (keep) or 3
-# (reject). Used by capture-observation.* to gate writes to observations.jsonl.
+# (reject). The supported integration point for gating writes in any external pipeline.
 # ---------------------------------------------------------------------------
 
 def _score_one_stdin(store_path: str, recalled_path: str, log_to: str) -> int:

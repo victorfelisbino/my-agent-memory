@@ -29,7 +29,7 @@
 </div>
 
 !!! note "What's actually automated vs. manual"
-    **Automated:** capture from local Copilot transcripts, cross-machine sync of the personal repo, brief generation, weekly synthesis, lint checks. **Manual:** pasting the brief into the Copilot prompt, deciding what to promote from the personal repo into this one, running the weekly review. See [Status](status.md) for the precise line between the two.
+    **Automated:** the admission gate (every candidate scored, junk rejected with a reason), the measurement harness, the dashboard, lint and drift checks in CI. **Manual:** deciding what to promote from your private notes into this shared layer, and pointing your agent's native memory (Copilot memory scopes, CLAUDE.md, Cursor rules) at the curated files here. The original capture/sync/summon pipeline was retired in June 2026 &mdash; editor-native memory does that job now. See [Status](status.md) for the precise line.
 
 <div class="scan-grid">
 	<div class="scan-card">
@@ -63,22 +63,19 @@
 
 ## Inputs
 
-- Captured activity and decisions (auto from Copilot transcripts; one-verb manual via `loop.ps1`).
-- Weekly synthesis outputs.
-- Lessons promoted from the personal repo into this one.
+- Candidate memories from whatever capture path you run (your agent's native memory, your own scripts).
+- Lessons promoted from private notes into this repo.
 
 ## Outputs
 
-- A ranked context brief on demand (`summon-memory`).
+- A keep/reject decision with a reason for every candidate memory (`score_memory.py --score-one`).
 - Curated principles, gotchas, and domain playbooks here.
-- Weekly synthesis files in the personal repo.
 
 ## Operating cycle
 
-1. Capture activity and decisions continuously.
-2. Synthesize patterns on a weekly cadence.
-3. Promote only what passes the transfer test (still applies in a language you haven't used yet).
-4. Retire or downgrade stale rules.
+1. Gate every candidate memory at write time.
+2. Promote only what passes the transfer test (still applies in a language you haven't used yet).
+3. Retire or downgrade stale rules.
 
 ## Guardrails
 
