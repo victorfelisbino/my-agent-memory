@@ -1,5 +1,8 @@
 # Copilot auto-mode
 
+!!! warning "Partially retired (June 2026)"
+    The `summon-memory` script that emitted the router-hints header was retired in the June 2026 restructure (see [Status](status.md)). The header format and token-saving strategy below remain usable by hand or from your own tooling; the numbers are observations, not benchmarks.
+
 <div class="landing-shell">
 	<div class="landing-grid">
 		<div class="hero-copy">
@@ -56,9 +59,9 @@ Without good context, the auto-router has to either:
 
 Either way, you lose. The router needs **structured task metadata** in the prompt to classify cheaply and pick correctly the first time.
 
-## How this repo helps
+## The router-hints header format
 
-`summon-memory.ps1` emits a **router-hints header** at the top of every brief:
+The retired `summon-memory.ps1` emitted a **router-hints header** at the top of every brief. The format is still useful by hand or from your own tooling:
 
 ```
 ## Router hints (for Copilot auto-mode)
@@ -82,15 +85,11 @@ The auto-router reads this and biases its choice. Empirically the suggested-mode
 
 `full` is for non-trivial work where the brief's signal is worth the tokens. `compact` is the default for quick tasks — roughly 60-75% fewer tokens in observed runs.
 
-```powershell
-.\summon-memory.ps1 -Task "fix the deployment error in staging" -Compact -Preflight
-```
-
 ## When to use which mode
 
 - **Trivial / well-bounded** (rename, typo, single small function): `-Compact`. Router will pick a small model and the brief won't bloat the prompt.
 - **Complex / multi-step / cross-cutting**: full brief. The score breakdowns and active-threads list help auto-mode justify routing to a deeper model and give it more context to avoid retries.
-- **Pure conversation / "explain this code"**: skip summon-memory entirely. Auto-mode handles it cheaply on its own.
+- **Pure conversation / "explain this code"**: skip the brief entirely. Auto-mode handles it cheaply on its own.
 
 ## Drift prevention is the real saver
 
@@ -102,15 +101,14 @@ Tokens spent on a too-cheap model that drifts dwarf the tokens saved by being ch
 1. **Stay-scoped instruction** in the preflight prompt: *"Do not expand scope without asking."* Cuts unsolicited refactors.
 2. **One-batched-question rule**: *"If required values are org/project-specific, ask for them explicitly (one batched question, not many)."* Cuts back-and-forth round trips.
 3. **Skip-restating instruction**: *"Skip restating context back to me. Go straight to the answer."* Cuts the polite-but-expensive recap.
-4. **Anti-hallucination guardrails** &mdash; the protocol in `anti-hallucination-protocol.md` documents the rules. Today you have to load it manually (paste it, or reference it from your agent instructions); it is *not* auto-included by `summon-memory`. Making this a one-line opt-in is tracked in the [roadmap](roadmap.md) as Wave 1. When loaded, it cuts retries caused by invented file paths, APIs, or component names.
+4. **Anti-hallucination guardrails** &mdash; the protocol in `anti-hallucination-protocol.md` documents the rules. Load it manually (paste it, or reference it from your agent instructions). Making this a one-line opt-in is tracked in the [roadmap](roadmap.md) as Wave 1. When loaded, it cuts retries caused by invented file paths, APIs, or component names.
 
 Even on a heavy model, these four reliably cut a 4-turn conversation to 1-2 turns.
 
 ## Recommended VS Code settings
 
 - Set the default model to **auto** in the Copilot Chat picker. Override per-conversation only when you have a specific reason.
-- Bind a keybinding to `summon-memory.ps1 -Compact -Preflight` for one-shot context injection.
-- Run the daily `MemoryDailySync` scheduled task so `observations.jsonl` and `active-threads.md` stay fresh; stale observations hurt routing accuracy.
+- Keep your agent's native memory/instruction files current; stale context hurts routing accuracy.
 
 ## Measuring whether this works
 
@@ -119,7 +117,7 @@ Track these in your own use over a week:
 - **% of sessions where auto picked a deep model when a cheap one would do** (target: <20%).
 - **% of sessions where you manually overrode auto** (target: <30% after a week of tuning).
 
-If those numbers don't improve, the router-hints aren't being read or the brief is wrong; revisit task-type classifier rules in `summon-memory.ps1`.
+If those numbers don't improve, the router-hints aren't being read or the brief is wrong; revisit how your tooling classifies task types before emitting the header.
 
 ## Token-reduction benchmark protocol
 

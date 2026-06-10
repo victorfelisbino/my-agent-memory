@@ -200,15 +200,7 @@ else
 fi
 ```
 
-Or use the built-in capture scripts that already have the gate wired in:
-
-```bash
-# Manual capture (gated by default)
-./capture-observation.sh "Lesson learned about X"
-
-# Bypass the gate when you know what you're doing
-./capture-observation.sh --no-gate "Force-store this observation"
-```
+The `--score-one` contract (stdin JSON in, decision JSON out, exit `0` keep / `3` reject) is the supported integration point &mdash; wire it in front of whatever storage your agent uses. The repo's own capture scripts that consumed it were retired in June 2026 (editor-native memory does the capture job now); see [Status](status.md).
 
 ## Bonus: anti-hallucination skill
 

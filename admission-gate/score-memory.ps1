@@ -459,7 +459,7 @@ function Score-Memory([string]$text) {
 # ---------------------------------------------------------------------------
 # Single-item write-path mode (iter 13). Reads one JSON record from stdin
 # ({text/note,...}), scores it, prints decision JSON to stdout, and exits
-# 0 (keep) or 3 (reject). Used by capture-observation.ps1 to gate writes.
+# 0 (keep) or 3 (reject). The supported integration point for gating writes in external pipelines.
 # ---------------------------------------------------------------------------
 if ($ScoreOne) {
   $raw = [Console]::In.ReadToEnd()

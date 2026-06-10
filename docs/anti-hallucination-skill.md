@@ -28,7 +28,7 @@ The roadmap's exit criterion for Wave 1 is **"a reproducible demo where the same
 
 ## What is NOT yet automated
 
-- **Auto-injection by `summon-memory`.** Today it's load-it-yourself. The roadmap Wave 4-A item ("Copilot Guardrail Layer" MCP server) is where auto-injection becomes the default.
+- **Auto-injection.** Today it's load-it-yourself. The roadmap Wave 4-A item ("Copilot Guardrail Layer" MCP server) is where auto-injection becomes the default.
 - **Cross-agent comparison.** Results-template captures one agent at a time. Aggregating across Copilot vs Cline vs Cursor is manual.
 - **Continuous regression.** No CI runs the harness. Treat your last results entry as a point-in-time snapshot.
 
