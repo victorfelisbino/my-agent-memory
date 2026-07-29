@@ -161,11 +161,13 @@ Full analysis: [docs/competitive-landscape-2026-05.md](competitive-landscape-202
 
 ---
 
-## Wave 4 — Decision gate (1 day, ~2h) &mdash; **PLANNED**
+## Wave 4 — Decision gate (1 day, ~2h) &mdash; **DECIDED 2026-07-29 (late)**
 
 **Goal:** Read the Wave 2 + Wave 3 signals and pick exactly one of three paths. No drift, no "both."
 
-**Decision checkpoint date:** **June 23, 2026** (4 weeks from probe-open date 2026-05-26).
+**Decision checkpoint date:** **June 23, 2026** (4 weeks from probe-open date 2026-05-26). **Actual decision date: July 29, 2026** — five weeks late; the June 10 restructure pre-empted most of the call.
+
+**Decision:** Both probes were **ignored** — 9 weeks, zero maintainer engagement (no reviews, comments, or labels; both target repos appear largely unmaintained). Per the signal table that is Path C for the outreach track, and the June 10 restructure already executed the corresponding scope cut (pipeline retired, admission gate + curated knowledge as the sole public focus). Remaining loose end, resolved 2026-07-29: the retired capture pipeline had kept running privately with no read path; it now lives in the personal repo (`pipeline/`) and injects a session brief into the VS Code user prompts folder on every sync, as a **two-week read-path trial ending August 12, 2026**. If it hasn't demonstrably improved sessions by then, the private pipeline is retired too.
 
 **Read the signal:**
 
